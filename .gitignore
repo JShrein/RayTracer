@@ -21,6 +21,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+output/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -227,4 +228,8 @@ _Pvt_Extensions
 .paket/paket.exe
 
 # FAKE - F# Make
-.fake/          
+.fake/ 
+
+*.sln
+**/*.vcxproj
+**/*.vcxproj.filters
