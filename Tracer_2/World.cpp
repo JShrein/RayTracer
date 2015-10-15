@@ -93,6 +93,7 @@ void World::render_scene() const {
 			pixel_color = black;
 
 			// "Trace" a function
+			/*
 			for (int p = 0; p < vp.num_samples; p++)
 			{
 				//pp.x = vp.s * (c - 0.5f * vp.hres + rand_float());
@@ -105,8 +106,8 @@ void World::render_scene() const {
 				
 				pixel_color = RGBColor(z, z, z);
 			}
-
-			/*
+			*/
+			
 			// Random sampling
 			for (int p = 0; p < vp.num_samples; p++)
 			{
@@ -115,7 +116,7 @@ void World::render_scene() const {
 				ray.o = Point3D(pp.x, pp.y, zw);
 				pixel_color += tracer_ptr->trace_ray(ray);
 			}
-			*/
+			
 			/*
 			for (int p = 0; p < n; p++){
 				for (int q = 0; q < n; q++){
@@ -127,7 +128,7 @@ void World::render_scene() const {
 				}
 			}
 			*/
-			//pixel_color /= vp.num_samples;
+			pixel_color /= vp.num_samples;
 			display_pixel(r, c, pixel_color);
 		}
 	}
@@ -269,7 +270,7 @@ void writeImage(int width, int height)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = 0;
 	string extension = ".ppm";

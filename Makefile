@@ -1,0 +1,2 @@
+all:
+	g++ ./Tracer_2/world.cpp ./Tracer_2/BuildSphere.cpp ./Tracer_2/GeometricObject.cpp ./Tracer_2/Matrix.cpp ./Tracer_2/MultipleObjects.cpp ./Tracer_2/Normal.cpp ./Tracer_2/Plane.cpp ./Tracer_2/Point2D.cpp ./Tracer_2/Point3D.cpp ./Tracer_2/RGBColor.cpp ./Tracer_2/Ray.cpp ./Tracer_2/ShadeRec.cpp ./Tracer_2/SingleSphere.cpp ./Tracer_2/Sphere.cpp ./Tracer_2/Tracer.cpp ./Tracer_2/Vector3D.cpp ./Tracer_2/ViewPlane.cpp -o RayTracer 
