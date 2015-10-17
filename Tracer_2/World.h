@@ -27,16 +27,17 @@ public:
 
 	ShadeRec hit_bare_bones_object(const Ray& ray);
 
+	// Orthographic render
 	void render_scene() const;
 
-	void open_window(const int hres, const int vres) const;
+	// Perspective render
+	void render_perspective() const;
 
+	void open_window(const int hres, const int vres) const;
 	void display_pixel(const int row, const int column, const RGBColor& pixel_color) const;
 
 	RGBColor max_to_one(const RGBColor& c) const;
-
 	RGBColor clamp_to_color(const RGBColor& raw_color) const;
-
 	RGBColor color_to_range(const RGBColor& c, int max) const;
 };
 

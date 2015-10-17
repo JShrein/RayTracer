@@ -136,6 +136,48 @@ void World::render_scene() const {
 	writeImage(vp.hres, vp.vres);
 }
 
+void World::render_perspective() const
+{
+	RGBColor pixel_color;
+	Ray ray;
+	Point2D sample;
+	Point2D pixelSample;
+
+	float eye = 500.0f; // May need to move in the +-z direction to get a nice perspective
+
+	// TODO: CREATE WINDOW HERE WHEN I CREATE THE GUI - JS
+
+	ray.o = Point3D(0.0, -50.0, 750);
+	//ray.d = Vector3D(0, 0, -1);
+	for (int r = 0; r < vp.vres; r++)
+	{
+		for (int c = 0; c < vp.hres; c++)
+		{
+			pixel_color = black;
+			for (int j = 0; j < vp.num_samples; j++)
+			{
+				sample = vp.sampler_ptr->sampleUnitSquare();
+				pixelSample.x = vp.s * (c - 0.5 * vp.hres + sample.x);
+				pixelSample.y = vp.s * (r - 0.5 * vp.vres + sample.y);
+				//ray.o = Point3D(pixelSample.x, pixelSample.y, eye);
+				ray.d = Vector3D(pixelSample.x, pixelSample.y, -eye);
+				/*ray.d = Vector3D(
+					vp.s * (c - 0.5 * (vp.hres - 1.0)),
+					vp.s * (r - 0.5 * (vp.vres - 1.0)),
+					eye
+					);
+				*/
+				ray.d.normalize();
+				pixel_color += tracer_ptr->trace_ray(ray);
+				//display_pixel(r, c, pixel_color);
+			}
+			pixel_color /= vp.num_samples;
+			display_pixel(r, c, pixel_color);
+		}
+	}
+	writeImage(vp.hres, vp.vres);
+}
+
 void World::display_pixel(const int row, const int column, const RGBColor& raw_color) const {
 	RGBColor mapped_color;
 
@@ -147,6 +189,7 @@ void World::display_pixel(const int row, const int column, const RGBColor& raw_c
 	int x = column;
 	int y = vp.vres - row - 1;
 
+	// THIS IS MEGA SLOW, DON'T DO IT!!!
 	//it = image.begin();
 	/*
 	if (image.size() == 20000)
@@ -156,6 +199,8 @@ void World::display_pixel(const int row, const int column, const RGBColor& raw_c
 	*/
 	//image.insert(it, color_to_range(mapped_color, 255));
 	//image.push_back(color_to_range(mapped_color, 255));
+
+	// THIS IS MUCH FASTER 
 	image[x + y * vp.vres] = color_to_range(mapped_color, 255);
 }
 
@@ -178,9 +223,10 @@ void World::build() {
 void World::build() {
 	vp.set_hres(400);
 	vp.set_vres(400);
+	vp.setSampler(new NRooks(25));
 	image = vector<RGBColor>(vp.hres * vp.vres);
 	vp.set_pixel_size(1.0);
-	vp.set_samples(100);
+	//vp.set_samples(25);
 	vp.set_gamma(1.0);
 
 	background_color = black;
@@ -258,7 +304,8 @@ int main()
 {
 	World w;
 	w.build();
-	w.render_scene();
+	//w.render_scene();
+	w.render_perspective();
 
 	return 0;
 }
