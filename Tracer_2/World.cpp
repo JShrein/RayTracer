@@ -128,7 +128,7 @@ void World::render_scene() const {
 				}
 			}
 			*/
-			pixel_color /= vp.num_samples;
+			pixel_color /= (float)vp.num_samples;
 			display_pixel(r, c, pixel_color);
 		}
 	}
@@ -230,7 +230,7 @@ void World::open_window(const int hres, const int vres) const
 }
 
 RGBColor World::max_to_one(const RGBColor& c) const {
-	float max_value = max(c.r, max(c.g, c.b));
+	float max_value = (float)max(c.r, max(c.g, c.b));
 
 	if (max_value > 1.0)
 		return c / max_value;
@@ -250,7 +250,7 @@ RGBColor World::clamp_to_color(const RGBColor& raw_color) const {
 }
 
 RGBColor World::color_to_range(const RGBColor& c, int max) const {
-	return max * RGBColor(c);
+	return ((float)max) * RGBColor(c);
 }
 
 
@@ -270,7 +270,7 @@ void writeImage(int width, int height)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "./output/";
+	string location = "../output/";
 	string filePrefix = "multipleObj";
 	int fileNum = 0;
 	string extension = ".ppm";
