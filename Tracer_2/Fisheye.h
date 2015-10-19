@@ -1,3 +1,4 @@
+/*
 #ifndef __FISHEYE__
 #define __FISHEYE__
 
@@ -11,3 +12,5 @@ public:
 };
 
 #endif // __FISHEYE__
+
+*/

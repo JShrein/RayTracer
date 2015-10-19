@@ -2,29 +2,35 @@
 #include "World.h"
 #include "ShadeRec.h"
 
-// -------------------------------------------------------------------- default constructor
-
+// Constructors
 SingleSphere::SingleSphere(void)
 	: Tracer()
 {}
-
-
-// -------------------------------------------------------------------- constructor
 
 SingleSphere::SingleSphere(World* _worldPtr)
 	: Tracer(_worldPtr)
 {}
 
 
-// -------------------------------------------------------------------- destructor
-
+// Destructor
 SingleSphere::~SingleSphere(void) {}
 
 
-// -------------------------------------------------------------------- trace_ray
+// Trace Ray
+RGBColor SingleSphere::traceRay(const Ray& ray) const {
+	ShadeRec	sr(*world_ptr); 	// not used
+	double    	t;  				// not used
 
-RGBColor
-SingleSphere::trace_ray(const Ray& ray) const {
+	if (world_ptr->sphere.hit(ray, t, sr))
+	{
+		return red;
+	}
+	else
+		return black;
+}
+
+RGBColor SingleSphere::traceRay(const Ray ray, const int depth) const
+{
 	ShadeRec	sr(*world_ptr); 	// not used
 	double    	t;  				// not used
 

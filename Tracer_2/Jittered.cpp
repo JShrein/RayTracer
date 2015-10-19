@@ -48,7 +48,7 @@ void Jittered::generateSamples() {
 	for (int p = 0; p < numSets; p++){
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				Point2D sp((j + rand_float()) * inverseN, (i + rand_float()) * inverseN);
+				Point2D sp((j + randFloat()) * inverseN, (i + randFloat()) * inverseN);
 				samples.push_back(sp);
 			}
 		}

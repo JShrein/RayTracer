@@ -21,8 +21,8 @@ public:
 
 	// Assignment operator
 	Sampler& operator=(const Sampler& rhs);
-	
-	// Deep Copy
+
+	// Clone
 	virtual Sampler* clone() const = 0;
 	
 	// Destructor
@@ -31,6 +31,7 @@ public:
 	// Setters/Getters
 	void setNumSets(const int np);
 	int getNumSamples();
+	int getRootNumSamples();
 
 	void shuffleXCoords();
 	void shuffleYCoords();

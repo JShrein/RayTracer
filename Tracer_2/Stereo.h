@@ -1,3 +1,4 @@
+/*
 #ifndef __STEREO__
 #define __STEREO__
 
@@ -11,3 +12,4 @@ public:
 };
 
 #endif // __STEREO__
+*/

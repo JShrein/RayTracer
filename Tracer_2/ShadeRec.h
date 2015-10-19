@@ -6,22 +6,30 @@
 #include <vector>
 
 class World;
+class Material;
 
 #include "Point3D.h"
 #include "Normal.h"
 #include "RGBColor.h"
-//#include "World.h"
+#include "Ray.h"
 
 class ShadeRec {
 public:
-	bool hit_an_object;
-	Point3D local_hit_point;
+	bool hitAnObject;
+	Material* mat_ptr;
+	Point3D hit_point;
+	Point3D localHitPoint;
 	Normal normal;
+	Ray ray;
+	int depth;
+	double t;
 	RGBColor color;
+	Vector3D dir;
 	World& w;
 
 	ShadeRec(World& wr);
 	ShadeRec(const ShadeRec& sr);
+	~ShadeRec();
 };
 
 #endif // __SHADE_REC__

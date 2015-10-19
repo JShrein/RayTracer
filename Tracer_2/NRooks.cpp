@@ -44,7 +44,7 @@ void NRooks::generateSamples() {
 	float invNumSamples = 1.0f / (float)numSamples;
 	for (int p = 0; p < numSets; p++) {
 		for (int j = 0; j < numSamples; j++) {
-			Point2D sp((j + rand_float()) * invNumSamples, (j + rand_float()) * invNumSamples);
+			Point2D sp((j + randFloat()) * invNumSamples, (j + randFloat()) * invNumSamples);
 			samples.push_back(sp);
 		}
 	}

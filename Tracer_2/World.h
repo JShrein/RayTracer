@@ -1,48 +1,80 @@
 #ifndef __WORLD__
 #define __WORLD__
 
-#include "Maths.h"
+#include <vector>
 
 #include "ViewPlane.h"
 #include "RGBColor.h"
-#include "Sphere.h"
 #include "Tracer.h"
+#include "GeometricObject.h"
+#include "Light.h"
+#include "Ambient.h"
+#include "Sphere.h"
+#include "Ray.h"
+#include "SingleSphere.h"
 
-#include <vector>
+#include "Camera.h"
+
+using std::vector;
 
 class World {
 public:
 	ViewPlane vp;
-	RGBColor background_color;
-	std::vector<GeometricObject*> objects;
+	RGBColor backgroundColor;
+	vector<GeometricObject*> objects;
 	Sphere sphere;
 	Tracer* tracer_ptr;
+	Camera* camera_ptr;
+	Light* ambient_ptr;
+	vector<Light*> lights;
 
 	World();
 	~World();
 
 	void build();
 
-	void add_object(GeometricObject* object_ptr);
+	void addObject(GeometricObject* object_ptr);
+	void addLight(Light* light_ptr);
 
-	ShadeRec hit_bare_bones_object(const Ray& ray);
+	ShadeRec hitBareBonesObject(const Ray& ray);
+	ShadeRec hitObjects(const Ray& ray);
+
+	void setCamera(Camera* camera_ptr);
+	void setAmbientLight(Ambient* ambient_ptr);
 
 	// Orthographic render
-	void render_scene() const;
+	void renderScene() const;
 
 	// Perspective render
 	void render_perspective() const;
 
-	void open_window(const int hres, const int vres) const;
-	void display_pixel(const int row, const int column, const RGBColor& pixel_color) const;
+	void openWindow(const int hres, const int vres) const;
+	void displayPixel(const int row, const int column, const RGBColor& pixelColor) const;
 
-	RGBColor max_to_one(const RGBColor& c) const;
-	RGBColor clamp_to_color(const RGBColor& raw_color) const;
-	RGBColor color_to_range(const RGBColor& c, int max) const;
+	RGBColor maxToOne(const RGBColor& c) const;
+	RGBColor clampToColor(const RGBColor& raw_color) const;
+	RGBColor colorToRange(const RGBColor& c, int max) const;
 };
 
-inline void World::add_object(GeometricObject* object_ptr) {
+inline void World::addObject(GeometricObject* object_ptr) 
+{
 	objects.push_back(object_ptr);
+}
+
+inline void World::addLight(Light* light_ptr)
+{
+	lights.push_back(light_ptr);
+}
+
+// Set camera
+inline void World::setCamera(Camera* cam_ptr)
+{
+	camera_ptr = cam_ptr;
+}
+
+inline void World::setAmbientLight(Ambient* amb_ptr)
+{
+	ambient_ptr = amb_ptr;
 }
 
 #endif // __WORLD__

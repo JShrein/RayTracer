@@ -1,7 +1,8 @@
+/*
 #ifndef __ORTHOGRAPHIC__
 #define __ORTHOGRAPHIC__
 
-#include "Camera.h"
+//#include "Camera.h"
 
 class Orthographic : public Camera
 {
@@ -11,3 +12,4 @@ public:
 };
 
 #endif // __ORTHOGRAPHIC__
+*/

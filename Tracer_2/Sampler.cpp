@@ -15,26 +15,29 @@ Sampler::Sampler()
 }
 
 Sampler::Sampler(const int ns)
-	: rootNumSamples((int)sqrt(numSamples)),
-	  numSamples(ns),
+	: numSamples(ns),
 	  numSets(101), // Default 101
 	  count(0),
-	  jump(0) {
-	  samples.reserve(numSamples * numSets);
-	  setupShuffledIndices();
+	  jump(0) 
+{
+	rootNumSamples = (int)sqrt(ns);
+	samples.reserve(numSamples * numSets);
+	setupShuffledIndices();
 }
 
 
 // ------------------------------------------------------------------ constructor
 
 Sampler::Sampler(const int ns, const int nSets)
-	: rootNumSamples((int)sqrt(numSamples)),
-	  numSamples(ns),
+	: numSamples(ns),
 	  numSets(nSets),
 	  count(0),
-	  jump(0) {
-	  samples.reserve(numSamples * numSets);
-	  setupShuffledIndices();
+	  jump(0)
+
+{
+	rootNumSamples = (int)sqrt(ns);
+	samples.reserve(numSamples * numSets);
+	setupShuffledIndices();
 }
 
 
@@ -88,6 +91,9 @@ int Sampler::getNumSamples() {
 	return numSamples;
 }
 
+int Sampler::getRootNumSamples() {
+	return rootNumSamples;
+}
 
 // Shuffle x coords
 // shuffle the x coordinates of the points within each set
@@ -95,7 +101,7 @@ void Sampler::shuffleXCoords() {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < numSamples - 1; i++) {
 			int setRange = p * numSamples;						// Specific set of samples out of entire vector
-			int target = rand_int() % numSamples + setRange;	// swap target
+			int target = randInt() % numSamples + setRange;	// swap target
 			int srcIdx = i + setRange + 1;						// swap source
 
 			// Swap
@@ -113,7 +119,7 @@ void Sampler::shuffleYCoords() {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < numSamples - 1; i++) {
 			int setRange = p * numSamples;						// Specific set of samples out of entire vector
-			int target = rand_int() % numSamples + setRange;	// swap target
+			int target = randInt() % numSamples + setRange;	// swap target
 			int srcIdx = i + setRange + 1;						// swap source
 
 			// Swap
@@ -239,7 +245,7 @@ void Sampler::mapSamplesToSphere() {
 // Sample unit square
 Point2D Sampler::sampleUnitSquare() {
 	if (count % numSamples == 0)  									// start of a new pixel
-		jump = (rand_int() % numSets) * numSamples;				// random index jump initialised to zero in constructor
+		jump = (randInt() % numSets) * numSamples;				// random index jump initialised to zero in constructor
 
 	return samples[jump + shuffledIndices[jump + count++ % numSamples]];
 }
@@ -247,7 +253,7 @@ Point2D Sampler::sampleUnitSquare() {
 // Sample unit disk
 Point2D Sampler::sampleUnitDisk() {
 	if (count % numSamples == 0)  									// start of a new pixel
-		jump = (rand_int() % numSets) * numSamples;
+		jump = (randInt() % numSets) * numSamples;
 
 	return diskSamples[jump + shuffledIndices[jump + count++ % numSamples]];
 }
@@ -255,7 +261,7 @@ Point2D Sampler::sampleUnitDisk() {
 // Sample hemisphere
 Point3D Sampler::sampleHemisphere() {
 	if (count % numSamples == 0)  									// start of a new pixel
-		jump = (rand_int() % numSets) * numSamples;
+		jump = (randInt() % numSets) * numSamples;
 
 	return hemisphereSamples[jump + shuffledIndices[jump + count++ % numSamples]];
 }
@@ -263,7 +269,7 @@ Point3D Sampler::sampleHemisphere() {
 // Sample sphere
 Point3D Sampler::sampleSphere() {
 	if (count % numSamples == 0)  									// start of a new pixel
-		jump = (rand_int() % numSets) * numSamples;
+		jump = (randInt() % numSets) * numSamples;
 
 	return sphereSamples[jump + shuffledIndices[jump + count++ % numSamples]];
 }

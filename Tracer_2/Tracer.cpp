@@ -1,40 +1,33 @@
 #include "Tracer.h"
 
-// -------------------------------------------------------------------- default constructor
-
+// Constructors
 Tracer::Tracer(void)
 	: world_ptr(NULL)
 {}
-
-
-// -------------------------------------------------------------------- constructor
-
 
 Tracer::Tracer(World* _worldPtr)
 	: world_ptr(_worldPtr)
 {}
 
-
-
-// -------------------------------------------------------------------- destructor
-
+// Destructor
 Tracer::~Tracer(void) {
 	if (world_ptr)
 		world_ptr = NULL;
 }
 
 
-// -------------------------------------------------------------------- trace_ray
-
-RGBColor
-Tracer::trace_ray(const Ray& ray) const {
-	return (black);
+// Trace Ray
+RGBColor Tracer::traceRay(const Ray& ray) const 
+{
+	return black;
 }
 
+RGBColor Tracer::traceRay(const Ray ray, const int depth) const 
+{
+	return red;
+}
 
-// -------------------------------------------------------------------- trace_ray
-
-RGBColor
-Tracer::trace_ray(const Ray ray, const int depth) const {
-	return (black);
+RGBColor Tracer::traceRay(const Ray ray, float& tMin, const int depth) const 
+{
+	return red;
 }

@@ -38,7 +38,7 @@ PureRandom::~PureRandom() {}
 void PureRandom::generateSamples(void) {
 	for (int p = 0; p < numSets; p++)
 		for (int q = 0; q < numSamples; q++)
-			samples.push_back(Point2D(rand_float(), rand_float()));
+			samples.push_back(Point2D(randFloat(), randFloat()));
 }
 
 

@@ -1,33 +1,38 @@
 #include "MultipleObjects.h"
 #include "World.h"
 
-// default constructor
-
+// Constructors
 MultipleObjects::MultipleObjects(void)
 	: Tracer()
 { }
 
-
-// constructor
-
 MultipleObjects::MultipleObjects(World* _worldPtr)
 	: Tracer(_worldPtr)
-{}
+{ }
 
 
 // destructor
+MultipleObjects::~MultipleObjects(void) 
+{ }
 
-MultipleObjects::~MultipleObjects(void) {}
 
+// Trace ray
+RGBColor MultipleObjects::traceRay(const Ray& ray) const {
+	ShadeRec sr(world_ptr->hitBareBonesObject(ray)); // sr is copy constructed
 
-// trace_ray
-
-RGBColor
-MultipleObjects::trace_ray(const Ray& ray) const {
-	ShadeRec sr(world_ptr->hit_bare_bones_object(ray)); // sr is copy constructed
-
-	if (sr.hit_an_object)
+	if (sr.hitAnObject)
 		return (sr.color);
 	else
-		return (world_ptr->background_color);
+		return (world_ptr->backgroundColor);
+}
+
+RGBColor MultipleObjects::traceRay(const Ray ray, const int depth) const
+{
+	// TODO: Implement depth, currently exactly the same as traceRay(const Ray& ray)
+	ShadeRec sr(world_ptr->hitBareBonesObject(ray)); // sr is copy constructed
+
+	if (sr.hitAnObject)
+		return (sr.color);
+	else
+		return (world_ptr->backgroundColor);
 }

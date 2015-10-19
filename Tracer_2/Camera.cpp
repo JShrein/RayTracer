@@ -1,8 +1,11 @@
 #include "Camera.h"
+#include "Matrix.h"
+#include "Maths.h"
+#include <cmath>
 
 Camera::Camera()
 	: eyePos(0, 0, 500),
-	  lookAt(0),
+	  lookAt(0, 0, 0),
 	  up(0, 1, 0),
 	  u(1, 0, 0),
 	  v(0, 1, 0),
@@ -48,8 +51,21 @@ Camera& Camera::operator=(const Camera& rhs)
 Camera::~Camera()
 { }
 
+void Camera::setRoll(const float rollAngle)
+{
+	roll = rollAngle;
+}
+
 void Camera::computeUVW()
 {
+	Vector3D upRotated(0, 0, 0);
+	double rollAngle = toRads(-roll);
+	upRotated.x = up.x * cos(rollAngle) - up.y * sin(rollAngle);
+	upRotated.y = up.x * sin(rollAngle) + up.y * cos(rollAngle);
+	upRotated.z = up.z;
+
+	up = upRotated;
+
 	w = eyePos - lookAt;
 	w.normalize();
 	u = up ^ w;

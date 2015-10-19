@@ -14,11 +14,12 @@ public:
 	int hres;
 	int vres;
 	float s;
-	int num_samples;
+	int numSamples;
+	int rootNumSamples;
 	float gamma;
 	float inv_gamma;
 	Sampler* sampler_ptr;
-	//bool show_out_of_gamut;
+	bool show_out_of_gamut;
 
 	ViewPlane();
 	ViewPlane(const ViewPlane& vp);
@@ -29,7 +30,7 @@ public:
 	void set_vres(const int v_res);
 	void set_pixel_size(const float size);
 	void set_gamma(const float g);
-	//void set_gamut_display(const bool show);
+	void set_gamut_display(const bool show);
 
 	// Handle sampling
 	void setSampler(Sampler* sp);
@@ -66,17 +67,9 @@ inline void ViewPlane::set_gamma(const float g) {
 
 
 // ------------------------------------------------------------------------------ set_gamut_display
-/*
 inline void ViewPlane::set_gamut_display(const bool show) {
 	show_out_of_gamut = show;
 }
-*/
 
-// ------------------------------------------------------------------------------ set_samples
-/*
-inline void ViewPlane::set_samples(const int n) {
-	num_samples = n;
-}
-*/
 
 #endif // __VIEWPLANE__

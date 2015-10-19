@@ -11,13 +11,14 @@ public:
 	float	r, g, b;
 
 public:
+	// Constructors
+	RGBColor(void);
+	RGBColor(float c);
+	RGBColor(float _r, float _g, float _b);
+	RGBColor(const RGBColor& c);
 
-	RGBColor(void);										// default constructor
-	RGBColor(float c);									// constructor
-	RGBColor(float _r, float _g, float _b);				// constructor
-	RGBColor(const RGBColor& c); 						// copy constructor
-
-	~RGBColor(void);									// destructor
+	// Destructor
+	~RGBColor(void);
 
 	// assignment operator
 	RGBColor& operator= (const RGBColor& rhs);
@@ -54,106 +55,85 @@ public:
 };
 
 
-
 // inlined member functions
 
-// ----------------------------------------------------------------------- operator+
-// addition of two colors
+// Addition of colors
+inline RGBColor RGBColor::operator+ (const RGBColor& c) const 
+{
+	return RGBColor(r + c.r, g + c.g, b + c.b);
+}
 
-inline RGBColor
-RGBColor::operator+ (const RGBColor& c) const {
-	return (RGBColor(r + c.r, g + c.g, b + c.b));
+// Aggregate addition of color + color
+inline RGBColor& RGBColor::operator+= (const RGBColor& c) 
+{
+	r += c.r; 
+	g += c.g; 
+	b += c.b;
+	return *this;
 }
 
 
-// ----------------------------------------------------------------------- operator+=
-// compound addition of two colors
-
-inline RGBColor&
-RGBColor::operator+= (const RGBColor& c) {
-	r += c.r; g += c.g; b += c.b;
-	return (*this);
+// Multiply by scalar
+inline RGBColor RGBColor::operator* (const float a) const 
+{
+	return RGBColor(r * a, g * a, b * a);
 }
 
 
-// ----------------------------------------------------------------------- operator*
-// multiplication by a float on the right
-
-inline RGBColor
-RGBColor::operator* (const float a) const {
-	return (RGBColor(r * a, g * a, b * a));
+// Aggregate multiplication by scalar
+inline RGBColor& RGBColor::operator*= (const float a) {
+	r *= a; 
+	g *= a; 
+	b *= a;
+	return *this;
 }
 
 
-// ----------------------------------------------------------------------- operator*=
-// compound multiplication by a float on the right
-
-inline RGBColor&
-RGBColor::operator*= (const float a) {
-	r *= a; g *= a; b *= a;
-	return (*this);
+// Divide by scalar
+inline RGBColor RGBColor::operator/ (const float a) const 
+{
+	return RGBColor(r / a, g / a, b / a);
 }
 
 
-// ----------------------------------------------------------------------- operator/
-// division by float
+// Aggregate division by scalar
+inline RGBColor& RGBColor::operator/= (const float a) 
+{
+	r /= a; 
+	g /= a; 
+	b /= a;
+	return *this;
+}
 
-inline RGBColor
-RGBColor::operator/ (const float a) const {
-	return (RGBColor(r / a, g / a, b / a));
+// Color * Color
+inline RGBColor RGBColor::operator* (const RGBColor& c) const 
+{
+	return RGBColor(r * c.r, g * c.g, b * c.b);
 }
 
 
-// ----------------------------------------------------------------------- operator/=
-// compound division by float
-
-inline RGBColor&
-RGBColor::operator/= (const float a) {
-	r /= a; g /= a; b /= a;
-	return (*this);
-}
-
-
-
-// ----------------------------------------------------------------------- operator*
-// component-wise multiplication of two colors
-
-inline RGBColor
-RGBColor::operator* (const RGBColor& c) const {
-	return (RGBColor(r * c.r, g * c.g, b * c.b));
-}
-
-
-// ----------------------------------------------------------------------- operator==
-// are two RGBColors the same?
-
-inline bool
-RGBColor::operator== (const RGBColor& c) const {
+// Comparison operator
+inline bool RGBColor::operator== (const RGBColor& c) const 
+{
 	return (r == c.r && g == c.g && b == c.b);
 }
 
 
-// ----------------------------------------------------------------------- average
-// the average of the three components
-
-inline float RGBColor::average(void) const {
-	return float((0.333333333333 * (r + g + b)));
+// Get the average of color components
+inline float RGBColor::average(void) const 
+{
+	return float(0.333333333333 * (r + g + b));
 }
 
 
+// inline non-member functions
 
+// scalar * color
+RGBColor operator* (const float a, const RGBColor& c);
 
-// inlined non-member function
-
-// ----------------------------------------------------------------------- operator*
-// multiplication by a float on the left
-
-RGBColor
-operator* (const float a, const RGBColor& c);
-
-inline RGBColor
-operator* (const float a, const RGBColor& c) {
-	return (RGBColor(a * c.r, a * c.g, a * c.b));
+inline RGBColor operator* (const float a, const RGBColor& c) 
+{
+	return RGBColor(a * c.r, a * c.g, a * c.b);
 }
 
 

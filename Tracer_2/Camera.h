@@ -48,48 +48,43 @@ protected:
 
 // Inline member functions
 
-void Camera::setEyePos(const Point3D& eye)
+inline void Camera::setEyePos(const Point3D& eye)
 {
 	eyePos = eye;
 }
 
-void Camera::setEyePos(const float x, const float y, const float z)
+inline void Camera::setEyePos(const float x, const float y, const float z)
 {
 	eyePos.x = x;
 	eyePos.y = y;
 	eyePos.z = z;
 }
 
-void Camera::setLookAt(const Point3D& look)
+inline void Camera::setLookAt(const Point3D& look)
 {
 	lookAt = look;
 }
 
-void Camera::setLookAt(const float x, const float y, const float z)
+inline void Camera::setLookAt(const float x, const float y, const float z)
 {
 	lookAt.x = x;
 	lookAt.y = y;
 	lookAt.z = z;
 }
 
-void Camera::setUpVec(const Vector3D& upVec)
+inline void Camera::setUpVec(const Vector3D& upVec)
 {
 	up = upVec;
 }
 
-void Camera::setUpVec(const float x, const float y, const float z)
+inline void Camera::setUpVec(const float x, const float y, const float z)
 {
 	up.x = x;
 	up.y = y;
 	up.z = z;
 }
 
-void Camera::setRoll(const float rollAngle)
-{
-	roll = rollAngle;
-}
-
-void Camera::setExposureTime(const float expTime)
+inline void Camera::setExposureTime(const float expTime)
 {
 	exposureTime = expTime;
 }

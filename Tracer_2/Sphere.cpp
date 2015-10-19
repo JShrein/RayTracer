@@ -62,24 +62,25 @@ bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	else
 	{
 		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;
+		double denom = 1.0 / 2.0 * a;
+		double r = 1.0 / radius;
+		t = (-b - e) * denom;
 
 		if (t > kEpsilon)
 		{
 			tmin = t;
-			sr.normal = (temp + t * ray.d) / radius;
-			sr.local_hit_point = ray.o + t * ray.d;
+			sr.normal = (temp + t * ray.d) * r;
+			sr.localHitPoint = ray.o + t * ray.d;
 			return true;
 		}
 
-		t = (-b + e) / denom;
+		t = (-b + e) * denom;
 
 		if (t > kEpsilon)
 		{
 			tmin = t;
-			sr.normal = (temp + t * ray.d) / radius;
-			sr.local_hit_point = ray.o + t * ray.d;
+			sr.normal = (temp + t * ray.d) * r;
+			sr.localHitPoint = ray.o + t * ray.d;
 			return true;
 		}
 	}

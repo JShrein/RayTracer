@@ -56,7 +56,7 @@ void MultiJittered::shuffleXCoords(void) {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < rootNumSamples; i++) {
 			for (int j = 0; j < rootNumSamples; j++) {
-				int k = (int)(rand_int(j, rootNumSamples - 1));
+				int k = (int)(randInt(j, rootNumSamples - 1));
 				int srcIdx = i * rootNumSamples + j + p * numSamples;
 				int tgtIdx = i * rootNumSamples + k + p * numSamples;
 
@@ -91,8 +91,8 @@ MultiJittered::generateSamples(void) {
 		for (int i = 0; i < rootNumSamples; i++) {
 			for (int j = 0; j < rootNumSamples; j++) {
 				int index = i * rootNumSamples + j + p * numSamples;
-				samples[index].x = (i * rootNumSamples + j) * subcellWidth + rand_float(0, (int)subcellWidth);
-				samples[index].y = (j * rootNumSamples + i) * subcellWidth + rand_float(0, (int)subcellWidth);
+				samples[index].x = (i * rootNumSamples + j) * subcellWidth + randFloat(0, (int)subcellWidth);
+				samples[index].y = (j * rootNumSamples + i) * subcellWidth + randFloat(0, (int)subcellWidth);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ MultiJittered::generateSamples(void) {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < rootNumSamples; i++) {
 			for (int j = 0; j < rootNumSamples; j++) {
-				int k = (int)rand_int(j, rootNumSamples - 1);
+				int k = (int)randInt(j, rootNumSamples - 1);
 				int srcIdx = i * rootNumSamples + j + p * numSamples;
 				int tgtIdx = i * rootNumSamples + k + p * numSamples;
 				float t = samples[srcIdx].x;
@@ -127,7 +127,7 @@ MultiJittered::generateSamples(void) {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < rootNumSamples; i++) {
 			for (int j = 0; j < rootNumSamples; j++) {
-				int k = (int)rand_int(j, rootNumSamples - 1);
+				int k = (int)randInt(j, rootNumSamples - 1);
 				int srcIdx = j * rootNumSamples + i + p * numSamples;
 				int tgtIdx = k * rootNumSamples + i + p * numSamples;
 				float t = samples[srcIdx].y;

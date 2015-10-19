@@ -1,3 +1,4 @@
+/*
 #ifndef __THINLENS__
 #define __THINLENS__
 
@@ -11,3 +12,4 @@ public:
 };
 
 #endif // __THINLENS__
+*/

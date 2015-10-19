@@ -2,26 +2,32 @@
 #include "Constants.h"
 
 // Geometric Objects
-
-#include "Sphere.h"
 #include "Plane.h"
-#include "MultipleObjects.h"
+#include "Sphere.h"
+
+// Materials
+#include "Matte.h"
+
+// Lights
+#include "Ambient.h"
+#include "Point.h"
+#include "Directional.h"
 
 // Tracers
-
 #include "SingleSphere.h"
+#include "MultipleObjects.h"
+#include "Raycast.h"
+
+// Cameras
+#include "Pinhole.h"
 
 // Utilities
-
 #include "Vector3D.h"
-#include "Point2D.h"
 #include "Point3D.h"
 #include "Normal.h"
 #include "ShadeRec.h"
-#include "Ray.h"
+#include "Maths.h"
 
-
-//#include <vector>
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
@@ -47,8 +53,10 @@ vector<RGBColor>::iterator it;
 
 // Default Constructor
 World::World()
-	: background_color(black),
-	tracer_ptr(NULL)
+	: backgroundColor(black),
+	tracer_ptr(NULL),
+	camera_ptr(NULL),
+	ambient_ptr(new Ambient)
 { }
 
 // Destructor
@@ -59,20 +67,26 @@ World::~World()
 		delete tracer_ptr;
 		tracer_ptr = NULL;
 	}
+	if (camera_ptr)
+	{
+		delete camera_ptr;
+		camera_ptr = NULL;
+	}
 }
 
+
 // Render Scene
-void World::render_scene() const {
-	RGBColor pixel_color;
+void World::renderScene() const {
+	RGBColor pixelColor;
 	Ray ray;
 	float zw = 100.0;
 	//double x, y;
 	Point2D pp;
 	rand_seed();
 
-	int n = (int)(sqrt(vp.num_samples));
+	int n = (int)(sqrt(vp.numSamples));
 
-	//open_window(vp.hres, vp.vres);
+	//openWindow(vp.hres, vp.vres);
 	ray.d = Vector3D(0, 0, -1);
 
 	/*
@@ -82,39 +96,39 @@ void World::render_scene() const {
 			x = vp.s * (c - vp.hres/2.0 - 0.5);
 			y = vp.s * (r - vp.vres/2.0 - 0.5);
 			ray.o = Point3D(x, y, zw);
-			pixel_color = tracer_ptr->trace_ray(ray);
-			display_pixel(r, c, pixel_color);
+			pixelColor = tracer_ptr->traceRay(ray);
+			displayPixel(r, c, pixelColor);
 		}
 	}
 	*/
 	for (int r = 0; r < vp.vres; r++)
 	{
 		for (int c = 0; c < vp.hres; c++) {
-			pixel_color = black;
+			pixelColor = black;
 
 			// "Trace" a function
 			/*
-			for (int p = 0; p < vp.num_samples; p++)
+			for (int p = 0; p < vp.numSamples; p++)
 			{
-				//pp.x = vp.s * (c - 0.5f * vp.hres + rand_float());
-				//pp.y = vp.s * (r - 0.5f * vp.vres + rand_float());
-				pp.x = (c - 0.5f * vp.hres + rand_float()) * PI / 180;
-				pp.y = (r - 0.5f * vp.vres + rand_float()) * PI / 180;
+				//pp.x = vp.s * (c - 0.5f * vp.hres + randFloat());
+				//pp.y = vp.s * (r - 0.5f * vp.vres + randFloat());
+				pp.x = (c - 0.5f * vp.hres + randFloat()) * PI / 180;
+				pp.y = (r - 0.5f * vp.vres + randFloat()) * PI / 180;
 				//ray.o = Point3D(pp.x, pp.y, zw);
 				float z = 1.0f / 2.0f * sin(1 + sin(pp.x*pp.x*pp.y*pp.y));
-				//pixel_color += tracer_ptr->trace_ray(ray);
+				//pixelColor += tracer_ptr->traceRay(ray);
 				
-				pixel_color = RGBColor(z, z, z);
+				pixelColor = RGBColor(z, z, z);
 			}
 			*/
 			
 			// Random sampling
-			for (int p = 0; p < vp.num_samples; p++)
+			for (int p = 0; p < vp.numSamples; p++)
 			{
-				pp.x = vp.s * (c - 0.5f * vp.hres + rand_float());
-				pp.y = vp.s * (r - 0.5f * vp.vres + rand_float());
+				pp.x = vp.s * (c - 0.5f * vp.hres + randFloat());
+				pp.y = vp.s * (r - 0.5f * vp.vres + randFloat());
 				ray.o = Point3D(pp.x, pp.y, zw);
-				pixel_color += tracer_ptr->trace_ray(ray);
+				pixelColor += tracer_ptr->traceRay(ray);
 			}
 			
 			/*
@@ -123,13 +137,13 @@ void World::render_scene() const {
 					pp.x = vp.s * (c - 0.5f * vp.hres + (q + 0.5f) / n);
 					pp.y = vp.s * (r - 0.5f * vp.vres + (p + 0.5f) / n);
 					ray.o = Point3D(pp.x, pp.y, zw);
-					pixel_color += tracer_ptr->trace_ray(ray);
+					pixelColor += tracer_ptr->traceRay(ray);
 					
 				}
 			}
 			*/
-			pixel_color /= (float)vp.num_samples;
-			display_pixel(r, c, pixel_color);
+			pixelColor /= (float)vp.numSamples;
+			displayPixel(r, c, pixelColor);
 		}
 	}
 
@@ -138,7 +152,7 @@ void World::render_scene() const {
 
 void World::render_perspective() const
 {
-	RGBColor pixel_color;
+	RGBColor pixelColor;
 	Ray ray;
 	Point2D sample;
 	Point2D pixelSample;
@@ -153,12 +167,12 @@ void World::render_perspective() const
 	{
 		for (int c = 0; c < vp.hres; c++)
 		{
-			pixel_color = black;
-			for (int j = 0; j < vp.num_samples; j++)
+			pixelColor = black;
+			for (int j = 0; j < vp.numSamples; j++)
 			{
 				sample = vp.sampler_ptr->sampleUnitSquare();
-				pixelSample.x = vp.s * (c - 0.5 * vp.hres + sample.x);
-				pixelSample.y = vp.s * (r - 0.5 * vp.vres + sample.y);
+				pixelSample.x = vp.s * (c - 0.5f * vp.hres + sample.x);
+				pixelSample.y = vp.s * (r - 0.5f * vp.vres + sample.y);
 				//ray.o = Point3D(pixelSample.x, pixelSample.y, eye);
 				ray.d = Vector3D(pixelSample.x, pixelSample.y, -eye);
 				/*ray.d = Vector3D(
@@ -168,20 +182,23 @@ void World::render_perspective() const
 					);
 				*/
 				ray.d.normalize();
-				pixel_color += tracer_ptr->trace_ray(ray);
-				//display_pixel(r, c, pixel_color);
+				pixelColor += tracer_ptr->traceRay(ray);
+				//displayPixel(r, c, pixelColor);
 			}
-			pixel_color /= vp.num_samples;
-			display_pixel(r, c, pixel_color);
+			pixelColor /= (float)vp.numSamples;
+			displayPixel(r, c, pixelColor);
 		}
 	}
 	writeImage(vp.hres, vp.vres);
 }
 
-void World::display_pixel(const int row, const int column, const RGBColor& raw_color) const {
+void World::displayPixel(const int row, const int column, const RGBColor& raw_color) const {
 	RGBColor mapped_color;
-
-	mapped_color = max_to_one(raw_color);
+	
+	if (vp.show_out_of_gamut)
+		mapped_color = clampToColor(raw_color);
+	else
+		mapped_color = maxToOne(raw_color);
 
 	if (vp.gamma != 1.0)
 		mapped_color = mapped_color.powc(vp.inv_gamma);
@@ -197,11 +214,11 @@ void World::display_pixel(const int row, const int column, const RGBColor& raw_c
 		cout << "r = " << mapped_color.r << ", b = " << mapped_color.b << ", g = " << mapped_color.g << endl;
 	}
 	*/
-	//image.insert(it, color_to_range(mapped_color, 255));
-	//image.push_back(color_to_range(mapped_color, 255));
+	//image.insert(it, colorToRange(mapped_color, 255));
+	//image.push_back(colorToRange(mapped_color, 255));
 
 	// THIS IS MUCH FASTER 
-	image[x + y * vp.vres] = color_to_range(mapped_color, 255);
+	image[x + y * vp.vres] = colorToRange(mapped_color, 255);
 }
 
 // Hit objects
@@ -212,7 +229,7 @@ void World::build() {
 	vp.set_pixel_size(1.0);
 	vp.set_gamma(1.0);
 
-	background_color = black;
+	backgroundColor = black;
 	tracer_ptr = new SingleSphere(this);
 
 	sphere.set_center(0.0);
@@ -220,39 +237,92 @@ void World::build() {
 }
 */
 
+
 void World::build() {
 	vp.set_hres(400);
 	vp.set_vres(400);
-	vp.setSampler(new NRooks(25));
+	vp.setSampler(new Jittered(25));
 	image = vector<RGBColor>(vp.hres * vp.vres);
-	vp.set_pixel_size(1.0);
+	vp.set_pixel_size(1.0f);
 	//vp.set_samples(25);
 	vp.set_gamma(1.0);
 
-	background_color = black;
-	tracer_ptr = new MultipleObjects(this);
+	
+	Ambient* ambient_ptr = new Ambient;
+	ambient_ptr->scale_radiance(0.75);
+	setAmbientLight(ambient_ptr);
+
+	backgroundColor = black;
+
+	tracer_ptr = new RayCast(this);// MultipleObjects(this);
+
+	Pinhole* pinhole_ptr = new Pinhole();
+	pinhole_ptr->setEyePos(0, -45, 200);
+	pinhole_ptr->setLookAt(0, 0, 0);
+	pinhole_ptr->setDistance(100);
+	pinhole_ptr->setRoll(0);
+	pinhole_ptr->computeUVW();
+	setCamera(pinhole_ptr);
+
+	Point* pointLight_ptr = new Point;
+	pointLight_ptr->setPos(200, 200, 200);
+	pointLight_ptr->scaleRadiance(0.01);
+	//pointLight_ptr->setColor(1, 0, 0);
+	addLight(pointLight_ptr);
+
+	
+	Directional* dirLight_ptr = new Directional;
+	dirLight_ptr->setDir(0, 1, 0);
+	dirLight_ptr->scaleRadiance(3.0);
+	addLight(dirLight_ptr);
+	
+
+	Matte* matte_ptr = new Matte;
+	matte_ptr->setKA(0.25);
+	matte_ptr->setKD(0.75);
+	matte_ptr->setCD(1, 1, 0);
+
 
 	// use accessors to set sphere center and radius
 	Sphere* sphere_ptr = new Sphere;
 	sphere_ptr->set_center(0, -25, 0);
 	sphere_ptr->set_radius(80);
-	sphere_ptr->set_color(1, 0, 0);
-	add_object(sphere_ptr);
+	//sphere_ptr->set_color(1, 0, 0);
+	sphere_ptr->setMat(matte_ptr);
+	addObject(sphere_ptr);
+
+	matte_ptr = new Matte;
+	matte_ptr->setKA(0.25);
+	matte_ptr->setKD(0.75);
+	matte_ptr->setCD(0, 1, 1);
 
 	sphere_ptr = new Sphere(Point3D(0, 30, 0), 60);
-	sphere_ptr->set_color(1, 1, 0);
-	add_object(sphere_ptr);
+	//sphere_ptr->set_color(1, 1, 0);
+	sphere_ptr->setMat(matte_ptr);
+	addObject(sphere_ptr);
+
+	matte_ptr = new Matte;
+	matte_ptr->setKA(0.25);
+	matte_ptr->setKD(0.75);
+	matte_ptr->setCD(0.68, 0.45, 0.75);
 
 	sphere_ptr = new Sphere(Point3D(-30, 30, 0), 90);
-	sphere_ptr->set_color(0, 1, 1);
-	add_object(sphere_ptr);
+	//sphere_ptr->set_color(0, 1, 1);
+	sphere_ptr->setMat(matte_ptr);
+	addObject(sphere_ptr);
+
+	matte_ptr = new Matte;
+	matte_ptr->setKA(0.25);
+	matte_ptr->setKD(0.75);
+	matte_ptr->setCD(0, 0.45, 0);
 
 	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 1));
-	plane_ptr->set_color(0.0f, 0.3f, 0.0f);
-	add_object(plane_ptr);
+	//plane_ptr->set_color(0.0f, 0.3f, 0.0f);
+	plane_ptr->setMat(matte_ptr);
+	addObject(plane_ptr);
 }
 
-ShadeRec World::hit_bare_bones_object(const Ray& ray) {
+ShadeRec World::hitBareBonesObject(const Ray& ray) {
 	ShadeRec sr(*this);
 	double t;
 	double tmin = kHugeValue;
@@ -261,7 +331,7 @@ ShadeRec World::hit_bare_bones_object(const Ray& ray) {
 	for (int i = 0; i < num_objects; i++)
 	{
 		if (objects[i]->hit(ray, t, sr) && (t < tmin)) {
-			sr.hit_an_object = true;
+			sr.hitAnObject = true;
 			tmin = t;
 			sr.color = objects[i]->get_color();
 		}
@@ -270,12 +340,42 @@ ShadeRec World::hit_bare_bones_object(const Ray& ray) {
 	return sr;
 }
 
-void World::open_window(const int hres, const int vres) const
+ShadeRec World::hitObjects(const Ray& ray)
+{
+	ShadeRec sr(*this);
+	double t;
+	Normal normal;
+	Point3D localHitPoint;
+	double tMin = kHugeValue;
+	int numObjects = objects.size();
+
+	for (int i = 0; i < numObjects; i++)
+	{
+		if (objects[i]->hit(ray, t, sr) && (t < tMin))
+		{
+			sr.hitAnObject = true;
+			tMin = t;
+			sr.mat_ptr = objects[i]->getMat();
+			sr.hit_point = ray.o + t * ray.d;
+			normal = sr.normal;
+			localHitPoint = sr.localHitPoint;
+		}
+		if (sr.hitAnObject)
+		{
+			sr.t = tMin;
+			sr.normal = normal;
+			sr.localHitPoint = localHitPoint;
+		}
+	}
+	return sr;
+}
+
+void World::openWindow(const int hres, const int vres) const
 {
 
 }
 
-RGBColor World::max_to_one(const RGBColor& c) const {
+RGBColor World::maxToOne(const RGBColor& c) const {
 	float max_value = (float)max(c.r, max(c.g, c.b));
 
 	if (max_value > 1.0)
@@ -284,7 +384,7 @@ RGBColor World::max_to_one(const RGBColor& c) const {
 		return c;
 }
 
-RGBColor World::clamp_to_color(const RGBColor& raw_color) const {
+RGBColor World::clampToColor(const RGBColor& raw_color) const {
 	RGBColor c(raw_color);
 
 	if (raw_color.r > 1.0 || raw_color.g > 1.0 || raw_color.b > 1.0) {
@@ -295,7 +395,7 @@ RGBColor World::clamp_to_color(const RGBColor& raw_color) const {
 	return c;
 }
 
-RGBColor World::color_to_range(const RGBColor& c, int max) const {
+RGBColor World::colorToRange(const RGBColor& c, int max) const {
 	return ((float)max) * RGBColor(c);
 }
 
@@ -304,8 +404,10 @@ int main()
 {
 	World w;
 	w.build();
-	//w.render_scene();
-	w.render_perspective();
+	//w.renderScene();
+	//w.render_perspective();
+	w.camera_ptr->renderScene(w);
+	writeImage(w.vp.hres, w.vp.vres);
 
 	return 0;
 }

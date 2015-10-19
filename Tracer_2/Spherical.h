@@ -1,3 +1,4 @@
+/*
 #ifndef __SPHERICAL__
 #define __SPHERICAL__
 
@@ -11,3 +12,4 @@ public:
 };
 
 #endif // __SPHERICAL__
+*/

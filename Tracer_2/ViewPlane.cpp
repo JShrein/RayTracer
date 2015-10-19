@@ -5,21 +5,24 @@ ViewPlane::ViewPlane(void)
 	: hres(400),
 	vres(400),
 	s(1.0),
-	num_samples(1),
+	numSamples(1),
+	rootNumSamples(1),
 	gamma(1.0),
-	inv_gamma(1.0)
-	//show_out_of_gamut(false)
-{}
+	inv_gamma(1.0),
+	show_out_of_gamut(false)
+{ }
 
 ViewPlane::ViewPlane(const ViewPlane& vp)
 	: hres(vp.hres),
 	vres(vp.vres),
 	s(vp.s),
-	num_samples(vp.num_samples),
+	numSamples(vp.numSamples),
+	rootNumSamples(vp.rootNumSamples),
 	gamma(vp.gamma),
-	inv_gamma(vp.inv_gamma)
-	//show_out_of_gamut(vp.show_out_of_gamut)
-{}
+	inv_gamma(vp.inv_gamma),
+	sampler_ptr(vp.sampler_ptr),
+	show_out_of_gamut(vp.show_out_of_gamut)
+{ }
 
 
 // Assignment operator
@@ -30,14 +33,15 @@ ViewPlane& ViewPlane::operator= (const ViewPlane& rhs) {
 	hres = rhs.hres;
 	vres = rhs.vres;
 	s = rhs.s;
-	num_samples = rhs.num_samples;
+	numSamples = rhs.numSamples;
+	rootNumSamples = rhs.rootNumSamples;
 	gamma = rhs.gamma;
 	inv_gamma = rhs.inv_gamma;
-	//show_out_of_gamut = rhs.show_out_of_gamut;
+	sampler_ptr = rhs.sampler_ptr;
+	show_out_of_gamut = rhs.show_out_of_gamut;
 
 	return *this;
 }
-
 
 // Destructor
 ViewPlane::~ViewPlane(void) {}
@@ -49,22 +53,24 @@ void ViewPlane::setSampler(Sampler* sp)
 		sampler_ptr = NULL;
 	}
 
-	num_samples = sp->getNumSamples();
+	rootNumSamples = sp->getRootNumSamples();
+	numSamples = sp->getNumSamples();
 	sampler_ptr = sp;
 }
 
 void ViewPlane::set_samples(const int n)
 {
-	num_samples = n;
+	numSamples = n;
+	rootNumSamples = (int)sqrt(n);
 
 	if (sampler_ptr) {
 		delete sampler_ptr;
 		sampler_ptr = NULL;
 	}
 
-	if (num_samples > 1)
+	if (numSamples > 1)
 	{
-		sampler_ptr = new MultiJittered(num_samples);
+		sampler_ptr = new MultiJittered(numSamples);
 	}
 	else
 	{

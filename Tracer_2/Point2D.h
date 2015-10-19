@@ -6,20 +6,25 @@ public:
 	float x, y;
 
 public:
-	Point2D(void);										// default constructor
-	Point2D(const float arg);							// constructor
-	Point2D(const float x1, const float y1);			// constructor
-	Point2D(const Point2D& p); 							// copy constructor
-	~Point2D(void) {}									// destructor
+	// Constructors
+	Point2D(void);
+	Point2D(const float arg);
+	Point2D(const float x1, const float y1);
+	Point2D(const Point2D& p);
+	// Destructor
+	~Point2D() {}
 
-	Point2D& operator= (const Point2D& rhs);			// assignment operator
-	Point2D operator* (const float a);					// multiplication on right by scalar
+	// Assignment operator
+	Point2D& operator= (const Point2D& rhs);
+
+	// Point * scalar
+	Point2D operator* (const float a);
 };
 
 
-// scales the point by the float a
-
-inline Point2D Point2D::operator* (const float a) {
+// Point * scalar
+inline Point2D Point2D::operator* (const float a) 
+{
 	return (Point2D(a * x, a * y));
 }
 
