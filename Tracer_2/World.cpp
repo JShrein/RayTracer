@@ -38,6 +38,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
+using std::cin;
 
 // Build output file
 void writeImage(int width, int height);
@@ -74,7 +75,7 @@ World::~World()
 	}
 }
 
-
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 // Render Scene
 void World::renderScene() const {
 	RGBColor pixelColor;
@@ -121,7 +122,7 @@ void World::renderScene() const {
 				pixelColor = RGBColor(z, z, z);
 			}
 			*/
-			
+			// RANDOM SAMPLING NOW DONE THROUGH SAMPLING FRAMEWORK
 			// Random sampling
 			for (int p = 0; p < vp.numSamples; p++)
 			{
@@ -150,6 +151,7 @@ void World::renderScene() const {
 	writeImage(vp.hres, vp.vres);
 }
 
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 void World::render_perspective() const
 {
 	RGBColor pixelColor;
@@ -267,9 +269,9 @@ void World::build() {
 
     cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, -45, 200);
+	pinhole_ptr->setEyePos(0, 200, 800);
 	pinhole_ptr->setLookAt(0, 0, 0);
-	pinhole_ptr->setDistance(100);
+	pinhole_ptr->setDistance(500);
 	pinhole_ptr->setRoll(0);
 	pinhole_ptr->computeUVW();
 
@@ -298,7 +300,7 @@ void World::build() {
 
 	// use accessors to set sphere center and radius
 	Sphere* sphere_ptr = new Sphere;
-	sphere_ptr->set_center(0, -25, 0);
+	sphere_ptr->set_center(-100, 80, 0);
 	sphere_ptr->set_radius(80);
 	//sphere_ptr->set_color(1, 0, 0);
 	sphere_ptr->setMat(matte_ptr);
@@ -309,7 +311,7 @@ void World::build() {
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0, 1, 1);
 
-	sphere_ptr = new Sphere(Point3D(0, 30, 0), 60);
+	sphere_ptr = new Sphere(Point3D(100, 60, 0), 60);
 	//sphere_ptr->set_color(1, 1, 0);
 	sphere_ptr->setMat(matte_ptr);
 	addObject(sphere_ptr);
@@ -319,17 +321,17 @@ void World::build() {
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0.68, 0.45, 0.75);
 
-	sphere_ptr = new Sphere(Point3D(-30, 30, 0), 90);
+	sphere_ptr = new Sphere(Point3D(70, 90, 0), 90);
 	//sphere_ptr->set_color(0, 1, 1);
 	sphere_ptr->setMat(matte_ptr);
-	addObject(sphere_ptr);
+	//addObject(sphere_ptr);
 
 	matte_ptr = new Matte;
 	matte_ptr->setKA(0.25);
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0, 0.45, 0);
 
-	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 1));
+	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 0));
 	//plane_ptr->set_color(0.0f, 0.3f, 0.0f);
 	plane_ptr->setMat(matte_ptr);
 	addObject(plane_ptr);
@@ -436,7 +438,7 @@ void writeImage(int width, int height)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "./output/";
+	string location = "../output/";
 	string filePrefix = "multipleObj";
 	int fileNum = 0;
 	string extension = ".ppm";
