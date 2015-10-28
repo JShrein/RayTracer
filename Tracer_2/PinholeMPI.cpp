@@ -99,8 +99,14 @@ void PinholeMPI::renderScene(World& w)
 	for (int r = start; r < end; r++) {
 		// horizontal image coord	
 		for (int c = start; c < end; c++) {
-			pixelColor = black;
-
+			if(rank % 2 == 0)
+            {
+                pixelColor = red;
+            }
+            else 
+            {
+                pixelColor = blue;
+            }
 			for (int j = 0; j < vp.numSamples; j++)	{
 				sample = vp.sampler_ptr->sampleUnitSquare();
 				pp.x = vp.s * (c - 0.5f * vp.hres + sample.x);

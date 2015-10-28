@@ -20,6 +20,7 @@
 
 // Cameras
 #include "Pinhole.h"
+#include "PinholeMPI.h"
 
 // Utilities
 #include "Vector3D.h"
@@ -34,11 +35,21 @@
 #include <string>
 #include <sstream>
 
+/*
+bool linuxSys = 0;
+
+#ifdef __linux__
+#include <mpi.h>
+linuxSys = 1;
+#endif
+*/
+
 using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
 using std::cin;
+
 
 // Build output file
 void writeImage(int width, int height);
@@ -73,9 +84,14 @@ World::~World()
 		delete camera_ptr;
 		camera_ptr = NULL;
 	}
+	if (ambient_ptr)
+	{
+		delete ambient_ptr;
+		ambient_ptr = NULL;
+	}
 }
 
-// NO LONGER RENDER HERE, RENDER WITH CAMERA OBJECT (USE PINHOLE)
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 // Render Scene
 void World::renderScene() const {
 	RGBColor pixelColor;
@@ -151,7 +167,7 @@ void World::renderScene() const {
 	writeImage(vp.hres, vp.vres);
 }
 
-// NO LONGER RENDER HERE, RENDER WITH CAMERA OBJECT (USE PINHOLE)
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 void World::render_perspective() const
 {
 	RGBColor pixelColor;
@@ -240,7 +256,40 @@ void World::build() {
 */
 
 
-void World::build() {
+void World::build() 
+{    
+    int size = 0, rank = 0;
+	
+    cout << "Instantiating new Pinhole camera\n";
+	Pinhole* pinhole_ptr = new Pinhole();
+	pinhole_ptr->setEyePos(0, 200, 800);
+	pinhole_ptr->setLookAt(0, 0, 0);
+	pinhole_ptr->setDistance(500);
+	pinhole_ptr->setRoll(0);
+	pinhole_ptr->computeUVW();
+
+    cout << "Setting camera\n";
+	setCamera(pinhole_ptr);
+	/*
+    if(linuxSys)
+    {
+        cout << "Initializing MPI sub-system\n";
+        MPI_Init(NULL,NULL);
+
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        
+        // If on linux, use the MPI implementation instead
+        PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
+        distPinhole_ptr->setEyePos(0,200,800);
+        distPinhole_ptr->setLookAt(0,0,0);
+        distPinhole_ptr->setDistance(500);
+        distPinhole_ptr->setRoll(0);
+        distPinhole_ptr->computeUVW();
+        setCamera(distPinhole_ptr);
+    }
+	*/
+
     cout << "In build function\n";
 	vp.set_hres(512);
 	vp.set_vres(512);
@@ -267,22 +316,13 @@ void World::build() {
     cout << "Instantiating new tracer_ptr\n";
 	tracer_ptr = new RayCast(this);// MultipleObjects(this);
 
-    cout << "Instantiating new Pinhole camera\n";
-	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, 200, 1000);
-	pinhole_ptr->setLookAt(0, 0, 0);
-	pinhole_ptr->setDistance(750);
-	pinhole_ptr->setRoll(0);
-	pinhole_ptr->computeUVW();
-
-    cout << "Setting camera\n";
-	setCamera(pinhole_ptr);
+   
 
     cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
-	pointLight_ptr->setPos(0, 100, 50);
-	pointLight_ptr->scaleRadiance(2.0);
-	pointLight_ptr->setColor(1, 1, 1);
+	pointLight_ptr->setPos(200, 200, 200);
+	pointLight_ptr->scaleRadiance(0.01);
+	//pointLight_ptr->setColor(1, 0, 0);
 	addLight(pointLight_ptr);
 
 	cout << "Creating new Directional Light\n";
@@ -438,7 +478,7 @@ void writeImage(int width, int height)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = 0;
 	string extension = ".ppm";
@@ -455,7 +495,7 @@ void writeImage(int width, int height)
 	imageFile.open(fileName);
 
 	imageFile << "P3\n";
-	imageFile << "# SpheresAndPlanes.ppm\n";
+	imageFile << "# RedSphere.ppm\n";
 	imageFile << width << " " << height << "\n";
 	imageFile << "255\n";
 

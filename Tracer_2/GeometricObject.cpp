@@ -4,9 +4,12 @@
 
 // Default constructor
 GeometricObject::GeometricObject()
+	: mat_ptr(NULL)
 { }
 
-GeometricObject::GeometricObject(const GeometricObject& object)  
+GeometricObject::GeometricObject(const GeometricObject& object) 
+	: color(object.color),
+	  mat_ptr(object.mat_ptr)
 { }
 
 GeometricObject& GeometricObject::operator=(const GeometricObject& obj) {
