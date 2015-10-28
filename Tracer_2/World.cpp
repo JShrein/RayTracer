@@ -438,7 +438,7 @@ void writeImage(int width, int height)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = 0;
 	string extension = ".ppm";

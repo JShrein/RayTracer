@@ -11,7 +11,7 @@ public:
 	Camera();
 	Camera(Point3D eye, Point3D look);
 	Camera(const Camera& c);
-	~Camera();
+	virtual ~Camera();
 
 	virtual Camera* clone() const = 0;
 
