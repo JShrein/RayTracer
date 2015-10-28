@@ -75,7 +75,7 @@ World::~World()
 	}
 }
 
-// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
+// NO LONGER RENDER HERE, RENDER WITH CAMERA OBJECT (USE PINHOLE)
 // Render Scene
 void World::renderScene() const {
 	RGBColor pixelColor;
@@ -151,7 +151,7 @@ void World::renderScene() const {
 	writeImage(vp.hres, vp.vres);
 }
 
-// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
+// NO LONGER RENDER HERE, RENDER WITH CAMERA OBJECT (USE PINHOLE)
 void World::render_perspective() const
 {
 	RGBColor pixelColor;
@@ -242,8 +242,8 @@ void World::build() {
 
 void World::build() {
     cout << "In build function\n";
-	vp.set_hres(400);
-	vp.set_vres(400);
+	vp.set_hres(512);
+	vp.set_vres(512);
     cout << "Instantiating new sampler\n";
 	Sampler* s = new Jittered(25); 
     cout << "Sampler built, setting in viewplane\n";
@@ -269,9 +269,9 @@ void World::build() {
 
     cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, 200, 800);
+	pinhole_ptr->setEyePos(0, 200, 1000);
 	pinhole_ptr->setLookAt(0, 0, 0);
-	pinhole_ptr->setDistance(500);
+	pinhole_ptr->setDistance(750);
 	pinhole_ptr->setRoll(0);
 	pinhole_ptr->computeUVW();
 
@@ -280,9 +280,9 @@ void World::build() {
 
     cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
-	pointLight_ptr->setPos(200, 200, 200);
-	pointLight_ptr->scaleRadiance(0.01);
-	//pointLight_ptr->setColor(1, 0, 0);
+	pointLight_ptr->setPos(0, 100, 50);
+	pointLight_ptr->scaleRadiance(2.0);
+	pointLight_ptr->setColor(1, 1, 1);
 	addLight(pointLight_ptr);
 
 	cout << "Creating new Directional Light\n";
@@ -455,7 +455,7 @@ void writeImage(int width, int height)
 	imageFile.open(fileName);
 
 	imageFile << "P3\n";
-	imageFile << "# RedSphere.ppm\n";
+	imageFile << "# SpheresAndPlanes.ppm\n";
 	imageFile << width << " " << height << "\n";
 	imageFile << "255\n";
 
