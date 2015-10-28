@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=
 LDFLAGS=
-SOURCES=./Tracer_2/World.cpp ./Tracer_2/BuildSphere.cpp ./Tracer_2/GeometricObject.cpp ./Tracer_2/Matrix.cpp ./Tracer_2/MultipleObjects.cpp ./Tracer_2/Normal.cpp ./Tracer_2/Plane.cpp ./Tracer_2/Point2D.cpp ./Tracer_2/Point3D.cpp ./Tracer_2/RGBColor.cpp ./Tracer_2/Ray.cpp ./Tracer_2/ShadeRec.cpp ./Tracer_2/SingleSphere.cpp ./Tracer_2/Sphere.cpp ./Tracer_2/Tracer.cpp ./Tracer_2/Vector3D.cpp ./Tracer_2/ViewPlane.cpp
+SOURCES= ./Tracer_2/Ambient.cpp ./Tracer_2/Pinhole.cpp ./Tracer_2/BRDF.cpp ./Tracer_2/Plane.cpp ./Tracer_2/BuildSphere.cpp ./Tracer_2/Point.cpp ./Tracer_2/Camera.cpp ./Tracer_2/Point2D.cpp ./Tracer_2/Cylinder.cpp ./Tracer_2/Point3D.cpp ./Tracer_2/Directional.cpp ./Tracer_2/PureRandom.cpp ./Tracer_2/Fisheye.cpp ./Tracer_2/RGBColor.cpp ./Tracer_2/GeometricObject.cpp ./Tracer_2/Ray.cpp ./Tracer_2/GlossySpecular.cpp ./Tracer_2/Raycast.cpp ./Tracer_2/Hammersley.cpp ./Tracer_2/Regular.cpp ./Tracer_2/Jittered.cpp ./Tracer_2/Sampler.cpp ./Tracer_2/Lambertian.cpp ./Tracer_2/ShadeRec.cpp ./Tracer_2/Light.cpp ./Tracer_2/SingleSphere.cpp ./Tracer_2/Material.cpp ./Tracer_2/Sphere.cpp ./Tracer_2/Matrix.cpp ./Tracer_2/Spherical.cpp ./Tracer_2/Matte.cpp ./Tracer_2/Stereo.cpp ./Tracer_2/MultiJittered.cpp ./Tracer_2/ThinLens.cpp ./Tracer_2/MultipleObjects.cpp ./Tracer_2/Tracer.cpp ./Tracer_2/NRooks.cpp ./Tracer_2/Vector3D.cpp ./Tracer_2/Normal.cpp ./Tracer_2/ViewPlane.cpp ./Tracer_2/Orthographic.cpp ./Tracer_2/World.cpp ./Tracer_2/PerfectSpecular.cpp
 EXECUTABLE=RayTracer
 
 all: 
