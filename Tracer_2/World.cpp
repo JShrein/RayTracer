@@ -38,6 +38,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
+using std::cin;
 
 // Build output file
 void writeImage(int width, int height);
@@ -74,7 +75,7 @@ World::~World()
 	}
 }
 
-
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 // Render Scene
 void World::renderScene() const {
 	RGBColor pixelColor;
@@ -121,7 +122,7 @@ void World::renderScene() const {
 				pixelColor = RGBColor(z, z, z);
 			}
 			*/
-			
+			// RANDOM SAMPLING NOW DONE THROUGH SAMPLING FRAMEWORK
 			// Random sampling
 			for (int p = 0; p < vp.numSamples; p++)
 			{
@@ -150,6 +151,7 @@ void World::renderScene() const {
 	writeImage(vp.hres, vp.vres);
 }
 
+// NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
 void World::render_perspective() const
 {
 	RGBColor pixelColor;
@@ -239,14 +241,22 @@ void World::build() {
 
 
 void World::build() {
+    cout << "In build function\n";
 	vp.set_hres(400);
 	vp.set_vres(400);
-	vp.setSampler(new Jittered(25));
-	image = vector<RGBColor>(vp.hres * vp.vres);
+    cout << "Instantiating new sampler\n";
+	Sampler* s = new Jittered(25); 
+    cout << "Sampler built, setting in viewplane\n";
+    vp.setSampler(s);
+	cout << "Creating image vector\n";
+    image = vector<RGBColor>(vp.hres * vp.vres);
+    cout << "Setting pixel size\n";
 	vp.set_pixel_size(1.0f);
 	//vp.set_samples(25);
+    cout << "Setting vp gamma\n";
 	vp.set_gamma(1.0);
 
+    cout << "Setting ambient light source\n";
 	
 	Ambient* ambient_ptr = new Ambient;
 	ambient_ptr->scale_radiance(0.75);
@@ -254,23 +264,28 @@ void World::build() {
 
 	backgroundColor = black;
 
+    cout << "Instantiating new tracer_ptr\n";
 	tracer_ptr = new RayCast(this);// MultipleObjects(this);
 
+    cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, -45, 200);
+	pinhole_ptr->setEyePos(0, 200, 800);
 	pinhole_ptr->setLookAt(0, 0, 0);
-	pinhole_ptr->setDistance(100);
+	pinhole_ptr->setDistance(500);
 	pinhole_ptr->setRoll(0);
 	pinhole_ptr->computeUVW();
+
+    cout << "Setting camera\n";
 	setCamera(pinhole_ptr);
 
+    cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
 	pointLight_ptr->setPos(200, 200, 200);
 	pointLight_ptr->scaleRadiance(0.01);
 	//pointLight_ptr->setColor(1, 0, 0);
 	addLight(pointLight_ptr);
 
-	
+	cout << "Creating new Directional Light\n";
 	Directional* dirLight_ptr = new Directional;
 	dirLight_ptr->setDir(0, 1, 0);
 	dirLight_ptr->scaleRadiance(3.0);
@@ -285,7 +300,7 @@ void World::build() {
 
 	// use accessors to set sphere center and radius
 	Sphere* sphere_ptr = new Sphere;
-	sphere_ptr->set_center(0, -25, 0);
+	sphere_ptr->set_center(-100, 80, 0);
 	sphere_ptr->set_radius(80);
 	//sphere_ptr->set_color(1, 0, 0);
 	sphere_ptr->setMat(matte_ptr);
@@ -296,7 +311,7 @@ void World::build() {
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0, 1, 1);
 
-	sphere_ptr = new Sphere(Point3D(0, 30, 0), 60);
+	sphere_ptr = new Sphere(Point3D(100, 60, 0), 60);
 	//sphere_ptr->set_color(1, 1, 0);
 	sphere_ptr->setMat(matte_ptr);
 	addObject(sphere_ptr);
@@ -306,17 +321,17 @@ void World::build() {
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0.68, 0.45, 0.75);
 
-	sphere_ptr = new Sphere(Point3D(-30, 30, 0), 90);
+	sphere_ptr = new Sphere(Point3D(70, 90, 0), 90);
 	//sphere_ptr->set_color(0, 1, 1);
 	sphere_ptr->setMat(matte_ptr);
-	addObject(sphere_ptr);
+	//addObject(sphere_ptr);
 
 	matte_ptr = new Matte;
 	matte_ptr->setKA(0.25);
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0, 0.45, 0);
 
-	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 1));
+	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 0));
 	//plane_ptr->set_color(0.0f, 0.3f, 0.0f);
 	plane_ptr->setMat(matte_ptr);
 	addObject(plane_ptr);
@@ -403,11 +418,15 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 int main()
 {
 	World w;
+    cout << "Created world object, entering build function\n";
 	w.build();
+    cout << "Build complete, rendering scene\n";
 	//w.renderScene();
 	//w.render_perspective();
 	w.camera_ptr->renderScene(w);
+    cout << "Scene rendered, writing to file\n";
 	writeImage(w.vp.hres, w.vp.vres);
+    cout << "Write to file complete, shutting down\n";
 
 	return 0;
 }
@@ -446,6 +465,7 @@ void writeImage(int width, int height)
 	}
 
 	imageFile.close();
+    cout << "Image file closed\n";
 }
 
 

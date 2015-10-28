@@ -1,10 +1,12 @@
 #include "ViewPlane.h"
+#include <iostream>
 
 // Constructors
 ViewPlane::ViewPlane(void)
 	: hres(400),
 	vres(400),
 	s(1.0),
+    sampler_ptr(NULL),
 	numSamples(1),
 	rootNumSamples(1),
 	gamma(1.0),
@@ -48,14 +50,18 @@ ViewPlane::~ViewPlane(void) {}
 
 void ViewPlane::setSampler(Sampler* sp)
 {
-	if (sampler_ptr) {
+    std::cout << "In setSampler() function\n";
+	if (sampler_ptr != NULL) {
+        std::cout << "Deleting current sampler\n";
 		delete sampler_ptr;
-		sampler_ptr = NULL;
+        std::cout << "Attempting to set sampler_ptr to NULL\n";
+	    sampler_ptr = NULL;
 	}
-
+    std::cout << "in vp, Attempting to set sampler\n";
 	rootNumSamples = sp->getRootNumSamples();
 	numSamples = sp->getNumSamples();
 	sampler_ptr = sp;
+    std::cout << "Successfully set sampler in vp\n";
 }
 
 void ViewPlane::set_samples(const int n)

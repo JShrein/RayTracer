@@ -1,4 +1,4 @@
-#include "RayCast.h"
+#include "Raycast.h"
 #include "World.h"
 #include "ShadeRec.h"
 #include "Material.h"
