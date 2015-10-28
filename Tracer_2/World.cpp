@@ -20,6 +20,7 @@
 
 // Cameras
 #include "Pinhole.h"
+#include "PinholeMPI.h"
 
 // Utilities
 #include "Vector3D.h"
@@ -33,6 +34,10 @@
 #include <sys/stat.h>
 #include <string>
 #include <sstream>
+#ifdef __linux__
+#include <mpi.h>
+bool linuxSys = 1;
+#endif
 
 using std::vector;
 using std::cout;
@@ -240,10 +245,42 @@ void World::build() {
 */
 
 
-void World::build() {
+void World::build() 
+{    
+    int size, rank;
+   
+    cout << "Instantiating new Pinhole camera\n";
+	Pinhole* pinhole_ptr = new Pinhole();
+	pinhole_ptr->setEyePos(0, 200, 800);
+	pinhole_ptr->setLookAt(0, 0, 0);
+	pinhole_ptr->setDistance(500);
+	pinhole_ptr->setRoll(0);
+	pinhole_ptr->computeUVW();
+
+    cout << "Setting camera\n";
+	setCamera(pinhole_ptr);
+    
+    if(linuxSys)
+    {
+        cout << "Initializing MPI sub-system\n";
+        MPI_Init(NULL,NULL);
+
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        
+        // If on linux, use the MPI implementation instead
+        PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
+        distPinhole_ptr->setEyePos(0,200,800);
+        distPinhole_ptr->setLookAt(0,0,0);
+        distPinhole_ptr->setDistance(500);
+        distPinhole_ptr->setRoll(0);
+        distPinhole_ptr->computeUVW();
+        setCamera(distPinhole_ptr);
+    }
+
     cout << "In build function\n";
-	vp.set_hres(400);
-	vp.set_vres(400);
+	vp.set_hres(512);
+	vp.set_vres(512);
     cout << "Instantiating new sampler\n";
 	Sampler* s = new Jittered(25); 
     cout << "Sampler built, setting in viewplane\n";
@@ -267,16 +304,7 @@ void World::build() {
     cout << "Instantiating new tracer_ptr\n";
 	tracer_ptr = new RayCast(this);// MultipleObjects(this);
 
-    cout << "Instantiating new Pinhole camera\n";
-	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, 200, 800);
-	pinhole_ptr->setLookAt(0, 0, 0);
-	pinhole_ptr->setDistance(500);
-	pinhole_ptr->setRoll(0);
-	pinhole_ptr->computeUVW();
-
-    cout << "Setting camera\n";
-	setCamera(pinhole_ptr);
+   
 
     cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
