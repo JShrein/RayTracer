@@ -35,14 +35,10 @@
 #include <string>
 #include <sstream>
 
-/*
-bool linuxSys = 0;
-
 #ifdef __linux__
 #include <mpi.h>
-linuxSys = 1;
+bool linuxSys = 1;
 #endif
-*/
 
 using std::vector;
 using std::cout;
@@ -52,7 +48,7 @@ using std::cin;
 
 
 // Build output file
-void writeImage(int width, int height);
+void writeImage(int width, int height, int rank);
 bool file_exists(const string& name);
 
 // Build functions
@@ -164,7 +160,7 @@ void World::renderScene() const {
 		}
 	}
 
-	writeImage(vp.hres, vp.vres);
+	writeImage(vp.hres, vp.vres, rank);
 }
 
 // NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
@@ -207,7 +203,7 @@ void World::render_perspective() const
 			displayPixel(r, c, pixelColor);
 		}
 	}
-	writeImage(vp.hres, vp.vres);
+	writeImage(vp.hres, vp.vres, rank);
 }
 
 void World::displayPixel(const int row, const int column, const RGBColor& raw_color) const {
@@ -258,7 +254,7 @@ void World::build() {
 
 void World::build() 
 {    
-    int size = 0, rank = 0;
+    //int size = 0, rank = 0;
 	
     cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
@@ -270,12 +266,9 @@ void World::build()
 
     cout << "Setting camera\n";
 	setCamera(pinhole_ptr);
-	/*
+    
     if(linuxSys)
     {
-        cout << "Initializing MPI sub-system\n";
-        MPI_Init(NULL,NULL);
-
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
         
@@ -288,7 +281,7 @@ void World::build()
         distPinhole_ptr->computeUVW();
         setCamera(distPinhole_ptr);
     }
-	*/
+
 
     cout << "In build function\n";
 	vp.set_hres(512);
@@ -457,6 +450,8 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 
 int main()
 {
+    cout << "Initializing MPI sub-system\n";
+    MPI_Init(NULL, NULL);
 	World w;
     cout << "Created world object, entering build function\n";
 	w.build();
@@ -465,14 +460,16 @@ int main()
 	//w.render_perspective();
 	w.camera_ptr->renderScene(w);
     cout << "Scene rendered, writing to file\n";
-	writeImage(w.vp.hres, w.vp.vres);
+	writeImage(w.vp.hres, w.vp.vres, w.rank);
     cout << "Write to file complete, shutting down\n";
+
+    MPI_Finalize();
 
 	return 0;
 }
 
 
-void writeImage(int width, int height)
+void writeImage(int width, int height, int rank)
 {
 	std::ofstream imageFile;
 	std::stringstream ss;
@@ -480,7 +477,7 @@ void writeImage(int width, int height)
 	string fileName;
 	string location = "./output/";
 	string filePrefix = "multipleObj";
-	int fileNum = 0;
+	int fileNum = rank;//0;
 	string extension = ".ppm";
 
 	do

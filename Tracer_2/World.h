@@ -27,6 +27,8 @@ public:
 	Camera* camera_ptr;
 	Light* ambient_ptr;
 	vector<Light*> lights;
+    int rank;
+    int size;
 
 	World();
 	~World();

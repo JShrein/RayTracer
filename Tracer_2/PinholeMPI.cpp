@@ -77,12 +77,14 @@ void PinholeMPI::renderScene(World& w)
 {
 	// num rendering blocks = 16
 	// block size = (2imageSize / MPISize)^2 (assuming square image for now)
-	int blockSize = w.vp.hres / size; // 512 / 16 = 32, 32*32 block size
+	int blockSize = w.vp.hres / (size/4); // 512 / 16 = 32, 32*32 block size
 
 
 	// for now, vertical and horizontal render range
-	int start = rank * blockSize;
-	int end = rank * blockSize + blockSize;
+	int vStart = rank/4 * blockSize;
+	int vEnd = rank/4 * blockSize + blockSize;
+    int hStart = rank % 4 * blockSize;
+    int hEnd = rank%4 * blockSize + blockSize;;
 
 	RGBColor	pixelColor;
 	ViewPlane	vp(w.vp);
@@ -96,18 +98,13 @@ void PinholeMPI::renderScene(World& w)
 	ray.o = eyePos;
 
 	// vertical image coord
-	for (int r = start; r < end; r++) {
+	for (int r = vStart; r < vEnd; r++) {
 		// horizontal image coord	
-		for (int c = start; c < end; c++) {
-			if(rank % 2 == 0)
+		for (int c = hStart; c < hEnd; c++) {
+			pixelColor = black;
+                
+            for (int j = 0; j < vp.numSamples; j++)	
             {
-                pixelColor = red;
-            }
-            else 
-            {
-                pixelColor = blue;
-            }
-			for (int j = 0; j < vp.numSamples; j++)	{
 				sample = vp.sampler_ptr->sampleUnitSquare();
 				pp.x = vp.s * (c - 0.5f * vp.hres + sample.x);
 				pp.y = vp.s * (r - 0.5f * vp.vres + sample.y);
@@ -116,7 +113,7 @@ void PinholeMPI::renderScene(World& w)
 			}
 
 			pixelColor /= (float)vp.numSamples;
-			pixelColor *= exposureTime;
+            pixelColor *= exposureTime;
 			w.displayPixel(r, c, pixelColor);
 		}
 	}
