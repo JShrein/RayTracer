@@ -4,6 +4,7 @@
 // Geometric Objects
 #include "Plane.h"
 #include "Sphere.h"
+#include "Cylinder.h"
 
 // Materials
 #include "Matte.h"
@@ -35,9 +36,33 @@
 #include <string>
 #include <sstream>
 
+// TODO: Find a better way to do this
+// If OS is linux, do the MPI stuff
+void initMPI(int argc, char *argv[]);
+void shutdownMPI();
+
 #ifdef __linux__
 #include <mpi.h>
-bool linuxSys = 1;
+bool usingMPI = 1;
+void initMPI(int argc, char *argv[])
+{
+	MPI_Init(&argc, &argv);
+
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+}
+
+void shutdownMPI()
+{
+	MPI_Finalize();
+}
+#else
+bool usingMPI = 0;
+void initMPI(int argc, char *argv[])
+{ }
+
+void shutdownMPI()
+{ }
 #endif
 
 using std::vector;
@@ -254,8 +279,6 @@ void World::build() {
 
 void World::build() 
 {    
-    //int size = 0, rank = 0;
-	
     cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
 	pinhole_ptr->setEyePos(0, 200, 800);
@@ -267,12 +290,9 @@ void World::build()
     cout << "Setting camera\n";
 	setCamera(pinhole_ptr);
     
-    if(linuxSys)
+	// If using MPI implementation, replace camera with distributed version of cam
+	if (usingMPI)
     {
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        MPI_Comm_size(MPI_COMM_WORLD, &size);
-        
-        // If on linux, use the MPI implementation instead
         PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
         distPinhole_ptr->setEyePos(0,200,800);
         distPinhole_ptr->setLookAt(0,0,0);
@@ -314,14 +334,14 @@ void World::build()
     cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
 	pointLight_ptr->setPos(200, 200, 200);
-	pointLight_ptr->scaleRadiance(0.01);
+	pointLight_ptr->scaleRadiance(0.01f);
 	//pointLight_ptr->setColor(1, 0, 0);
 	addLight(pointLight_ptr);
 
 	cout << "Creating new Directional Light\n";
 	Directional* dirLight_ptr = new Directional;
 	dirLight_ptr->setDir(0, 1, 0);
-	dirLight_ptr->scaleRadiance(3.0);
+	dirLight_ptr->scaleRadiance(3.0f);
 	addLight(dirLight_ptr);
 	
 
@@ -349,20 +369,41 @@ void World::build()
 	sphere_ptr->setMat(matte_ptr);
 	addObject(sphere_ptr);
 
+	
 	matte_ptr = new Matte;
-	matte_ptr->setKA(0.25);
-	matte_ptr->setKD(0.75);
-	matte_ptr->setCD(0.68, 0.45, 0.75);
+	matte_ptr->setKA(0.25f);
+	matte_ptr->setKD(0.75f);
+	matte_ptr->setCD(0.9f, 0.1f, 0.0f);
 
-	sphere_ptr = new Sphere(Point3D(70, 90, 0), 90);
+	sphere_ptr = new Sphere(Point3D(0, 150, 0), 25);
 	//sphere_ptr->set_color(0, 1, 1);
 	sphere_ptr->setMat(matte_ptr);
-	//addObject(sphere_ptr);
+	addObject(sphere_ptr);
+	
+	matte_ptr = new Matte;
+	matte_ptr->setKA(0.25f);
+	matte_ptr->setKD(0.75f);
+	matte_ptr->setCD(0.9f, 0.1f, 0.0f);
+
+	sphere_ptr = new Sphere(Point3D(0, 40, 0), 25);
+	//sphere_ptr->set_color(0, 1, 1);
+	sphere_ptr->setMat(matte_ptr);
+	addObject(sphere_ptr);
 
 	matte_ptr = new Matte;
-	matte_ptr->setKA(0.25);
-	matte_ptr->setKD(0.75);
-	matte_ptr->setCD(0, 0.45, 0);
+	matte_ptr->setKA(0.25f);
+	matte_ptr->setKD(0.75f);
+	matte_ptr->setCD(0.9f, 0.1f, 0.0f);
+
+	Cylinder* cylinder_ptr = new Cylinder(Point3D(0, 0, 0), 25);
+	cylinder_ptr->set_yRange(50.0, 150.0);
+	cylinder_ptr->setMat(matte_ptr);
+	addObject(cylinder_ptr);
+
+	matte_ptr = new Matte;
+	matte_ptr->setKA(0.25f);
+	matte_ptr->setKD(0.75f);
+	matte_ptr->setCD(0.0f, 0.45f, 0.0f);
 
 	Plane* plane_ptr = new Plane(Point3D(0, 0, 0), Normal(0, 1, 0));
 	//plane_ptr->set_color(0.0f, 0.3f, 0.0f);
@@ -447,11 +488,13 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 	return ((float)max) * RGBColor(c);
 }
 
-
 int main()
 {
     cout << "Initializing MPI sub-system\n";
-    MPI_Init(NULL, NULL);
+   // MPI_Init(NULL, NULL);
+
+	// MPI_Init() wrapped up in this function to facilitate multi-platform development
+	initMPI(NULL, NULL);
 	World w;
     cout << "Created world object, entering build function\n";
 	w.build();
@@ -463,7 +506,8 @@ int main()
 	writeImage(w.vp.hres, w.vp.vres, w.rank);
     cout << "Write to file complete, shutting down\n";
 
-    MPI_Finalize();
+	// MPI_Finalize() wrapped in shutdownMPI()
+	shutdownMPI();
 
 	return 0;
 }
@@ -475,7 +519,7 @@ void writeImage(int width, int height, int rank)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "./output/";
+	string location = "../output/";
 	string filePrefix = "multipleObj";
 	int fileNum = rank;//0;
 	string extension = ".ppm";

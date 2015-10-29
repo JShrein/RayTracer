@@ -16,6 +16,7 @@ public:
 
 	Cylinder& operator=(const Cylinder& Cylinder);
 
+	void set_yRange(const double yMin, const double yMax);
 	void set_center(const Point3D& c);
 	void set_center(const double x, const double y, const double z);
 	void set_radius(const double r);
@@ -26,12 +27,20 @@ public:
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
 
 private:
+	double yMinimum;
+	double yMaximum;
 	Point3D center;
 	double radius;
 	RGBColor color;
 
 	static const double kEpsilon;
 };
+
+inline void Cylinder::set_yRange(const double yMin = 0, const double yMax = 0)
+{
+	yMinimum = yMin;
+	yMaximum = yMax;
+}
 
 inline void Cylinder::set_center(const Point3D& c)
 {
