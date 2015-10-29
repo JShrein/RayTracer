@@ -19,7 +19,7 @@ Tracer::~Tracer(void) {
 // Trace Ray
 RGBColor Tracer::traceRay(const Ray& ray) const 
 {
-	return black;
+	return red;
 }
 
 RGBColor Tracer::traceRay(const Ray ray, const int depth) const 

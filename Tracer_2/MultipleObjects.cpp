@@ -16,6 +16,7 @@ MultipleObjects::~MultipleObjects(void)
 { }
 
 
+// TODO: remove
 // Trace ray
 RGBColor MultipleObjects::traceRay(const Ray& ray) const {
 	ShadeRec sr(world_ptr->hitBareBonesObject(ray)); // sr is copy constructed
@@ -26,6 +27,7 @@ RGBColor MultipleObjects::traceRay(const Ray& ray) const {
 		return (world_ptr->backgroundColor);
 }
 
+// TODO: remove
 RGBColor MultipleObjects::traceRay(const Ray ray, const int depth) const
 {
 	// TODO: Implement depth, currently exactly the same as traceRay(const Ray& ray)

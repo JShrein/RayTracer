@@ -411,6 +411,7 @@ void World::build()
 	addObject(plane_ptr);
 }
 
+// TODO: Check and get rid of this function, has been abstracted to camera
 ShadeRec World::hitBareBonesObject(const Ray& ray) {
 	ShadeRec sr(*this);
 	double t;
