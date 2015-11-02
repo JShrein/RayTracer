@@ -50,11 +50,11 @@ Cylinder::~Cylinder()
 bool Cylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	double t;
 
-	Vector3D temp = ray.o - center;
+	Vector3D newPos = ray.o - center;
 
 	double a = ray.d.x * ray.d.x + ray.d.z * ray.d.z;
-	double b = 2.0 * (ray.o.x * ray.d.x + ray.o.z * ray.d.z);
-	double c = ray.o.x * ray.o.x + ray.o.z * ray.o.z - radius * radius;
+	double b = 2.0 * (newPos.x * ray.d.x + newPos.z * ray.d.z);// (ray.o.x * ray.d.x + ray.o.z * ray.d.z);
+	double c = newPos.x * newPos.x + newPos.z * newPos.z - radius * radius;
 	double disc = b * b - 4.0 * a * c;
 
 	if (disc < 0.0)
@@ -102,6 +102,47 @@ bool Cylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 			}
 			
 			return false;
+		}
+	}
+
+	return false;
+}
+
+bool Cylinder::shadowHit(const Ray& ray, float& tMin) const
+{
+	double t;
+
+	Vector3D temp = ray.o - center;
+
+	double a = ray.d.x * ray.d.x + ray.d.z * ray.d.z;
+	double b = 2.0 * (temp.x * ray.d.x + temp.z * ray.d.z);// (ray.o.x * ray.d.x + ray.o.z * ray.d.z);
+	double c = temp.x * temp.x + temp.z * temp.z - radius * radius;
+	double disc = b * b - 4.0 * a * c;
+
+	if (disc < 0.0)
+	{
+		return false;
+	}
+	else
+	{
+		double e = sqrt(disc);
+		double denom = 1.0 / 2.0 * a;
+		double r = 1.0 / radius;
+
+		t = (-b - e) * denom;
+
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
+		}
+
+		t = (-b + e) * denom;
+
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
 		}
 	}
 

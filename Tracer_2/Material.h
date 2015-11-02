@@ -16,6 +16,9 @@ public:
 	virtual ~Material(void);
 
 	virtual RGBColor shade(ShadeRec& sr);
+	//virtual RGBColor shadeAreaLight(ShadeRec& sr);
+	//virtual RGBColor shadeWhitted(ShadeRec& sr);
+	//virtual RGBColor shadePath(ShadeRec& sr);
 
 protected:
 	Material& operator= (const Material& rhs);

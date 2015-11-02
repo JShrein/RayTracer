@@ -18,6 +18,7 @@ public:
 	void set_color(const float r, const float g, const float b);
 
 	virtual bool hit(const Ray& ray, double&t, ShadeRec& s) const;
+	bool shadowHit(const Ray& ray, float& tMin) const;
 	virtual RGBColor get_color();
 
 

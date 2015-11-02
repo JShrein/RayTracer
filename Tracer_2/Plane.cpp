@@ -55,3 +55,14 @@ bool Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 	return(false);
 }
+
+bool Plane::shadowHit(const Ray& ray, float& tMin) const
+{
+	float t = (point - ray.o) * normal / (ray.d * normal);
+
+	if (t > kEpsilon) {
+		tMin = t;
+		return true;
+	}
+	return false;
+}

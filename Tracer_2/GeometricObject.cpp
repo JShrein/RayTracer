@@ -43,3 +43,8 @@ void GeometricObject::setMat(Material* material_ptr)
 {
 	mat_ptr = material_ptr;
 }
+
+bool GeometricObject::shadowHit(const Ray& ray, float& tMin) const
+{
+	return false;
+}

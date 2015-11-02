@@ -41,7 +41,28 @@ Vector3D Point::getDir(ShadeRec& sr)
 	return (pos - sr.hit_point).hat();
 }
 
+Point3D Point::getPos()
+{
+	return pos;
+}
+
 RGBColor Point::L(ShadeRec& sr)
 {
 	return ls * color;
+}
+
+bool Point::inShadow(const Ray& ray, const ShadeRec& sr) const
+{
+	float t;
+	int numObj = sr.w.objects.size();
+	float d = pos.distance(ray.o);
+
+	for (int i = 0; i < numObj; i++)
+	{
+		if (sr.w.objects[i]->shadowHit(ray, t) && t < d)
+		{
+			return true;
+		}
+	}
+	return false;
 }

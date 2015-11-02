@@ -18,6 +18,8 @@ public:
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& sr) const = 0;
 	virtual RGBColor get_color() = 0;
 
+	virtual bool shadowHit(const Ray& ray, float& tMin) const;
+
 	Material* getMat() const;
 	void setMat(Material* material_ptr);
 

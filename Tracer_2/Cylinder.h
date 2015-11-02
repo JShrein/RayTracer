@@ -25,6 +25,7 @@ public:
 
 	virtual RGBColor get_color();
 	virtual bool hit(const Ray& ray, double& t, ShadeRec& s) const;
+	bool shadowHit(const Ray& ray, float& tMin) const;
 
 private:
 	double yMinimum;

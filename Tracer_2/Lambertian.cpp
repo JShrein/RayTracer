@@ -56,11 +56,11 @@ RGBColor Lambertian::sample_f(const ShadeRec& sr, Vector3D& wi, const Vector3D& 
 
 	pdf = sr.normal * wi * INV_PI;
 
-	return kd * cd * INV_PI;
+	return kd * cd * INV_PI;b
 }
 */
 
-RGBColor Lambertian::rho(const ShadeRec& sr, const Vector3D& wo)
+RGBColor Lambertian::rho(const ShadeRec& sr, const Vector3D& wo) const
 {
 	return kd * cd;
 }

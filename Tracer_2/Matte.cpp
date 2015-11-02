@@ -26,28 +26,28 @@ Material* Matte::clone(void) const
 }
 
 // Assignment operator
-Matte& Matte::operator= (const Matte& rhs) 
+Matte& Matte::operator= (const Matte& m) 
 {
-	if (this == &rhs)
+	if (this == &m)
 		return *this;
 
-	Material::operator=(rhs);
+	Material::operator=(m);
 
 	if (ambient_brdf) {
 		delete ambient_brdf;
 		ambient_brdf = NULL;
 	}
 
-	if (rhs.ambient_brdf)
-		ambient_brdf = rhs.ambient_brdf->clone();
+	if (m.ambient_brdf)
+		ambient_brdf = m.ambient_brdf->clone();
 
 	if (diffuse_brdf) {
 		delete diffuse_brdf;
 		diffuse_brdf = NULL;
 	}
 
-	if (rhs.diffuse_brdf)
-		diffuse_brdf = rhs.diffuse_brdf->clone();
+	if (m.diffuse_brdf)
+		diffuse_brdf = m.diffuse_brdf->clone();
 
 	return *this;
 }
@@ -78,7 +78,16 @@ RGBColor Matte::shade(ShadeRec& sr) {
 		double ndotwi = sr.normal * wi;
 
 		if (ndotwi > 0.0)
-			L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * ndotwi;
+		{
+			if (sr.w.lights[j]->attenuate)
+			{
+				double r = (sr.w.lights[j]->getPos() - sr.localHitPoint).length();
+				r = pow(r, sr.w.lights[j]->p);
+				L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) / r * ndotwi;
+			}
+			else
+				L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) * ndotwi;
+		}
 	}
 
 	return L;

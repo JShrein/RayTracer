@@ -87,3 +87,41 @@ bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 
 	return false;
 }
+
+bool Sphere::shadowHit(const Ray& ray, float& tMin) const
+{
+	double t;
+	Vector3D temp = ray.o - center;
+	double a = ray.d * ray.d;
+	double b = 2.0 * temp * ray.d;
+	double c = temp * temp - radius * radius;
+	double disc = b * b - 4.0 * a * c;
+
+	if (disc < 0.0)
+	{
+		return false;
+	}
+	else
+	{
+		double e = sqrt(disc);
+		double denom = 1.0 / 2.0 * a;
+		double r = 1.0 / radius;
+		t = (-b - e) * denom;
+
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
+		}
+
+		t = (-b + e) * denom;
+
+		if (t > kEpsilon)
+		{
+			tMin = t;
+			return true;
+		}
+	}
+
+	return false;
+}

@@ -23,16 +23,20 @@ public:
 	void setColor(const float c);
 	void setColor(const RGBColor& c);
 	void setColor(const float r, const float g, const float b);
-	void setPos(const Point3D& d);
-	void setPos(float dx, float dy, float dz);
+	
+	virtual void setPos(const Point3D& p);
+	virtual void setPos(const float px, const float py, const float pz);
 
 	virtual Vector3D getDir(ShadeRec& sr);
+	virtual Point3D getPos();
 	virtual RGBColor L(ShadeRec& sr);
+	
+	virtual bool inShadow(const Ray& ray, const ShadeRec& sr) const;
 
 private:
-	float		ls;
-	RGBColor	color;
-	Vector3D	pos;
+	float ls;
+	RGBColor color;
+	Point3D pos;
 };
 
 
@@ -65,17 +69,16 @@ inline void Point::setColor(const float r, const float g, const float b)
 }
 
 // Set direction
-inline void Point::setPos(const Point3D& d)
+inline void Point::setPos(const Point3D& p)
 {
-	pos = d;
+	pos = p;
 }
 
-inline void Point::setPos(const float dx, const float dy, const float dz)
+inline void Point::setPos(const float px, const float py, const float pz)
 {
-	pos.x = dx; 
-	pos.y = dy; 
-	pos.z = dz;
+	pos.x = px; 
+	pos.y = py; 
+	pos.z = pz;
 }
-
 
 #endif // __POINTLIGHT__

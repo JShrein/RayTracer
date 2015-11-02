@@ -8,6 +8,7 @@
 
 // Materials
 #include "Matte.h"
+#include "Phong.h"
 
 // Lights
 #include "Ambient.h"
@@ -83,6 +84,8 @@ bool file_exists(const string& name);
 
 vector<RGBColor> image;// (0);
 vector<RGBColor>::iterator it;
+
+Point3D cameraPosition(0, 200, 500);
 
 // Default Constructor
 World::World()
@@ -276,10 +279,10 @@ void World::build() {
 }
 */
 
-
-void World::build() 
-{    
-    cout << "Instantiating new Pinhole camera\n";
+/*
+void World::build()
+{
+	cout << "Instantiating new Pinhole camera\n";
 	Pinhole* pinhole_ptr = new Pinhole();
 	pinhole_ptr->setEyePos(0, 200, 800);
 	pinhole_ptr->setLookAt(0, 0, 0);
@@ -287,51 +290,51 @@ void World::build()
 	pinhole_ptr->setRoll(0);
 	pinhole_ptr->computeUVW();
 
-    cout << "Setting camera\n";
+	cout << "Setting camera\n";
 	setCamera(pinhole_ptr);
-    
+
 	// If using MPI implementation, replace camera with distributed version of cam
 	if (usingMPI)
-    {
-        PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
-        distPinhole_ptr->setEyePos(0,200,800);
-        distPinhole_ptr->setLookAt(0,0,0);
-        distPinhole_ptr->setDistance(500);
-        distPinhole_ptr->setRoll(0);
-        distPinhole_ptr->computeUVW();
-        setCamera(distPinhole_ptr);
-    }
+	{
+	PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
+	distPinhole_ptr->setEyePos(0,200,800);
+	distPinhole_ptr->setLookAt(0,0,0);
+	distPinhole_ptr->setDistance(500);
+	distPinhole_ptr->setRoll(0);
+	distPinhole_ptr->computeUVW();
+	setCamera(distPinhole_ptr);
+	}
 
 
-    cout << "In build function\n";
+	cout << "In build function\n";
 	vp.set_hres(512);
 	vp.set_vres(512);
-    cout << "Instantiating new sampler\n";
-	Sampler* s = new Jittered(25); 
-    cout << "Sampler built, setting in viewplane\n";
-    vp.setSampler(s);
+	cout << "Instantiating new sampler\n";
+	Sampler* s = new Jittered(25);
+	cout << "Sampler built, setting in viewplane\n";
+	vp.setSampler(s);
 	cout << "Creating image vector\n";
-    image = vector<RGBColor>(vp.hres * vp.vres);
-    cout << "Setting pixel size\n";
+	image = vector<RGBColor>(vp.hres * vp.vres);
+	cout << "Setting pixel size\n";
 	vp.set_pixel_size(1.0f);
 	//vp.set_samples(25);
-    cout << "Setting vp gamma\n";
+	cout << "Setting vp gamma\n";
 	vp.set_gamma(1.0);
 
-    cout << "Setting ambient light source\n";
-	
+	cout << "Setting ambient light source\n";
+
 	Ambient* ambient_ptr = new Ambient;
 	ambient_ptr->scale_radiance(0.75);
 	setAmbientLight(ambient_ptr);
 
 	backgroundColor = black;
 
-    cout << "Instantiating new tracer_ptr\n";
+	cout << "Instantiating new tracer_ptr\n";
 	tracer_ptr = new RayCast(this);// MultipleObjects(this);
 
-   
 
-    cout << "Creating new Point Light\n";
+
+	cout << "Creating new Point Light\n";
 	Point* pointLight_ptr = new Point;
 	pointLight_ptr->setPos(200, 200, 200);
 	pointLight_ptr->scaleRadiance(0.01f);
@@ -343,7 +346,7 @@ void World::build()
 	dirLight_ptr->setDir(0, 1, 0);
 	dirLight_ptr->scaleRadiance(3.0f);
 	addLight(dirLight_ptr);
-	
+
 
 	Matte* matte_ptr = new Matte;
 	matte_ptr->setKA(0.25);
@@ -364,12 +367,19 @@ void World::build()
 	matte_ptr->setKD(0.75);
 	matte_ptr->setCD(0, 1, 1);
 
+	Phong* phong_ptr = new Phong;
+	phong_ptr->setKA(0.25);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(0.5);
+	phong_ptr->setCD(cyan);
+	phong_ptr->setEXP(1000);
+
 	sphere_ptr = new Sphere(Point3D(100, 60, 0), 60);
 	//sphere_ptr->set_color(1, 1, 0);
-	sphere_ptr->setMat(matte_ptr);
+	sphere_ptr->setMat(phong_ptr);
 	addObject(sphere_ptr);
 
-	
+	/*
 	matte_ptr = new Matte;
 	matte_ptr->setKA(0.25f);
 	matte_ptr->setKD(0.75f);
@@ -379,7 +389,8 @@ void World::build()
 	//sphere_ptr->set_color(0, 1, 1);
 	sphere_ptr->setMat(matte_ptr);
 	addObject(sphere_ptr);
-	
+	*/
+/*
 	matte_ptr = new Matte;
 	matte_ptr->setKA(0.25f);
 	matte_ptr->setKD(0.75f);
@@ -396,7 +407,7 @@ void World::build()
 	matte_ptr->setCD(0.9f, 0.1f, 0.0f);
 
 	Cylinder* cylinder_ptr = new Cylinder(Point3D(0, 0, 0), 25);
-	cylinder_ptr->set_yRange(50.0, 150.0);
+	cylinder_ptr->set_yRange(50.0, 75.0);
 	cylinder_ptr->setMat(matte_ptr);
 	addObject(cylinder_ptr);
 
@@ -410,6 +421,85 @@ void World::build()
 	plane_ptr->setMat(matte_ptr);
 	addObject(plane_ptr);
 }
+*/
+
+void World::build() 
+{    
+	// Simple example
+	vp.set_hres(400);
+	vp.set_vres(400);
+	vp.set_pixel_size(1.0);
+	vp.set_samples(16);
+	image = vector<RGBColor>(vp.hres * vp.vres);
+
+	backgroundColor = black;
+	tracer_ptr = new RayCast(this);
+
+	Ambient* ambient_ptr = new Ambient;
+	ambient_ptr->scale_radiance(0.5);
+	setAmbientLight(ambient_ptr);
+
+	Point* pointLight_ptr = new Point;
+	pointLight_ptr->setPos(200, 50, 250);
+	pointLight_ptr->scaleRadiance(0.01f);
+	pointLight_ptr->attenuate = false;
+	pointLight_ptr->p = 2;
+	pointLight_ptr->setShadows(true);
+	addLight(pointLight_ptr);
+
+	Pinhole* pinhole_ptr = new Pinhole();
+	pinhole_ptr->setEyePos(0, 100, 500);
+	pinhole_ptr->setLookAt(-5, 0, 0);
+	pinhole_ptr->setDistance(850);
+	pinhole_ptr->setRoll(0);
+	pinhole_ptr->computeUVW();
+	setCamera(pinhole_ptr);
+
+	Phong* phong_ptr = new Phong;
+	phong_ptr->setKA(0.25);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(0.2);
+	phong_ptr->setCD(gray);
+	phong_ptr->setEXP(20);
+
+	Sphere* sphere_ptr = new Sphere(Point3D(50, -22, 15), 10);
+	sphere_ptr->setMat(phong_ptr);
+	addObject(sphere_ptr);
+
+	phong_ptr = new Phong;
+	phong_ptr->setKA(0.25);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(0.2);
+	phong_ptr->setCD(cyan);
+	phong_ptr->setEXP(25);
+
+	sphere_ptr = new Sphere(Point3D(10, -5, 0), 27);
+	sphere_ptr->setMat(phong_ptr);
+	addObject(sphere_ptr);
+
+	phong_ptr = new Phong;
+	phong_ptr->setKA(0.25);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(.1);
+	phong_ptr->setCD(red);
+	phong_ptr->setEXP(500);
+
+	sphere_ptr = new Sphere(Point3D(-40, -5, -180), 27);
+	sphere_ptr->setMat(phong_ptr);
+	addObject(sphere_ptr);
+
+	phong_ptr = new Phong;
+	phong_ptr->setKA(0.25);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(.1);
+	phong_ptr->setCD(green);
+	phong_ptr->setEXP(5);
+
+	Plane* plane_ptr = new Plane(Point3D(0, -32, 0), Normal(0, 1, 0));
+	plane_ptr->setMat(phong_ptr);
+	addObject(plane_ptr);
+}
+
 
 // TODO: Check and get rid of this function, has been abstracted to camera
 ShadeRec World::hitBareBonesObject(const Ray& ray) {
@@ -491,21 +581,40 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 
 int main()
 {
-    cout << "Initializing MPI sub-system\n";
-   // MPI_Init(NULL, NULL);
+	cout << "Initializing MPI sub-system\n";
+	// MPI_Init(NULL, NULL);
 
 	// MPI_Init() wrapped up in this function to facilitate multi-platform development
 	initMPI(NULL, NULL);
 	World w;
-    cout << "Created world object, entering build function\n";
+	cout << "Created world object, entering build function\n";
 	w.build();
-    cout << "Build complete, rendering scene\n";
+	cout << "Build complete, rendering scene\n";
 	//w.renderScene();
 	//w.render_perspective();
-	w.camera_ptr->renderScene(w);
-    cout << "Scene rendered, writing to file\n";
-	writeImage(w.vp.hres, w.vp.vres, w.rank);
-    cout << "Write to file complete, shutting down\n";
+	double angle = 5;
+	//for (int i = 0; i < 90; i++)
+	//{
+		//Point3D lightPos = w.lights[0]->getPos();
+
+		//double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
+		//double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
+
+		//cameraPosition.x = rx;
+		//cameraPosition.z = rz;
+
+		//w.camera_ptr->setEyePos(cameraPosition);
+		//w.camera_ptr->setLookAt(0, 0, 0);
+		
+		//w.lights[0]->setPos(rx, lightPos.y, rz);
+		
+		w.camera_ptr->renderScene(w);
+		cout << "Scene rendered, writing to file\n";
+		writeImage(w.vp.hres, w.vp.vres, w.rank);
+		
+	//}
+
+	cout << "Write to file complete, shutting down\n";
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();

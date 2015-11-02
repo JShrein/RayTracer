@@ -1,5 +1,5 @@
-#ifndef __LAMBERTIAN__
-#define __LAMBERTIAN__
+#ifndef LAMBERTIAN_H
+#define LAMBERTIAN_H
 
 #include "BRDF.h"
 
@@ -20,10 +20,10 @@ public:
 	void setCD(const float r, const float g, const float b);
 	void setCD(const float c);
 
-	virtual RGBColor f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi);
+	virtual RGBColor f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const;
 	// PDF is probability distribution function
 	//virtual RGBColor sample_f(const ShadeRec& sr, Vector3D& wi, const Vector3D& wo, float& pdf);
-	virtual RGBColor rho(const ShadeRec& sr, const Vector3D& wo);
+	virtual RGBColor rho(const ShadeRec& sr, const Vector3D& wo) const;
 private:
 	// Diffuse Reflection Coefficient
 	float kd;
@@ -60,10 +60,10 @@ inline void Lambertian::setCD(const float c)
 	cd.b = c;
 }
 
-inline RGBColor Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi)
+inline RGBColor Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const
 {
 	return kd * cd * INV_PI;
 }
 
 
-#endif // __LAMBERTIAN__
+#endif // LAMBERTIAN_H
