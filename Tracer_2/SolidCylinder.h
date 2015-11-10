@@ -18,8 +18,8 @@ public:
 
 	virtual AABB getAABB();
 	
-	virtual bool SolidCylinder::hit(const Ray& ray, double& tMin, ShadeRec& sr) const;
-	virtual bool SolidCylinder::shadowHit(const Ray& ray, double& tMin) const;
+	virtual bool hit(const Ray& ray, double& tMin, ShadeRec& sr) const;
+	virtual bool shadowHit(const Ray& ray, double& tMin) const;
 };
 
 #endif // SOLID_CYLINDER_H

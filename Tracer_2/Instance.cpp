@@ -1,5 +1,6 @@
 #include "Constants.h"
 #include "Instance.h"
+#include <cmath>
 
 // Declare static transformation matrix
 Matrix Instance::transformation;

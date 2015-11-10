@@ -79,4 +79,4 @@ inline void Phong::setCD(const float c)
 	diffuse_brdf->setCD(c);
 }
 
-#endif PHONG_H
+#endif //PHONG_H

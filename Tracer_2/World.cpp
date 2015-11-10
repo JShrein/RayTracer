@@ -46,10 +46,18 @@
 #include <string>
 #include <sstream>
 
+using std::vector;
+using std::cout;
+using std::endl;
+using std::string;
+using std::cin;
+
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
-void initMPI(int argc, char *argv[]);
-void shutdownMPI();
+//void initMPI(int argc, char *argv[]);
+//void shutdownMPI();
+int rank;
+int size;
 
 #ifdef __linux__
 #include <mpi.h>
@@ -75,12 +83,6 @@ void initMPI(int argc, char *argv[])
 void shutdownMPI()
 { }
 #endif
-
-using std::vector;
-using std::cout;
-using std::endl;
-using std::string;
-using std::cin;
 
 
 // Build output file
@@ -546,14 +548,28 @@ void World::build()
 	occluder_ptr->setSampler(sampler_ptr);
 	setAmbientLight(occluder_ptr);
 
-	Pinhole* pinhole_ptr = new Pinhole();
-	pinhole_ptr->setEyePos(0, 24, 56);
-	pinhole_ptr->setLookAt(0, 1, 0);
-	pinhole_ptr->setDistance(5000);
-	pinhole_ptr->setRoll(0);
-	pinhole_ptr->computeUVW();
-	setCamera(pinhole_ptr);
-
+	    
+    if (usingMPI)
+	{
+	    PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
+	    distPinhole_ptr->setEyePos(0,24,56);
+	    distPinhole_ptr->setLookAt(0,1,0);
+	    distPinhole_ptr->setDistance(5000);
+	    distPinhole_ptr->setRoll(0);
+	    distPinhole_ptr->computeUVW();
+	    setCamera(distPinhole_ptr);
+	}
+    else 
+    {
+        Pinhole* pinhole_ptr = new Pinhole();
+	    pinhole_ptr->setEyePos(0, 24, 56);
+	    pinhole_ptr->setLookAt(0, 1, 0);
+	    pinhole_ptr->setDistance(5000);
+	    pinhole_ptr->setRoll(0);
+	    pinhole_ptr->computeUVW();
+	    setCamera(pinhole_ptr);
+    }
+    
 	PointLight* pointLight_ptr = new PointLight;
 	pointLight_ptr->setPos(100, 100, 100);
 	pointLight_ptr->scaleRadiance(0.01f);
@@ -885,7 +901,7 @@ int main()
 		
 		w.camera_ptr->renderScene(w);
 		cout << "Scene rendered, writing to file\n";
-		writeImage(w.vp.hRes, w.vp.vRes, w.rank);
+		writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
 		
 	//}
 
@@ -904,7 +920,7 @@ void writeImage(int width, int height, int rank)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = rank;//0;
 	string extension = ".ppm";
