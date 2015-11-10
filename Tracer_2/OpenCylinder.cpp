@@ -1,4 +1,5 @@
 #include "OpenCylinder.h"
+#include <cmath>
 
 // This uses the value of kEpsilon defined in Constants.h
 // default constructor

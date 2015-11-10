@@ -527,7 +527,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 256;
+	int numSamples = 1;
 
 	vp.setHres(512);
 	vp.setVres(512);
@@ -696,7 +696,7 @@ void World::build()
 	//cylinder_ptr->setMat(reflective_ptr);
 	//addObject(cylinder_ptr);
 
-	SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 3, 0.75);
+	SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
 	solidCylinder_ptr->setMat(reflective_ptr);
 	addObject(solidCylinder_ptr);
 	
@@ -765,7 +765,7 @@ void World::build()
 	reflective_ptr->setCR(white);
 	reflective_ptr->setKR(1.0);
 
-	Sphere* sphere_ptr = new Sphere(Point3D(0, 3, 0), 1);
+	Sphere* sphere_ptr = new Sphere(Point3D(0, 3.15, 0), 1);
 	sphere_ptr->setMat(reflective_ptr);
 	addObject(sphere_ptr);
 

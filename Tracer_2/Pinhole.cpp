@@ -1,6 +1,8 @@
 #include "Constants.h"
 #include "Pinhole.h"
 #include <stdio.h>
+#include <ctime>
+#include <iostream>
 
 Pinhole::Pinhole()
 	: Camera(),
@@ -62,6 +64,11 @@ Vector3D Pinhole::getDir(const Point2D& p) const
 
 void Pinhole::renderScene(World& w)
 {
+	clock_t		startTime;
+	clock_t		currentTime;
+	clock_t		endTime;
+	float		totalTime;
+
 	RGBColor	pixelColor;
 	ViewPlane	vp(w.vp);
 	Ray			ray;
@@ -74,6 +81,10 @@ void Pinhole::renderScene(World& w)
 
 	vp.s /= zoom;
 	ray.o = eyePos;
+
+
+	// Start timer
+	startTime = clock();
 
 	// vertical image coord
 	for (int r = 0; r < vp.vRes; r++) {
@@ -94,6 +105,14 @@ void Pinhole::renderScene(World& w)
 			pixelColor /= (float)vp.numSamples;
 			pixelColor *= exposureTime;
 			w.displayPixel(r, c, pixelColor);
+
+			// Update interactive timer
 		}
 	}
+
+	// stop clock
+	endTime = clock();
+	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
+	
+	std::cout << "Render completed in " << totalTime << " ms" << std::endl;
 }

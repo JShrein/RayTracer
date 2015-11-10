@@ -1,5 +1,7 @@
 #include "Constants.h"
 #include "PinholeMPI.h"
+#include <ctime>
+#include <iostream>
 
 
 PinholeMPI::PinholeMPI(int _rank, int _size)
@@ -86,6 +88,11 @@ void PinholeMPI::renderScene(World& w)
     int hStart = rank % 4 * blockSize;
     int hEnd = rank%4 * blockSize + blockSize;;
 
+	clock_t		startTime;
+	clock_t		currentTime;
+	clock_t		endTime;
+	float		totalTime;
+
 	RGBColor	pixelColor;
 	ViewPlane	vp(w.vp);
 	Ray			ray;
@@ -96,6 +103,9 @@ void PinholeMPI::renderScene(World& w)
 
 	vp.s /= zoom;
 	ray.o = eyePos;
+
+	// Start timer
+	startTime = clock();
 
 	// vertical image coord
 	for (int r = vStart; r < vEnd; r++) {
@@ -117,4 +127,10 @@ void PinholeMPI::renderScene(World& w)
 			w.displayPixel(r, c, pixelColor);
 		}
 	}
+
+	// stop clock
+	endTime = clock();
+	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
+
+	std::cout << "Render completed in " << totalTime << " ms" << std::endl;
 }
