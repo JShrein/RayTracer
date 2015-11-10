@@ -1,48 +1,57 @@
 #include "Plane.h"
 
-const double Plane::kEpsilon = 0.001;
+const double Plane::kEpsilon = 0.00001;
 
 Plane::Plane()
-	: GeometricObject(), point(0.0), normal(0, 1, 0)
+	: GeometricObject(), 
+	point(0.0), 
+	normal(0, 1, 0)
 { }
 
 Plane::Plane(const Point3D& p, const Normal& n)
-	: GeometricObject(), point(p), normal(n)
+	: GeometricObject(), 
+	point(p), 
+	normal(n)
 {
 	normal.normalize();
 }
 
-Plane::Plane(const Plane& plane)
-	: GeometricObject(plane), point(plane.point), normal(plane.normal)
+Plane::Plane(const Plane& p)
+	: GeometricObject(p), 
+	point(p.point), 
+	normal(p.normal)
 { }
 
 
 // Clone
-Plane* Plane::clone(void) const {
-	return (new Plane(*this));
+Plane* Plane::clone() const 
+{
+	return new Plane(*this);
 }
 
 // Assignment operator
-Plane& Plane::operator= (const Plane& rhs)	{
+Plane& Plane::operator= (const Plane& p)	
+{
 
-	if (this == &rhs)
+	if (this == &p)
 		return (*this);
 
-	GeometricObject::operator= (rhs);
+	GeometricObject::operator= (p);
 
-	point = rhs.point;
-	normal = rhs.normal;
+	point = p.point;
+	normal = p.normal;
 
-	return (*this);
+	return *this;
 }
 
 // destructor
-Plane::~Plane(void)
+Plane::~Plane()
 { }
 
 
 // Hit
-bool Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
+bool Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const 
+{
 	float t = float((point - ray.o) * normal / (ray.d * normal));
 
 	if (t > kEpsilon) {
@@ -56,9 +65,9 @@ bool Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	return(false);
 }
 
-bool Plane::shadowHit(const Ray& ray, float& tMin) const
+bool Plane::shadowHit(const Ray& ray, double& tMin) const
 {
-	float t = (point - ray.o) * normal / (ray.d * normal);
+	double t = (point - ray.o) * normal / (ray.d * normal);
 
 	if (t > kEpsilon) {
 		tMin = t;

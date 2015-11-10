@@ -1,6 +1,6 @@
 /*
-#ifndef __ORTHOGRAPHIC__
-#define __ORTHOGRAPHIC__
+#ifndef ORTHOGRAPHIC_H
+#define ORTHOGRAPHIC_H
 
 //#include "Camera.h"
 
@@ -11,5 +11,5 @@ public:
 
 };
 
-#endif // __ORTHOGRAPHIC__
+#endif // ORTHOGRAPHIC_H
 */

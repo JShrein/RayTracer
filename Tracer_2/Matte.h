@@ -1,5 +1,5 @@
-#ifndef __MATTE__
-#define __MATTE__
+#ifndef MATTE_H
+#define MATTE_H
 
 #include "Material.h"
 #include "Lambertian.h"
@@ -11,11 +11,11 @@ public:
 	Matte();
 	Matte(const Matte& m);
 
-	virtual Material* clone(void) const;
+	virtual Material* clone() const;
 
-	Matte& operator= (const Matte& rhs);
+	Matte& operator= (const Matte& matte);
 
-	~Matte(void);
+	~Matte();
 
 	void setKA(const float k);
 	void setKD(const float k);
@@ -67,4 +67,4 @@ inline void Matte::setCD(const float c)
 }
 
 
-#endif
+#endif // MATTE_H

@@ -1,6 +1,6 @@
 /*
-#ifndef __FISHEYE__
-#define __FISHEYE__
+#ifndef FISHEYE_H
+#define FISHEYE_H
 
 #include "Camera.h"
 
@@ -11,6 +11,6 @@ public:
 
 };
 
-#endif // __FISHEYE__
+#endif // FISHEYE_H
 
 */

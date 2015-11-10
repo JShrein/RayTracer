@@ -9,7 +9,7 @@ public:
 	Jittered(const int numSamples);
 	Jittered(const int numSamples, const int m);
 	Jittered(const Jittered& u);
-	Jittered& operator= (const Jittered& rhs);
+	Jittered& operator= (const Jittered& j);
 
 	virtual Jittered* clone() const;
 	virtual ~Jittered();

@@ -21,11 +21,11 @@ NRooks::NRooks(const NRooks& nr)
 }
 
 // Ass op
-NRooks& NRooks::operator= (const NRooks& rhs) {
-	if (this == &rhs)
+NRooks& NRooks::operator= (const NRooks& rook) {
+	if (this == &rook)
 		return *this;
 
-	Sampler::operator=(rhs);
+	Sampler::operator=(rook);
 
 	return *this;
 }

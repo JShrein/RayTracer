@@ -1,7 +1,7 @@
 #include "Sphere.h"
 #include <cmath>
 
-const double Sphere::kEpsilon = 0.001;
+const double Sphere::kEpsilon = 0.00001;
 
 // Default Constructor
 Sphere::Sphere()
@@ -29,15 +29,15 @@ Sphere::Sphere(const Sphere& sphere)
 { }
 
 // Assignment operator
-Sphere& Sphere::operator=(const Sphere& rhs)
+Sphere& Sphere::operator=(const Sphere& s)
 {
-	if (this == &rhs)
+	if (this == &s)
 		return *this;
 
-	GeometricObject::operator=(rhs);
+	GeometricObject::operator=(s);
 
-	center = rhs.center;
-	radius = rhs.radius;
+	center = s.center;
+	radius = s.radius;
 
 	return *this;
 }
@@ -88,7 +88,7 @@ bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	return false;
 }
 
-bool Sphere::shadowHit(const Ray& ray, float& tMin) const
+bool Sphere::shadowHit(const Ray& ray, double& tMin) const
 {
 	double t;
 	Vector3D temp = ray.o - center;

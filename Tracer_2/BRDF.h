@@ -1,5 +1,5 @@
-#ifndef __BRDF__
-#define __BRDF__
+#ifndef BRDF_H
+#define BRDF_H
 
 #include "ShadeRec.h"
 #include "Sampler.h"
@@ -13,7 +13,7 @@ public:
 	BRDF(const BRDF& brdf);
 	virtual ~BRDF();
 
-	virtual BRDF* clone(void)const = 0;
+	virtual BRDF* clone()const = 0;
 	BRDF& operator=(const BRDF& brdf);
 
 	// Need a pointer to a sampler
@@ -35,4 +35,4 @@ protected:
 	Sampler* sampler_ptr;
 };
 
-#endif // __BRDF__
+#endif // BRDF_H

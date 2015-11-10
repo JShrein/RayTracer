@@ -20,7 +20,7 @@ public:
 	Sampler(const Sampler& s);
 
 	// Assignment operator
-	Sampler& operator=(const Sampler& rhs);
+	Sampler& operator=(const Sampler& s);
 
 	// Clone
 	virtual Sampler* clone() const = 0;

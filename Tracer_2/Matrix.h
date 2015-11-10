@@ -1,5 +1,5 @@
-#ifndef __MATRIX__
-#define __MATRIX__
+#ifndef MATRIX_H
+#define MATRIX_H
 
 class Matrix {
 public:
@@ -13,7 +13,7 @@ public:
 	
 	Matrix operator*(const Matrix& mat) const;
 	Matrix operator/(const double c);
-	void set_identity();
+	void setIdentity();
 };
 
-#endif // __MATRIX__
+#endif // MATRIX_H

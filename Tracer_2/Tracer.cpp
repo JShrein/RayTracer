@@ -1,22 +1,23 @@
 #include "Tracer.h"
 
 // Constructors
-Tracer::Tracer(void)
+Tracer::Tracer()
 	: world_ptr(NULL)
-{}
+{ }
 
 Tracer::Tracer(World* _worldPtr)
 	: world_ptr(_worldPtr)
-{}
+{ }
 
 // Destructor
-Tracer::~Tracer(void) {
+Tracer::~Tracer() 
+{
 	if (world_ptr)
 		world_ptr = NULL;
 }
 
-
 // Trace Ray
+// Returns red to make errors apparent
 RGBColor Tracer::traceRay(const Ray& ray) const 
 {
 	return red;

@@ -15,7 +15,7 @@ public:
 private:
 	Point3D center;
 	double radius;
-	RGBColor color;
+	//RGBColor color;
 };
 
 #endif

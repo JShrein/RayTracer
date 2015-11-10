@@ -8,16 +8,16 @@ Material::Material(const Material& m)
 { }
 
 // Assignment operator
-Material& Material::operator= (const Material& rhs) 
+Material& Material::operator= (const Material& mat) 
 {
-	if (this == &rhs)
+	if (this == &mat)
 		return *this;
 
 	return *this;
 }
 
 // Destructor
-Material::~Material(void)
+Material::~Material()
 { }
 
 // Shade

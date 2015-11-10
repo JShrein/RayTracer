@@ -26,25 +26,22 @@ RGBColor::RGBColor(const RGBColor& c)
 	  b(c.b)
 { }
 
-
 // Destructor
 RGBColor::~RGBColor()
 { }
 
-
 // Assignment operator
-RGBColor& RGBColor::operator= (const RGBColor& rhs) 
+RGBColor& RGBColor::operator= (const RGBColor& c) 
 {
-	if (this == &rhs)
+	if (this == &c)
 		return *this;
 
-	r = rhs.r; 
-	g = rhs.g; 
-	b = rhs.b;
+	r = c.r; 
+	g = c.g; 
+	b = c.b;
 
 	return *this;
 }
-
 
 // Raise each color component to power p
 RGBColor RGBColor::powc(float p) const 

@@ -1,5 +1,5 @@
-#ifndef __PINHOLE__
-#define __PINHOLE__
+#ifndef PINHOLE_H
+#define PINHOLE_H
 
 //#include "Camera.h"
 #include "World.h"
@@ -46,4 +46,4 @@ inline void Pinhole::setZoom(const float zf)
 	zoom = zf;
 }
 
-#endif // __PINHOLE__
+#endif // PINHOLE_H

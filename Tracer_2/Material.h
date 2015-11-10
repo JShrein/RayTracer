@@ -1,5 +1,5 @@
-#ifndef __MATERIAL__
-#define __MATERIAL__
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #include "World.h"
 #include "RGBColor.h"
@@ -8,12 +8,12 @@
 class Material {
 public:
 
-	Material(void);
+	Material();
 	Material(const Material& material);
 
-	virtual Material* clone(void) const = 0;
+	virtual Material* clone() const = 0;
 
-	virtual ~Material(void);
+	virtual ~Material();
 
 	virtual RGBColor shade(ShadeRec& sr);
 	//virtual RGBColor shadeAreaLight(ShadeRec& sr);
@@ -21,7 +21,7 @@ public:
 	//virtual RGBColor shadePath(ShadeRec& sr);
 
 protected:
-	Material& operator= (const Material& rhs);
+	Material& operator= (const Material& mat);
 };
 
-#endif
+#endif // MATERIAL_H

@@ -11,11 +11,11 @@ public:
 	Phong();
 	Phong(const Phong& p);
 
-	virtual Material* clone(void) const;
+	virtual Material* clone() const;
 
 	Phong& operator= (const Phong& p);
 
-	~Phong(void);
+	~Phong();
 
 	void setKA(const float k);
 	void setKD(const float k);

@@ -1,7 +1,7 @@
 #include "Matte.h"
 
 // Constructors
-Matte::Matte(void)
+Matte::Matte()
 	: Material(),
 	  ambient_brdf(new Lambertian),
 	  diffuse_brdf(new Lambertian)
@@ -20,7 +20,7 @@ Matte::Matte(const Matte& m)
 }
 
 // Clone
-Material* Matte::clone(void) const
+Material* Matte::clone() const
 {
 	return new Matte(*this);
 }
@@ -53,7 +53,7 @@ Matte& Matte::operator= (const Matte& m)
 }
 
 // Destructor
-Matte::~Matte(void) {
+Matte::~Matte() {
 
 	if (ambient_brdf) {
 		delete ambient_brdf;
@@ -79,10 +79,10 @@ RGBColor Matte::shade(ShadeRec& sr) {
 
 		if (ndotwi > 0.0)
 		{
-			if (sr.w.lights[j]->attenuate)
+			if (sr.w.lights[j]->doAttenuation())
 			{
 				double r = (sr.w.lights[j]->getPos() - sr.localHitPoint).length();
-				r = pow(r, sr.w.lights[j]->p);
+				r = pow(r, sr.w.lights[j]->getAttenPower());
 				L += diffuse_brdf->f(sr, wo, wi) * sr.w.lights[j]->L(sr) / r * ndotwi;
 			}
 			else

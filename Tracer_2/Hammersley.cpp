@@ -17,11 +17,11 @@ Hammersley::Hammersley(const Hammersley& h)
 }
 
 // Assignment operator
-Hammersley& Hammersley::operator= (const Hammersley& rhs) {
-	if (this == &rhs)
+Hammersley& Hammersley::operator= (const Hammersley& h) {
+	if (this == &h)
 		return *this;
 
-	Sampler::operator=(rhs);
+	Sampler::operator=(h);
 
 	return *this;
 }

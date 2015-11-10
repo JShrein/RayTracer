@@ -2,7 +2,7 @@
 
 // ---------------------------------------------------------------- default constructor
 
-MultiJittered::MultiJittered(void)
+MultiJittered::MultiJittered()
 	: Sampler()
 {}
 
@@ -32,27 +32,27 @@ MultiJittered::MultiJittered(const MultiJittered& mjs)
 }
 
 // Assignment operator
-MultiJittered& MultiJittered::operator= (const MultiJittered& rhs)	{
-	if (this == &rhs)
+MultiJittered& MultiJittered::operator= (const MultiJittered& mj)	{
+	if (this == &mj)
 		return *this;
 
-	Sampler::operator=(rhs);
+	Sampler::operator=(mj);
 
 	return *this;
 }
 
 // Clone
-MultiJittered* MultiJittered::clone(void) const {
+MultiJittered* MultiJittered::clone() const {
 	return new MultiJittered(*this);
 }
 
 // ---------------------------------------------------------------- destructor			
 
-MultiJittered::~MultiJittered(void) {}
+MultiJittered::~MultiJittered() {}
 
 
 // Shuffle x Coords
-void MultiJittered::shuffleXCoords(void) {
+void MultiJittered::shuffleXCoords() {
 	for (int p = 0; p < numSets; p++) {
 		for (int i = 0; i < rootNumSamples; i++) {
 			for (int j = 0; j < rootNumSamples; j++) {
@@ -75,7 +75,7 @@ void MultiJittered::shuffleXCoords(void) {
 // Generate Samples
 // K. Chiu, P. Shirley, C. Wang. (1994). Multi-Jittered Sampling. Graphics Gems IV. Academic Press, Inc.
 void
-MultiJittered::generateSamples(void) {
+MultiJittered::generateSamples() {
 	// numSamples = rootNumSamples * rootNumSamples
 
 	//int n = (int)sqrt(numSamples);

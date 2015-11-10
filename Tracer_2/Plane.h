@@ -1,5 +1,5 @@
-#ifndef __PLANE__
-#define __PLANE__
+#ifndef PLANE_H
+#define PLANE_H
 
 #include "GeometricObject.h"
 
@@ -10,25 +10,26 @@ public:
 	Plane();
 	Plane(const Point3D& p, const Normal& n);
 	Plane(const Plane& plane);
-	Plane& operator=(const Plane& rhs);
+	Plane& operator=(const Plane& p);
 	virtual ~Plane();
 	Plane* clone() const;
 
-	void set_color(const RGBColor& c);
-	void set_color(const float r, const float g, const float b);
+	//void set_color(const RGBColor& c);
+	//void set_color(const float r, const float g, const float b);
 
 	virtual bool hit(const Ray& ray, double&t, ShadeRec& s) const;
-	bool shadowHit(const Ray& ray, float& tMin) const;
-	virtual RGBColor get_color();
+	bool shadowHit(const Ray& ray, double& tMin) const;
+	//virtual RGBColor get_color();
 
 
 private:
 	Point3D point;
 	Normal normal;
-	RGBColor color;
+	//RGBColor color;
 	static const double kEpsilon;
 };
 
+/*
 inline void Plane::set_color(const RGBColor& c)
 {
 	color = c;
@@ -43,5 +44,6 @@ inline RGBColor Plane::get_color()
 {
 	return color;
 }
+*/
 
-#endif // __PLANE__
+#endif // PLANE_H

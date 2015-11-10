@@ -1,5 +1,5 @@
-#ifndef __DIRECTIONAL__
-#define __DIRECTIONAL__
+#ifndef DIRECTIONAL_H
+#define DIRECTIONAL_H
 
 #include "Light.h"
 #include "Vector3D.h"
@@ -9,14 +9,15 @@
 #include "ShadeRec.h"
 
 
-class Directional : public Light {
+class Directional : public Light 
+{
 public:
 	Directional();
 	Directional(const Directional& dl);
-	virtual ~Directional(void);
+	virtual ~Directional();
 
-	virtual Directional* clone() const;
-	Directional& operator= (const Directional& rhs);
+	virtual Light* clone() const;
+	Directional& operator= (const Directional& dirLight);
 
 	void scaleRadiance(const float b);
 	void setColor(const float c);
@@ -72,6 +73,5 @@ inline void Directional::setDir(float dx, float dy, float dz)
 	dir.normalize();
 }
 
-
-#endif
+#endif // DIRECTIONAL_H
 

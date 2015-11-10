@@ -1,5 +1,5 @@
-#ifndef __WORLD__
-#define __WORLD__
+#ifndef WORLD_H
+#define WORLD_H
 
 #include <vector>
 
@@ -9,6 +9,7 @@
 #include "GeometricObject.h"
 #include "Light.h"
 #include "Ambient.h"
+#include "AmbientOccluder.h"
 #include "Sphere.h"
 #include "Ray.h"
 #include "SingleSphere.h"
@@ -38,11 +39,12 @@ public:
 	void addObject(GeometricObject* object_ptr);
 	void addLight(Light* light_ptr);
 
-	ShadeRec hitBareBonesObject(const Ray& ray);
+	//ShadeRec hitBareBonesObject(const Ray& ray);
 	ShadeRec hitObjects(const Ray& ray);
 
 	void setCamera(Camera* camera_ptr);
 	void setAmbientLight(Ambient* ambient_ptr);
+	void setAmbientLight(AmbientOccluder* ambient_ptr);
 
 	// Orthographic render
 	void renderScene() const;
@@ -50,7 +52,7 @@ public:
 	// Perspective render
 	void render_perspective() const;
 
-	void openWindow(const int hres, const int vres) const;
+	void openWindow(const int hRes, const int vRes) const;
 	void displayPixel(const int row, const int column, const RGBColor& pixelColor) const;
 
 	RGBColor maxToOne(const RGBColor& c) const;
@@ -79,4 +81,9 @@ inline void World::setAmbientLight(Ambient* amb_ptr)
 	ambient_ptr = amb_ptr;
 }
 
-#endif // __WORLD__
+inline void World::setAmbientLight(AmbientOccluder* amb_ptr)
+{
+	ambient_ptr = amb_ptr;
+}
+
+#endif // WORLD_H

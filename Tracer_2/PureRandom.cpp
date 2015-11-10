@@ -16,11 +16,11 @@ PureRandom::PureRandom(const PureRandom& r)
 }
 
 // Assignment Operator
-PureRandom& PureRandom::operator= (const PureRandom& rhs) {
-	if (this == &rhs)
+PureRandom& PureRandom::operator= (const PureRandom& pr) {
+	if (this == &pr)
 		return *this;
 
-	Sampler::operator=(rhs);
+	Sampler::operator=(pr);
 
 	return *this;
 }
@@ -35,7 +35,7 @@ PureRandom::~PureRandom() {}
 
 
 // Generate purely random samples
-void PureRandom::generateSamples(void) {
+void PureRandom::generateSamples() {
 	for (int p = 0; p < numSets; p++)
 		for (int q = 0; q < numSamples; q++)
 			samples.push_back(Point2D(randFloat(), randFloat()));

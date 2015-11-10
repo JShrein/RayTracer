@@ -62,7 +62,7 @@ inline void Lambertian::setCD(const float c)
 
 inline RGBColor Lambertian::f(const ShadeRec& sr, const Vector3D& wo, const Vector3D& wi) const
 {
-	return kd * cd * INV_PI;
+	return kd * cd * (float)INV_PI;
 }
 
 

@@ -1,5 +1,5 @@
-#ifndef __MATHS__
-#define __MATHS__
+#ifndef MATHS_H
+#define MATHS_H
 
 #include "Constants.h"
 #include <random>
@@ -10,6 +10,8 @@
 inline double toRads(double angle);
 inline double toDegs(double angle);
 inline double max(double x0, double x1);
+inline double max3(const double a, const double b, const double c); // 3-way max
+inline double min3(const double a, const double b, const double c); // 3-way min
 inline double min(double x0, double x1);
 inline void rand_seed(unsigned int seed);
 
@@ -37,6 +39,18 @@ inline double toDegs(double angle)
 inline double max(double x0, double x1)
 {
 	return x0 > x1 ? x0 : x1;
+}
+
+inline double max3(const double a, const double b, const double c)
+{
+	double m = max(a, b);
+	return max(c, m);
+}
+
+inline double min3(const double a, const double b, const double c)
+{
+	double m = min(a, b);
+	return min(c, m);
 }
 
 inline double min(double x0, double x1)
@@ -83,4 +97,4 @@ inline float randInt(int a, int b)
 
 //*************************************************
 
-#endif
+#endif // MATHS_H

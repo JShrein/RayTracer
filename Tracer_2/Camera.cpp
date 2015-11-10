@@ -33,17 +33,17 @@ Camera::Camera(const Camera& c)
 	  exposureTime(1.0)
 { }
 
-Camera& Camera::operator=(const Camera& rhs)
+Camera& Camera::operator=(const Camera& cam)
 {
-	if (this == &rhs)
+	if (this == &cam)
 		return *this;
-	eyePos = rhs.eyePos;
-	lookAt = rhs.lookAt;
-	roll = rhs.roll;
-	u = rhs.u;
-	v = rhs.v;
-	w = rhs.w;
-	exposureTime = rhs.exposureTime;
+	eyePos = cam.eyePos;
+	lookAt = cam.lookAt;
+	roll = cam.roll;
+	u = cam.u;
+	v = cam.v;
+	w = cam.w;
+	exposureTime = cam.exposureTime;
 
 	return *this;
 }

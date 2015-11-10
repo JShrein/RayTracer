@@ -1,6 +1,6 @@
 /*
-#ifndef __STEREO__
-#define __STEREO__
+#ifndef STEREO_H
+#define STEREO_H
 
 #include "Camera.h"
 
@@ -11,5 +11,5 @@ public:
 
 };
 
-#endif // __STEREO__
+#endif // STEREO_H
 */

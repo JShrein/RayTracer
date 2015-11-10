@@ -11,7 +11,7 @@ public:
 	PureRandom(const PureRandom& r);
 
 	// Assign op
-	PureRandom& operator= (const PureRandom& rhs);
+	PureRandom& operator= (const PureRandom& pr);
 
 	virtual PureRandom* clone() const;
 

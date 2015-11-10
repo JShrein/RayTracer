@@ -1,7 +1,7 @@
 #include "Directional.h"
 
 // Constructor
-Directional::Directional(void)
+Directional::Directional()
 	: Light(),
 	ls(1.0),
 	color(1.0),
@@ -16,7 +16,7 @@ Directional::Directional(const Directional& dl)
 { }
 
 // Clone
-Directional* Directional::clone(void) const 
+Light* Directional::clone() const 
 {
 	return new Directional(*this);
 }
@@ -37,7 +37,7 @@ Directional& Directional::operator= (const Directional& directional)
 }
 
 // Destructor
-Directional::~Directional(void) 
+Directional::~Directional() 
 { }
 
 // Get direction

@@ -5,7 +5,7 @@
 #include <iostream>
 
 // Constructor
-RayCast::RayCast(void)
+RayCast::RayCast()
 	: Tracer()
 { }
 
@@ -14,7 +14,7 @@ RayCast::RayCast(World* _worldPtr)
 { }
 
 // Destructor
-RayCast::~RayCast(void) 
+RayCast::~RayCast() 
 { }
 
 

@@ -3,18 +3,16 @@
 #include "ShadeRec.h"
 
 // Constructors
-SingleSphere::SingleSphere(void)
+SingleSphere::SingleSphere()
 	: Tracer()
-{}
+{ }
 
 SingleSphere::SingleSphere(World* _worldPtr)
 	: Tracer(_worldPtr)
-{}
-
+{ }
 
 // Destructor
-SingleSphere::~SingleSphere(void) {}
-
+SingleSphere::~SingleSphere() {}
 
 // Trace Ray
 RGBColor SingleSphere::traceRay(const Ray& ray) const {

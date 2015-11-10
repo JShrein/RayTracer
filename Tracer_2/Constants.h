@@ -1,8 +1,11 @@
-#ifndef __CONSTANTS__
-#define __CONSTANTS__
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 #include <stdlib.h>
 #include "RGBColor.h"
+
+//typedef float FLOAT;
+//typedef double FLOAT;
 
 const double 	PI = 3.1415926535897932384;
 const double 	TWO_PI = 6.2831853071795864769;
@@ -26,4 +29,4 @@ const RGBColor yellow(1.0, 1.0, 0.0);
 
 const float 	INV_RAND_MAX = 1.0f / (float)RAND_MAX;
 
-#endif
+#endif // CONSTANTS_H

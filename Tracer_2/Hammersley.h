@@ -11,7 +11,7 @@ public:
 	Hammersley(const Hammersley& r);
 	
 	// Assignment op
-	Hammersley& operator= (const Hammersley& rhs);
+	Hammersley& operator= (const Hammersley& h);
 
 	virtual Hammersley* clone() const;
 

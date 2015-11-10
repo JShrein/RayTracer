@@ -1,5 +1,5 @@
-#ifndef __VIEWPLANE__
-#define __VIEWPLANE__
+#ifndef VIEWPLANE_H
+#define VIEWPLANE_H
 
 #include "Sampler.h"
 #include "Hammersley.h"
@@ -9,67 +9,76 @@
 #include "Regular.h"
 #include "PureRandom.h"
 
-class ViewPlane {
+class ViewPlane 
+{
 public:
-	int hres;
-	int vres;
+	int hRes;
+	int vRes;
 	float s;
 	int numSamples;
 	int rootNumSamples;
+	int maxDepth;
 	float gamma;
-	float inv_gamma;
+	float invGamma;
 	Sampler* sampler_ptr;
-	bool show_out_of_gamut;
+	bool showOutOfGamut;
 
 	ViewPlane();
 	ViewPlane(const ViewPlane& vp);
-	ViewPlane& operator= (const ViewPlane& rhs);
+	ViewPlane& operator= (const ViewPlane& vp);
 	~ViewPlane();
 
-	void set_hres(const int h_res);
-	void set_vres(const int v_res);
-	void set_pixel_size(const float size);
-	void set_gamma(const float g);
-	void set_gamut_display(const bool show);
+	void setHres(const int hRes);
+	void setVres(const int v_res);
+	void setPixelSize(const float size);
+	void setMaxDepth(const int md);
+	void setGamma(const float g);
+	void setGamutDisplay(const bool show);
 
 	// Handle sampling
 	void setSampler(Sampler* sp);
-	void set_samples(const int n);
+	void setSamples(const int n);
 };
 
-// set_hres
-inline void ViewPlane::set_hres(const int h_res) {
-	hres = h_res;
+// setHres
+inline void ViewPlane::setHres(const int _hRes) 
+{
+	hRes = _hRes;
 }
 
 
-// set_vres
-
-inline void ViewPlane::set_vres(const int v_res) {
-	vres = v_res;
+// setVres
+inline void ViewPlane::setVres(const int _vRes) 
+{
+	vRes = _vRes;
 }
 
 
-// set_pixel_size
-
-inline void ViewPlane::set_pixel_size(const float size) {
+// Set pixel size (default 1)
+inline void ViewPlane::setPixelSize(const float size) 
+{
 	s = size;
 }
 
+// Set max recursion depth
+inline void ViewPlane::setMaxDepth(const int md)
+{
+	maxDepth = md;
+}
 
-// ------------------------------------------------------------------------------ set_gamma
-
-
-inline void ViewPlane::set_gamma(const float g) {
+// Set gamma correction
+inline void ViewPlane::setGamma(const float g) 
+{
 	gamma = g;
-	inv_gamma = float(1.0 / gamma);
+	invGamma = float(1.0 / gamma);
 }
 
 
-// ------------------------------------------------------------------------------ set_gamut_display
-inline void ViewPlane::set_gamut_display(const bool show) {
-	show_out_of_gamut = show;
+// Show pixels that are out of gamut
+inline void ViewPlane::setGamutDisplay(const bool show) 
+{
+	showOutOfGamut = show;
 }
 
 
-#endif // __VIEWPLANE__
+#endif // VIEWPLANE_H

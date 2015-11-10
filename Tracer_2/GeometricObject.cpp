@@ -8,8 +8,7 @@ GeometricObject::GeometricObject()
 { }
 
 GeometricObject::GeometricObject(const GeometricObject& object) 
-	: color(object.color),
-	  mat_ptr(object.mat_ptr)
+	: mat_ptr(object.mat_ptr)
 { }
 
 GeometricObject& GeometricObject::operator=(const GeometricObject& obj) {
@@ -44,7 +43,20 @@ void GeometricObject::setMat(Material* material_ptr)
 	mat_ptr = material_ptr;
 }
 
-bool GeometricObject::shadowHit(const Ray& ray, float& tMin) const
+bool GeometricObject::shadowHit(const Ray& ray, double& tMin) const
 {
 	return false;
+}
+
+void GeometricObject::addObject(GeometricObject* object_ptr) 
+{ }
+
+// set axis-aligned bounding box
+void GeometricObject::setAABB() 
+{ }
+
+// get axis-aligned bounding box
+AABB GeometricObject::getAABB() 
+{
+	return AABB();
 }

@@ -1,7 +1,7 @@
 #include "Phong.h"
 
 // Constructors
-Phong::Phong(void)
+Phong::Phong()
 	: Material(),
 	ambient_brdf(new Lambertian),
 	diffuse_brdf(new Lambertian),
@@ -25,7 +25,7 @@ Phong::Phong(const Phong& m)
 }
 
 // Clone
-Material* Phong::clone(void) const
+Material* Phong::clone() const
 {
 	return new Phong(*this);
 }
@@ -66,7 +66,7 @@ Phong& Phong::operator= (const Phong& m)
 }
 
 // Destructor
-Phong::~Phong(void) {
+Phong::~Phong() {
 
 	if (ambient_brdf) {
 		delete ambient_brdf;
@@ -128,13 +128,22 @@ RGBColor Phong::shade(ShadeRec& sr) {
 		{
 			bool inShadow = false;
 			if (sr.w.lights[j]->castShadows()) {
-				Ray shadowRay(sr.hit_point, wi);
+				Ray shadowRay(sr.hitPoint, wi);
 				inShadow = sr.w.lights[j]->inShadow(shadowRay, sr);
 			}
 
 			if (!inShadow)
 			{
-				L += (diffuse_brdf->f(sr, wo, wi) + specular_brdf->f(sr, wo, wi)) * sr.w.lights[j]->L(sr) * ndotwi;
+				if (sr.w.lights[j]->doAttenuation())
+				{
+					double r = (sr.w.lights[j]->getPos() - sr.localHitPoint).length();
+					r = pow(r, sr.w.lights[j]->getAttenPower());
+					L += (diffuse_brdf->f(sr, wo, wi) + specular_brdf->f(sr, wo, wi)) * sr.w.lights[j]->L(sr) / r * ndotwi;
+				}
+				else
+				{
+					L += (diffuse_brdf->f(sr, wo, wi) + specular_brdf->f(sr, wo, wi)) * sr.w.lights[j]->L(sr) * ndotwi;
+				}
 			}
 		}
 	}

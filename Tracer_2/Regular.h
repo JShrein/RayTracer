@@ -11,7 +11,7 @@ public:
 	Regular(const Regular& u);
 
 	// Assign op
-	Regular& operator= (const Regular& rhs);
+	Regular& operator= (const Regular& reg);
 
 	virtual Regular* clone() const;
 

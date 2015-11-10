@@ -1,7 +1,7 @@
 #include "Ambient.h"
 
 // Constructor
-Ambient::Ambient(void)
+Ambient::Ambient()
 	: Light(),
 	ls(1.0),
 	color(1.0) // White light by default
@@ -14,26 +14,26 @@ Ambient::Ambient(const Ambient& a)
 { }
 
 // Clone
-Light* Ambient::clone(void) const 
+Light* Ambient::clone() const 
 {
 	return new Ambient(*this);
 }
 
 // Assignment operator
-Ambient& Ambient::operator= (const Ambient& rhs) {
-	if (this == &rhs)
+Ambient& Ambient::operator= (const Ambient& amb) {
+	if (this == &amb)
 		return *this;
 
-	Light::operator= (rhs);
+	Light::operator= (amb);
 
-	ls = rhs.ls;
-	color = rhs.color;
+	ls = amb.ls;
+	color = amb.color;
 
 	return *this;
 }
 
 // Destructor
-Ambient::~Ambient(void) 
+Ambient::~Ambient() 
 { }
 
 // Get direction

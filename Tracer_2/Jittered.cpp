@@ -21,11 +21,11 @@ Jittered::Jittered(const Jittered& js)
 }
 
 // Assignment operator
-Jittered& Jittered::operator= (const Jittered& rhs) {
-	if (this == &rhs)
+Jittered& Jittered::operator= (const Jittered& j) {
+	if (this == &j)
 		return *this;
 
-	Sampler::operator= (rhs);
+	Sampler::operator= (j);
 
 	return *this;
 }

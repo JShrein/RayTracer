@@ -1,19 +1,19 @@
-#ifndef __SINGLE_SPHERE__
-#define __SINGLE_SPHERE__
+#ifndef SINGLE_SPHERE_H
+#define SINGLE_SPHERE_H
 
 #include "Tracer.h"
 
 class SingleSphere : public Tracer {
 public:
 
-	SingleSphere(void);
+	SingleSphere();
 
 	SingleSphere(World* _worldPtr);
 
-	virtual ~SingleSphere(void);
+	virtual ~SingleSphere();
 
 	virtual RGBColor traceRay(const Ray& ray) const;
 	virtual RGBColor traceRay(const Ray ray, const int depth) const;
 };
 
-#endif
+#endif // SINGLE_SPHERE_H

@@ -18,11 +18,11 @@ Regular::Regular(const Regular& u)
 }
 
 // Assignment operator
-Regular& Regular::operator= (const Regular& rhs)	{
-	if (this == &rhs)
+Regular& Regular::operator= (const Regular& reg)	{
+	if (this == &reg)
 		return *this;
 
-	Sampler::operator= (rhs);
+	Sampler::operator= (reg);
 
 	return *this;
 }

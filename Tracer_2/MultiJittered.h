@@ -6,21 +6,21 @@
 class MultiJittered : public Sampler {
 public:
 	// Ctor
-	MultiJittered(void);
+	MultiJittered();
 	MultiJittered(const int numSamples);
 	MultiJittered(const int numSamples, const int numSets);
 	MultiJittered(const MultiJittered& mjs);
 
 	// Assignment op
-	MultiJittered& operator= (const MultiJittered& rhs);
+	MultiJittered& operator= (const MultiJittered& mj);
 
-	virtual MultiJittered* clone(void) const;
+	virtual MultiJittered* clone() const;
 	void shuffleXCoords();
 
 	// Dtor
-	virtual ~MultiJittered(void);
+	virtual ~MultiJittered();
 private:
-	virtual void generateSamples(void);
+	virtual void generateSamples();
 };
 
 #endif // __MULTI_JITTERED__

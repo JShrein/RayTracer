@@ -77,7 +77,7 @@ void PinholeMPI::renderScene(World& w)
 {
 	// num rendering blocks = 16
 	// block size = (2imageSize / MPISize)^2 (assuming square image for now)
-	int blockSize = w.vp.hres / (size/4); // 512 / 16 = 32, 32*32 block size
+	int blockSize = w.vp.hRes / (size/4); // 512 / 16 = 32, 32*32 block size
 
 
 	// for now, vertical and horizontal render range
@@ -106,8 +106,8 @@ void PinholeMPI::renderScene(World& w)
             for (int j = 0; j < vp.numSamples; j++)	
             {
 				sample = vp.sampler_ptr->sampleUnitSquare();
-				pp.x = vp.s * (c - 0.5f * vp.hres + sample.x);
-				pp.y = vp.s * (r - 0.5f * vp.vres + sample.y);
+				pp.x = vp.s * (c - 0.5f * vp.hRes + sample.x);
+				pp.y = vp.s * (r - 0.5f * vp.vRes + sample.y);
 				ray.d = getDir(pp);
 				pixelColor += w.tracer_ptr->traceRay(ray, depth);
 			}

@@ -1,5 +1,5 @@
-#ifndef __AMBIENT__
-#define __AMBIENT__
+#ifndef AMBIENT_H
+#define AMBIENT_H
 
 #include "Light.h"
 
@@ -9,8 +9,8 @@ public:
 	Ambient();
 	Ambient(const Ambient& a);
 	virtual Light* clone() const;
-	Ambient& operator= (const Ambient& rhs);
-	virtual ~Ambient(void);
+	Ambient& operator= (const Ambient& amb);
+	virtual ~Ambient();
 	void scale_radiance(const float b);
 	void setColor(const float c);
 	void setColor(const RGBColor& c);
@@ -51,4 +51,4 @@ inline void Ambient::setColor(const float r, const float g, const float b)
 }
 
 
-#endif
+#endif // AMBIENT_H

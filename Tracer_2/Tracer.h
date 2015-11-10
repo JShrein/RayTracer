@@ -1,10 +1,5 @@
-// This is the declaration of the base class Tracer
-// The tracer classes have no copy constructor, assignment operator. or clone function because 
-// of the world pointer, which should not be assigned or copy constructed
-// See comments in the World.h file.
-
-#ifndef __TRACER__
-#define __TRACER__
+#ifndef TRACER_H
+#define TRACER_H
 
 #include "Constants.h"
 #include "Ray.h"
@@ -12,12 +7,13 @@
 
 class World;
 
+// NOTE:***Do not copy-construct or clone Tracer, can't have multiple instances of World***
 class Tracer {
 public:
-	Tracer(void);
+	Tracer();
 	Tracer(World* _world_ptr);
 
-	virtual ~Tracer(void);
+	virtual ~Tracer();
 
 	virtual RGBColor traceRay(const Ray& ray) const;
 	virtual RGBColor traceRay(const Ray ray, const int depth) const;
@@ -27,4 +23,4 @@ protected:
 	World* world_ptr;
 };
 
-#endif
+#endif // TRACER_H

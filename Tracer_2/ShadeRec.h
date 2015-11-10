@@ -1,5 +1,5 @@
-#ifndef __SHADE_REC__
-#define __SHADE_REC__
+#ifndef SHADE_REC_H
+#define SHADE_REC_H
 
 #include "Constants.h"
 
@@ -17,7 +17,7 @@ class ShadeRec {
 public:
 	bool hitAnObject;
 	Material* mat_ptr;
-	Point3D hit_point;
+	Point3D hitPoint;
 	Point3D localHitPoint;
 	Normal normal;
 	Ray ray;
@@ -32,4 +32,4 @@ public:
 	~ShadeRec();
 };
 
-#endif // __SHADE_REC__
+#endif // SHADE_REC_H

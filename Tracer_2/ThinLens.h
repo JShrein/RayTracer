@@ -1,6 +1,6 @@
 /*
-#ifndef __THINLENS__
-#define __THINLENS__
+#ifndef THIN_LENS_H
+#define THIN_LENS_H
 
 #include "Camera.h"
 
@@ -11,5 +11,5 @@ public:
 
 };
 
-#endif // __THINLENS__
+#endif // THIN_LENS_H
 */

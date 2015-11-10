@@ -3,22 +3,31 @@
 
 // Geometric Objects
 #include "Plane.h"
+#include "Disk.h"
 #include "Sphere.h"
 #include "Cylinder.h"
+#include "OpenCylinder.h"
+#include "Box.h"
+#include "Triangle.h"
+#include "Instance.h"
+#include "SolidCylinder.h"
 
 // Materials
 #include "Matte.h"
 #include "Phong.h"
+#include "Reflective.h"
 
 // Lights
-#include "Ambient.h"
-#include "Point.h"
+//#include "Ambient.h"
+//#include "AmbientOccluder.h"
+#include "PointLight.h"
 #include "Directional.h"
 
 // Tracers
 #include "SingleSphere.h"
 #include "MultipleObjects.h"
 #include "Raycast.h"
+#include "Whitted.h"
 
 // Cameras
 #include "Pinhole.h"
@@ -47,6 +56,7 @@ void shutdownMPI();
 bool usingMPI = 1;
 void initMPI(int argc, char *argv[])
 {
+	cout << "Initializing MPI sub-system\n";
 	MPI_Init(&argc, &argv);
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -127,34 +137,34 @@ void World::renderScene() const {
 
 	int n = (int)(sqrt(vp.numSamples));
 
-	//openWindow(vp.hres, vp.vres);
+	//openWindow(vp.hRes, vp.vRes);
 	ray.d = Vector3D(0, 0, -1);
 
 	/*
-	for (int r = 0; r < vp.vres; r++)
+	for (int r = 0; r < vp.vRes; r++)
 	{
-		for (int c = 0; c < vp.hres; c++) {
-			x = vp.s * (c - vp.hres/2.0 - 0.5);
-			y = vp.s * (r - vp.vres/2.0 - 0.5);
+		for (int c = 0; c < vp.hRes; c++) {
+			x = vp.s * (c - vp.hRes/2.0 - 0.5);
+			y = vp.s * (r - vp.vRes/2.0 - 0.5);
 			ray.o = Point3D(x, y, zw);
 			pixelColor = tracer_ptr->traceRay(ray);
 			displayPixel(r, c, pixelColor);
 		}
 	}
 	*/
-	for (int r = 0; r < vp.vres; r++)
+	for (int r = 0; r < vp.vRes; r++)
 	{
-		for (int c = 0; c < vp.hres; c++) {
+		for (int c = 0; c < vp.hRes; c++) {
 			pixelColor = black;
 
 			// "Trace" a function
 			/*
 			for (int p = 0; p < vp.numSamples; p++)
 			{
-				//pp.x = vp.s * (c - 0.5f * vp.hres + randFloat());
-				//pp.y = vp.s * (r - 0.5f * vp.vres + randFloat());
-				pp.x = (c - 0.5f * vp.hres + randFloat()) * PI / 180;
-				pp.y = (r - 0.5f * vp.vres + randFloat()) * PI / 180;
+				//pp.x = vp.s * (c - 0.5f * vp.hRes + randFloat());
+				//pp.y = vp.s * (r - 0.5f * vp.vRes + randFloat());
+				pp.x = (c - 0.5f * vp.hRes + randFloat()) * PI / 180;
+				pp.y = (r - 0.5f * vp.vRes + randFloat()) * PI / 180;
 				//ray.o = Point3D(pp.x, pp.y, zw);
 				float z = 1.0f / 2.0f * sin(1 + sin(pp.x*pp.x*pp.y*pp.y));
 				//pixelColor += tracer_ptr->traceRay(ray);
@@ -166,8 +176,8 @@ void World::renderScene() const {
 			// Random sampling
 			for (int p = 0; p < vp.numSamples; p++)
 			{
-				pp.x = vp.s * (c - 0.5f * vp.hres + randFloat());
-				pp.y = vp.s * (r - 0.5f * vp.vres + randFloat());
+				pp.x = vp.s * (c - 0.5f * vp.hRes + randFloat());
+				pp.y = vp.s * (r - 0.5f * vp.vRes + randFloat());
 				ray.o = Point3D(pp.x, pp.y, zw);
 				pixelColor += tracer_ptr->traceRay(ray);
 			}
@@ -175,8 +185,8 @@ void World::renderScene() const {
 			/*
 			for (int p = 0; p < n; p++){
 				for (int q = 0; q < n; q++){
-					pp.x = vp.s * (c - 0.5f * vp.hres + (q + 0.5f) / n);
-					pp.y = vp.s * (r - 0.5f * vp.vres + (p + 0.5f) / n);
+					pp.x = vp.s * (c - 0.5f * vp.hRes + (q + 0.5f) / n);
+					pp.y = vp.s * (r - 0.5f * vp.vRes + (p + 0.5f) / n);
 					ray.o = Point3D(pp.x, pp.y, zw);
 					pixelColor += tracer_ptr->traceRay(ray);
 					
@@ -188,7 +198,7 @@ void World::renderScene() const {
 		}
 	}
 
-	writeImage(vp.hres, vp.vres, rank);
+	writeImage(vp.hRes, vp.vRes, rank);
 }
 
 // NO LONGER RENDER HERE, RENDER WITH TRACER OBJ
@@ -205,21 +215,21 @@ void World::render_perspective() const
 
 	ray.o = Point3D(0.0, -50.0, 750);
 	//ray.d = Vector3D(0, 0, -1);
-	for (int r = 0; r < vp.vres; r++)
+	for (int r = 0; r < vp.vRes; r++)
 	{
-		for (int c = 0; c < vp.hres; c++)
+		for (int c = 0; c < vp.hRes; c++)
 		{
 			pixelColor = black;
 			for (int j = 0; j < vp.numSamples; j++)
 			{
 				sample = vp.sampler_ptr->sampleUnitSquare();
-				pixelSample.x = vp.s * (c - 0.5f * vp.hres + sample.x);
-				pixelSample.y = vp.s * (r - 0.5f * vp.vres + sample.y);
+				pixelSample.x = vp.s * (c - 0.5f * vp.hRes + sample.x);
+				pixelSample.y = vp.s * (r - 0.5f * vp.vRes + sample.y);
 				//ray.o = Point3D(pixelSample.x, pixelSample.y, eye);
 				ray.d = Vector3D(pixelSample.x, pixelSample.y, -eye);
 				/*ray.d = Vector3D(
-					vp.s * (c - 0.5 * (vp.hres - 1.0)),
-					vp.s * (r - 0.5 * (vp.vres - 1.0)),
+					vp.s * (c - 0.5 * (vp.hRes - 1.0)),
+					vp.s * (r - 0.5 * (vp.vRes - 1.0)),
 					eye
 					);
 				*/
@@ -231,22 +241,22 @@ void World::render_perspective() const
 			displayPixel(r, c, pixelColor);
 		}
 	}
-	writeImage(vp.hres, vp.vres, rank);
+	writeImage(vp.hRes, vp.vRes, rank);
 }
 
 void World::displayPixel(const int row, const int column, const RGBColor& raw_color) const {
 	RGBColor mapped_color;
 	
-	if (vp.show_out_of_gamut)
+	if (vp.showOutOfGamut)
 		mapped_color = clampToColor(raw_color);
 	else
 		mapped_color = maxToOne(raw_color);
 
 	if (vp.gamma != 1.0)
-		mapped_color = mapped_color.powc(vp.inv_gamma);
+		mapped_color = mapped_color.powc(vp.invGamma);
 
 	int x = column;
-	int y = vp.vres - row - 1;
+	int y = vp.vRes - row - 1;
 
 	// THIS IS MEGA SLOW, DON'T DO IT!!!
 	//it = image.begin();
@@ -260,22 +270,22 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 	//image.push_back(colorToRange(mapped_color, 255));
 
 	// THIS IS MUCH FASTER 
-	image[x + y * vp.vres] = colorToRange(mapped_color, 255);
+	image[x + y * vp.vRes] = colorToRange(mapped_color, 255);
 }
 
 // Hit objects
 /*
 void World::build() {
-	vp.set_hres(400);
-	vp.set_vres(400);
-	vp.set_pixel_size(1.0);
-	vp.set_gamma(1.0);
+	vp.setHres(400);
+	vp.setVres(400);
+	vp.setPixelSize(1.0);
+	vp.setGamma(1.0);
 
 	backgroundColor = black;
 	tracer_ptr = new SingleSphere(this);
 
-	sphere.set_center(0.0);
-	sphere.set_radius(165.0);
+	sphere.setCenter(0.0);
+	sphere.setRadius(165.0);
 }
 */
 
@@ -307,19 +317,19 @@ void World::build()
 
 
 	cout << "In build function\n";
-	vp.set_hres(512);
-	vp.set_vres(512);
+	vp.setHres(512);
+	vp.setVres(512);
 	cout << "Instantiating new sampler\n";
 	Sampler* s = new Jittered(25);
 	cout << "Sampler built, setting in viewplane\n";
 	vp.setSampler(s);
 	cout << "Creating image vector\n";
-	image = vector<RGBColor>(vp.hres * vp.vres);
+	image = vector<RGBColor>(vp.hRes * vp.vRes);
 	cout << "Setting pixel size\n";
-	vp.set_pixel_size(1.0f);
-	//vp.set_samples(25);
+	vp.setPixelSize(1.0f);
+	//vp.setSamples(25);
 	cout << "Setting vp gamma\n";
-	vp.set_gamma(1.0);
+	vp.setGamma(1.0);
 
 	cout << "Setting ambient light source\n";
 
@@ -335,7 +345,7 @@ void World::build()
 
 
 	cout << "Creating new Point Light\n";
-	Point* pointLight_ptr = new Point;
+	PointLight* pointLight_ptr = new PointLight;
 	pointLight_ptr->setPos(200, 200, 200);
 	pointLight_ptr->scaleRadiance(0.01f);
 	//pointLight_ptr->setColor(1, 0, 0);
@@ -356,8 +366,8 @@ void World::build()
 
 	// use accessors to set sphere center and radius
 	Sphere* sphere_ptr = new Sphere;
-	sphere_ptr->set_center(-100, 80, 0);
-	sphere_ptr->set_radius(80);
+	sphere_ptr->setCenter(-100, 80, 0);
+	sphere_ptr->setRadius(80);
 	//sphere_ptr->set_color(1, 0, 0);
 	sphere_ptr->setMat(matte_ptr);
 	addObject(sphere_ptr);
@@ -423,23 +433,37 @@ void World::build()
 }
 */
 
+/*
 void World::build() 
 {    
-	// Simple example
-	vp.set_hres(400);
-	vp.set_vres(400);
-	vp.set_pixel_size(1.0);
-	vp.set_samples(16);
-	image = vector<RGBColor>(vp.hres * vp.vres);
+	int numSamples = 256;
+
+	vp.setHres(512);
+	vp.setVres(512);
+	vp.setSamples(numSamples);
+	image = vector<RGBColor>(vp.hRes * vp.vRes);
+
+	tracer_ptr = new RayCast(this);
+
+	Jittered* sampler_ptr = new Jittered(numSamples);
+
+	image = vector<RGBColor>(vp.hRes * vp.vRes);
 
 	backgroundColor = black;
 	tracer_ptr = new RayCast(this);
 
-	Ambient* ambient_ptr = new Ambient;
-	ambient_ptr->scale_radiance(0.5);
-	setAmbientLight(ambient_ptr);
+	//Ambient* ambient_ptr = new Ambient;
+	//ambient_ptr->scale_radiance(0.5);
+	//setAmbientLight(ambient_ptr);
 
-	Point* pointLight_ptr = new Point;
+	AmbientOccluder* occluder_ptr = new AmbientOccluder;
+	occluder_ptr->scale_radiance(1.0);
+	//occluder_ptr->setColor(white);
+	occluder_ptr->setMinAmt(0.0);
+	occluder_ptr->setSampler(sampler_ptr);
+	setAmbientLight(occluder_ptr);
+
+	PointLight* pointLight_ptr = new PointLight;
 	pointLight_ptr->setPos(200, 50, 250);
 	pointLight_ptr->scaleRadiance(0.01f);
 	pointLight_ptr->attenuate = false;
@@ -500,25 +524,276 @@ void World::build()
 	addObject(plane_ptr);
 }
 
+*/
+void World::build()
+{
+	int numSamples = 256;
 
-// TODO: Check and get rid of this function, has been abstracted to camera
-ShadeRec World::hitBareBonesObject(const Ray& ray) {
-	ShadeRec sr(*this);
-	double t;
-	double tmin = kHugeValue;
-	int num_objects = objects.size();
+	vp.setHres(512);
+	vp.setVres(512);
+	vp.setSamples(numSamples);
+	vp.setMaxDepth(10);
+	image = vector<RGBColor>(vp.hRes * vp.vRes);
 
-	for (int i = 0; i < num_objects; i++)
+	tracer_ptr = new Whitted(this);
+
+	MultiJittered* sampler_ptr = new MultiJittered(numSamples);
+
+	AmbientOccluder* occluder_ptr = new AmbientOccluder;
+	occluder_ptr->scale_radiance(1.0);
+	occluder_ptr->setColor(white);
+	occluder_ptr->setMinAmt(0.0);
+	occluder_ptr->setSampler(sampler_ptr);
+	setAmbientLight(occluder_ptr);
+
+	Pinhole* pinhole_ptr = new Pinhole();
+	pinhole_ptr->setEyePos(0, 24, 56);
+	pinhole_ptr->setLookAt(0, 1, 0);
+	pinhole_ptr->setDistance(5000);
+	pinhole_ptr->setRoll(0);
+	pinhole_ptr->computeUVW();
+	setCamera(pinhole_ptr);
+
+	PointLight* pointLight_ptr = new PointLight;
+	pointLight_ptr->setPos(100, 100, 100);
+	pointLight_ptr->scaleRadiance(0.01f);
+	pointLight_ptr->setAttenuate(false);
+	pointLight_ptr->setAttenPower(2);
+	pointLight_ptr->setShadows(true);
+	addLight(pointLight_ptr);
+
+	/*
+	Phong* matte_ptr = new Phong;
+	matte_ptr->setKA(0.5);
+	matte_ptr->setKD(0.75);
+	matte_ptr->setKS(0.5f);
+	matte_ptr->setEXP(500);
+	matte_ptr->setCD(RGBColor(0.3f, 0.3f, 0.3f));
+	*/
+	/*
+	OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 1);
+	cylinder_ptr->setCenter(0, 1, 0);
+	cylinder_ptr->setYRange(0, 4);
+	cylinder_ptr->setMat(matte_ptr);
+	addObject(cylinder_ptr);
+
+	Phong* phong_ptr = new Phong;
+	phong_ptr->setKA(0.5);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(0.1f);
+	phong_ptr->setEXP(500);
+	phong_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
+
+	Box* box_ptr = new Box(-1,-1,-1,1,1,1);
+	box_ptr->setMat(phong_ptr);
+	addObject(box_ptr);
+
+	Sphere* sphere_ptr = new Sphere(Point3D(0, 4.5, 0), 1.25);
+	sphere_ptr->setMat(matte_ptr);
+	addObject(sphere_ptr);
+
+
+	Matte* matte_ptr = new Matte;
+	matte_ptr->setKA(0.75);
+	matte_ptr->setKD(0);
+	matte_ptr->setCD(yellow);
+
+	Cylinder* cylinder_ptr = new Cylinder();
+	cylinder_ptr->setCenter(0, 0, 0);
+	cylinder_ptr->setRadius(1);
+	cylinder_ptr->set_yRange(0, 5);
+	cylinder_ptr->setMat(matte_ptr);
+	addObject(cylinder_ptr);
+
+	Matte* matte_ptr2 = new Matte;
+	matte_ptr2->setKA(0.5);
+	matte_ptr2->setKD(0.75);
+	matte_ptr2->setCD(1.0);
+	*/
+
+	/*
+
+	Reflective* reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.9926f, 0.6784f, 0.6784f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(0.75);
+
+	Sphere* sphere_ptr = new Sphere(Point3D(0, 1, 0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(black));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(0.75);
+
+	sphere_ptr = new Sphere(Point3D(2, 1, 0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(0.75);
+
+	sphere_ptr = new Sphere(Point3D(-2, 1, 0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+	Phong* phong_ptr = new Phong;
+	phong_ptr->setKA(0.5);
+	phong_ptr->setKD(0.75);
+	phong_ptr->setKS(0.1f);
+	phong_ptr->setEXP(500);
+	phong_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+
+	Phong* phong_ptr2 = new Phong;
+	phong_ptr2->setKA(0.25);
+	phong_ptr2->setKD(0.75);
+	phong_ptr2->setKS(0.1f);
+	phong_ptr2->setCD(green);
+	phong_ptr2->setEXP(500);
+
+	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
+	tri_ptr->setMat(phong_ptr);
+	//addObject(tri_ptr);
+	*/
+	/*
+	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
+	plane_ptr->setMat(phong_ptr2);
+	addObject(plane_ptr);
+	
+
+	Disk* disk_ptr = new Disk(Point3D(0), 3.0, Normal(0, 1, 0));
+	disk_ptr->setMat(phong_ptr2);
+	addObject(disk_ptr);
+	*/
+
+	Reflective* reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(0.75);
+
+	//OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 0.75);
+	//cylinder_ptr->setCenter(0, 0, -4);
+	//cylinder_ptr->setYRange(0, 3);
+	//cylinder_ptr->setMat(reflective_ptr);
+	//addObject(cylinder_ptr);
+
+	SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 3, 0.75);
+	solidCylinder_ptr->setMat(reflective_ptr);
+	addObject(solidCylinder_ptr);
+	
+	AABB a = solidCylinder_ptr->getAABB();
+
+	Phong* blackFloorPhong_ptr = new Phong;
+	blackFloorPhong_ptr->setKA(0.5);
+	blackFloorPhong_ptr->setKD(0.75);
+	blackFloorPhong_ptr->setKS(0.1f);
+	blackFloorPhong_ptr->setEXP(500);
+	blackFloorPhong_ptr->setCD(RGBColor(black));
+
+	Phong* whiteFloorPhong_ptr = new Phong;
+	whiteFloorPhong_ptr->setKA(0.5);
+	whiteFloorPhong_ptr->setKD(0.75);
+	whiteFloorPhong_ptr->setKS(0.1f);
+	whiteFloorPhong_ptr->setEXP(500);
+	whiteFloorPhong_ptr->setCD(RGBColor(white));
+	
+	Box* box_ptr;
+
+	for (int i = -20; i < 21; i++)
 	{
-		if (objects[i]->hit(ray, t, sr) && (t < tmin)) {
-			sr.hitAnObject = true;
-			tmin = t;
-			sr.color = objects[i]->get_color();
+		for (int j = -20; j < 21; j++)
+		{
+			if (i % 2 == 0)
+			{
+				if (j % 2 == 0)
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(blackFloorPhong_ptr);
+					addObject(box_ptr);
+				}
+				else
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(whiteFloorPhong_ptr);
+					addObject(box_ptr);
+				}
+			}
+			else
+			{
+				if (j % 2 == 0)
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(whiteFloorPhong_ptr);
+					addObject(box_ptr);
+				}
+				else
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(blackFloorPhong_ptr);
+					addObject(box_ptr);
+				}
+			}
 		}
 	}
+	
 
-	return sr;
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(red));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	Sphere* sphere_ptr = new Sphere(Point3D(0, 3, 0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
+	//ellipsoid_ptr->setMat(phong_ptr2);
+	//ellipsoid_ptr->scale(2, 3, 1);
+	//ellipsoid_ptr->rotateX(-45.0);
+	//addObject(ellipsoid_ptr);
 }
+
+// TODO: Check and get rid of this function, has been abstracted to camera
+//ShadeRec World::hitBareBonesObject(const Ray& ray) {
+//	ShadeRec sr(*this);
+//	double t;
+//	double tmin = kHugeValue;
+//	int num_objects = objects.size();
+//
+//	for (int i = 0; i < num_objects; i++)
+//	{
+//		if (objects[i]->hit(ray, t, sr) && (t < tmin)) {
+//			sr.hitAnObject = true;
+//			tmin = t;
+//			//sr.color = objects[i]->get_color();
+//		}
+//	}
+//
+//	return sr;
+//}
 
 ShadeRec World::hitObjects(const Ray& ray)
 {
@@ -536,7 +811,7 @@ ShadeRec World::hitObjects(const Ray& ray)
 			sr.hitAnObject = true;
 			tMin = t;
 			sr.mat_ptr = objects[i]->getMat();
-			sr.hit_point = ray.o + t * ray.d;
+			sr.hitPoint = ray.o + t * ray.d;
 			normal = sr.normal;
 			localHitPoint = sr.localHitPoint;
 		}
@@ -550,7 +825,7 @@ ShadeRec World::hitObjects(const Ray& ray)
 	return sr;
 }
 
-void World::openWindow(const int hres, const int vres) const
+void World::openWindow(const int hRes, const int vRes) const
 {
 
 }
@@ -581,7 +856,7 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 
 int main()
 {
-	cout << "Initializing MPI sub-system\n";
+	
 	// MPI_Init(NULL, NULL);
 
 	// MPI_Init() wrapped up in this function to facilitate multi-platform development
@@ -610,7 +885,7 @@ int main()
 		
 		w.camera_ptr->renderScene(w);
 		cout << "Scene rendered, writing to file\n";
-		writeImage(w.vp.hres, w.vp.vres, w.rank);
+		writeImage(w.vp.hRes, w.vp.vRes, w.rank);
 		
 	//}
 

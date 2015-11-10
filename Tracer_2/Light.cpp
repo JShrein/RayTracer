@@ -1,15 +1,25 @@
 #include "Light.h"
 
 Light::Light()
+	: attenuate(false),
+	  shadows(false),
+	  p(0)
 { }
 
 Light::Light(const Light& light)
+	: attenuate(light.attenuate),
+	  shadows(light.shadows),
+	  p(light.p)
 { }
 
 Light& Light::operator= (const Light& light)
 {
 	if (this == &light)
 		return *this;
+
+	attenuate = light.attenuate;
+	shadows = light.shadows;
+	p = light.p;
 
 	return *this;
 }
@@ -47,7 +57,27 @@ void Light::setShadows(bool s)
 	shadows = s;
 }
 
-bool Light::castShadows()
+bool Light::castShadows() const
 {
-	return true;
+	return shadows;
+}
+
+void Light::setAttenuate(bool a)
+{
+	attenuate = a;
+}
+
+bool Light::doAttenuation() const
+{
+	return attenuate;
+}
+
+void Light::setAttenPower(double _p)
+{
+	p = _p;
+}
+
+double Light::getAttenPower() const
+{
+	return p;
 }

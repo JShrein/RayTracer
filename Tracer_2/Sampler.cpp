@@ -59,20 +59,20 @@ Sampler::Sampler(const Sampler& s)
 
 // ------------------------------------------------------------------ assignment operator
 
-Sampler& Sampler::operator= (const Sampler& rhs)	{
-	if (this == &rhs)
+Sampler& Sampler::operator= (const Sampler& s)	{
+	if (this == &s)
 		return *this;
 
-	rootNumSamples = rhs.rootNumSamples;
-	numSamples = rhs.numSamples;
-	numSets = rhs.numSets;
-	samples = rhs.samples;
-	shuffledIndices = rhs.shuffledIndices;
-	diskSamples = rhs.diskSamples;
-	hemisphereSamples = rhs.hemisphereSamples;
-	sphereSamples = rhs.sphereSamples;
-	count = rhs.count;
-	jump = rhs.jump;
+	rootNumSamples = s.rootNumSamples;
+	numSamples = s.numSamples;
+	numSets = s.numSets;
+	samples = s.samples;
+	shuffledIndices = s.shuffledIndices;
+	diskSamples = s.diskSamples;
+	hemisphereSamples = s.hemisphereSamples;
+	sphereSamples = s.sphereSamples;
+	count = s.count;
+	jump = s.jump;
 
 	return *this;
 }

@@ -1,6 +1,6 @@
 #include "Constants.h"
 #include "Pinhole.h"
-
+#include <stdio.h>
 
 Pinhole::Pinhole()
 	: Camera(),
@@ -70,19 +70,23 @@ void Pinhole::renderScene(World& w)
 	Point2D 	pp;		// sample point on a pixel
 	int n = vp.rootNumSamples;// (int)sqrt((float)vp.numSamples);
 
+	int numPixels = vp.vRes * vp.hRes;
+
 	vp.s /= zoom;
 	ray.o = eyePos;
 
 	// vertical image coord
-	for (int r = 0; r < vp.vres; r++) {
+	for (int r = 0; r < vp.vRes; r++) {
+		//fprintf(stderr,"\rRendering... %5.2f%%", );
 		// horizontal image coord	
-		for (int c = 0; c < vp.hres; c++) {	
+		for (int c = 0; c < vp.hRes; c++) {	
 			pixelColor = black;
 
-			for (int j = 0; j < vp.numSamples; j++)	{
+			for (int j = 0; j < vp.numSamples; j++)	
+			{
 				sample = vp.sampler_ptr->sampleUnitSquare();
-				pp.x = vp.s * (c - 0.5f * vp.hres + sample.x);
-				pp.y = vp.s * (r - 0.5f * vp.vres + sample.y);
+				pp.x = vp.s * (c - 0.5f * vp.hRes + sample.x);
+				pp.y = vp.s * (r - 0.5f * vp.vRes + sample.y);
 				ray.d = getDir(pp);
 				pixelColor += w.tracer_ptr->traceRay(ray, depth);
 			}

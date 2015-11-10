@@ -5,7 +5,7 @@
 ShadeRec::ShadeRec(World& wr)
 	:hitAnObject(false),
 	mat_ptr(NULL),
-	hit_point(),
+	hitPoint(),
 	localHitPoint(),
 	normal(),
 	ray(),
@@ -18,7 +18,7 @@ ShadeRec::ShadeRec(World& wr)
 
 ShadeRec::ShadeRec(const ShadeRec& sr)
 	: hitAnObject(sr.hitAnObject),
-	hit_point(sr.hit_point),
+	hitPoint(sr.hitPoint),
 	mat_ptr(sr.mat_ptr),
 	localHitPoint(sr.localHitPoint),
 	normal(sr.normal),
@@ -32,5 +32,4 @@ ShadeRec::ShadeRec(const ShadeRec& sr)
 
 // Destructor
 ShadeRec::~ShadeRec()
-{
-}
+{ }

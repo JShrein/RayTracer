@@ -6,20 +6,20 @@
 class NRooks : public Sampler {
 public:
 	// Ctors
-	NRooks(void);
+	NRooks();
 	NRooks(const int numSamples);
 	NRooks(const int numSamples, const int numSets);
 	NRooks(const NRooks& nr);
 
 	// Assign op
-	NRooks& operator= (const NRooks& rhs);
+	NRooks& operator= (const NRooks& rook);
 
-	virtual NRooks* clone(void) const;
+	virtual NRooks* clone() const;
 
 	// Dtor
-	virtual ~NRooks(void);
+	virtual ~NRooks();
 private:
-	virtual void generateSamples(void);
+	virtual void generateSamples();
 };
 
 #endif // __N_ROOKS__

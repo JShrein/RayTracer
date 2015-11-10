@@ -1,6 +1,6 @@
 /*
-#ifndef __SPHERICAL__
-#define __SPHERICAL__
+#ifndef SPHERICAL_H
+#define SPHERICAL_H
 
 #include "Camera.h"
 
@@ -11,5 +11,5 @@ public:
 
 };
 
-#endif // __SPHERICAL__
+#endif // SPHERICAL_H
 */

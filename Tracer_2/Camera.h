@@ -1,5 +1,5 @@
-#ifndef __CAMERA__
-#define __CAMERA__
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include "Point3D.h"
 #include "Vector3D.h"
@@ -89,4 +89,4 @@ inline void Camera::setExposureTime(const float expTime)
 	exposureTime = expTime;
 }
 
-#endif // __CAMERA__
+#endif // CAMERA_H

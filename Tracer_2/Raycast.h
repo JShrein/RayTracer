@@ -1,18 +1,18 @@
-#ifndef __RAY_CAST__
-#define __RAY_CAST__
+#ifndef RAYCAST_H
+#define RAYCAST_H
 
 #include "Tracer.h"
 
-class RayCast : public Tracer {
+class RayCast : public Tracer 
+{
 public:
-
 	RayCast();
 	RayCast(World* _worldPtr);
 
-	virtual ~RayCast(void);
+	virtual ~RayCast();
 
 	virtual RGBColor traceRay(const Ray& ray) const;
 	virtual RGBColor traceRay(const Ray ray, const int depth) const;
 };
 
-#endif
+#endif // RAYCAST_H

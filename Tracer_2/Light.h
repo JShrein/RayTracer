@@ -1,5 +1,5 @@
-#ifndef __LIGHT__
-#define __LIGHT__
+#ifndef LIGHT_H
+#define LIGHT_H
 
 #include "Vector3D.h"
 #include "ShadeRec.h"
@@ -7,9 +7,6 @@
 
 class Light
 {
-public:
-	bool attenuate;
-	double p; // Attenuateion power
 public:
 	Light();
 	Light(const Light& light);
@@ -29,10 +26,18 @@ public:
 	virtual bool inShadow(const Ray& ray, const ShadeRec& sr) const;
 
 	void setShadows(bool s);
-	bool castShadows();
+	bool castShadows() const;
+
+	void setAttenuate(bool a);
+	bool doAttenuation() const;
+
+	void setAttenPower(double _p);
+	double getAttenPower() const;
 
 protected:
 	bool shadows;
+	bool attenuate;
+	double p; // Attenuateion power
 };
 
-#endif // __LIGHT__
+#endif // LIGHT_H
