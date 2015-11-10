@@ -52,6 +52,8 @@ using std::endl;
 using std::string;
 using std::cin;
 
+#define USEMPI 0
+
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
 //void initMPI(int argc, char *argv[]);
@@ -59,7 +61,7 @@ using std::cin;
 int rank;
 int size;
 
-#ifdef __linux__
+#if USEMPI
 #include <mpi.h>
 bool usingMPI = 1;
 void initMPI(int argc, char *argv[])
