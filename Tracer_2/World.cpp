@@ -531,7 +531,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 256;
+	int numSamples = 1;
 
 	vp.setHres(512);
 	vp.setVres(512);
