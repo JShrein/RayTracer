@@ -531,7 +531,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 1;
+	int numSamples = 256;
 
 	vp.setHres(512);
 	vp.setVres(512);
@@ -902,12 +902,12 @@ int main()
 		//w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 		w.camera_ptr->renderScene(w);
-		cout << "Scene rendered, writing to file\n";
+		cout << "Writing image to file\n";
 		writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
 		
 	//}
 
-	cout << "Write to file complete, shutting down\n";
+	cout << "Write successful, shutting down\n";
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
@@ -949,7 +949,6 @@ void writeImage(int width, int height, int rank)
 	}
 
 	imageFile.close();
-    cout << "Image file closed\n";
 }
 
 
