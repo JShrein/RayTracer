@@ -52,6 +52,8 @@ using std::endl;
 using std::string;
 using std::cin;
 
+#define USEMPI 0
+
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
 //void initMPI(int argc, char *argv[]);
@@ -59,7 +61,7 @@ using std::cin;
 int rank;
 int size;
 
-#ifdef __linux__
+#if USEMPI
 #include <mpi.h>
 bool usingMPI = 1;
 void initMPI(int argc, char *argv[])
@@ -903,12 +905,12 @@ int main()
 		//w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 		w.camera_ptr->renderScene(w);
-		cout << "Scene rendered, writing to file\n";
+		cout << "Writing image to file\n";
 		writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
 		
 	//}
 
-	cout << "Write to file complete, shutting down\n";
+	cout << "Write successful, shutting down\n";
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
@@ -952,7 +954,6 @@ void writeImage(int width, int height, int rank)
 	}
 
 	imageFile.close();
-    cout << "Image file closed\n";
 }
 
 

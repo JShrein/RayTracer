@@ -88,7 +88,6 @@ void Pinhole::renderScene(World& w)
 
 	// vertical image coord
 	for (int r = 0; r < vp.vRes; r++) {
-		//fprintf(stderr,"\rRendering... %5.2f%%", );
 		// horizontal image coord	
 		for (int c = 0; c < vp.hRes; c++) {	
 			pixelColor = black;
@@ -107,12 +106,17 @@ void Pinhole::renderScene(World& w)
 			w.displayPixel(r, c, pixelColor);
 
 			// Update interactive timer
+			totalTime = ((float)(clock() - startTime)) / CLOCKS_PER_SEC;
+			//fprintf(stderr, "\rRender Time: %f s", totalTime);
+			
 		}
+        fprintf(stderr, "\rRendering... %5.2f %%", 100.0 * r/(vp.vRes-1));
 	}
+	printf("\n");
 
 	// stop clock
 	endTime = clock();
 	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
 	
-	std::cout << "Render completed in " << totalTime << " ms" << std::endl;
+    std::cout << "\rRender completed in " << totalTime << " ms" << std::endl;
 }
