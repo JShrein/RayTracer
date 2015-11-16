@@ -57,7 +57,7 @@ bool PointLight::inShadow(const Ray& ray, const ShadeRec& sr) const
 {
 	double t;
 	int numObj = sr.w.objects.size();
-	float d = pos.distance(ray.o);
+	double d = pos.distance(ray.o);
 
 	for (int i = 0; i < numObj; i++)
 	{

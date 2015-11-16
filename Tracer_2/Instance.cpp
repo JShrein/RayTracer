@@ -129,9 +129,9 @@ void Instance::computeAABB()
 	transformation.setIdentity();
 
 	// Find min
-	float x0 = v[0].x;//kHugeValue;
-	float y0 = v[0].y;//kHugeValue;
-	float z0 = v[0].z;//kHugeValue;
+	double x0 = v[0].x;//kHugeValue;
+	double y0 = v[0].y;//kHugeValue;
+	double z0 = v[0].z;//kHugeValue;
 
 	for (int j = 1; j <= 7; j++)
 	{
@@ -152,9 +152,9 @@ void Instance::computeAABB()
 	}
 
 	// Find max
-	float x1 = v[0].x;//-kHugeValue;
-	float y1 = v[0].y;//-kHugeValue;
-	float z1 = v[0].z;//-kHugeValue;
+	double x1 = v[0].x;//-kHugeValue;
+	double y1 = v[0].y;//-kHugeValue;
+	double z1 = v[0].z;//-kHugeValue;
 
 	for (int j = 1; j <= 7; j++)
 	{

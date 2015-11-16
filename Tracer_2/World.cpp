@@ -89,6 +89,9 @@ void shutdownMPI()
 void writeImage(int width, int height, int rank);
 bool file_exists(const string& name);
 
+// Helper functions
+void pause();
+
 // Build functions
 
 //#include "BuildRedSphere.cpp"
@@ -872,7 +875,7 @@ RGBColor World::colorToRange(const RGBColor& c, int max) const {
 
 int main()
 {
-	
+	// Note*** initMPI() and shutdownMPI() are simply defined as empty functions in Windows
 	// MPI_Init(NULL, NULL);
 
 	// MPI_Init() wrapped up in this function to facilitate multi-platform development
@@ -910,6 +913,8 @@ int main()
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
 
+	pause();
+	
 	return 0;
 }
 
@@ -955,4 +960,11 @@ bool file_exists(const string& name)
 {
 	struct stat buf;
 	return (stat(name.c_str(), &buf) == 0);
+}
+
+
+void pause()
+{
+	std::cin.sync();
+	std::cin.ignore();
 }
