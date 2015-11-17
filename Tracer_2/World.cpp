@@ -53,7 +53,7 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 0
+#define USEMPI 1
 
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff

@@ -80,7 +80,8 @@ void PinholeMPI::renderScene(World& w)
 	// num rendering blocks = 16
 	// block size = (2imageSize / MPISize)^2 (assuming square image for now)
 	int blockSize = w.vp.hRes / (size/4); // 512 / 16 = 32, 32*32 block size
-
+    
+    std::cout << "rank: " << rank << std::endl;
 
 	// for now, vertical and horizontal render range
 	int vStart = rank/4 * blockSize;
