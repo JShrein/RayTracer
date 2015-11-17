@@ -534,7 +534,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 1;
+	int numSamples = 256;
 
 	vp.setHres(512);
 	vp.setVres(512);
@@ -568,7 +568,7 @@ void World::build()
     {
         Pinhole* pinhole_ptr = new Pinhole();
 	    pinhole_ptr->setEyePos(0, 24, 56);
-	    pinhole_ptr->setLookAt(0, 1, 0);
+	    pinhole_ptr->setLookAt(0, 2, 0);
 	    pinhole_ptr->setDistance(5000);
 	    pinhole_ptr->setRoll(0);
 	    pinhole_ptr->computeUVW();
@@ -576,7 +576,7 @@ void World::build()
     }
     
 	PointLight* pointLight_ptr = new PointLight;
-	pointLight_ptr->setPos(100, 100, 100);
+	pointLight_ptr->setPos(30, 30, 30);
 	pointLight_ptr->scaleRadiance(0.01f);
 	pointLight_ptr->setAttenuate(false);
 	pointLight_ptr->setAttenPower(2);
@@ -707,7 +707,7 @@ void World::build()
 	reflective_ptr->setKD(0.75);
 	reflective_ptr->setKS(0.1f);
 	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+	reflective_ptr->setCD(RGBColor(0.1, 0.1, 0.1));
 	reflective_ptr->setCR(white);
 	reflective_ptr->setKR(0.75);
 
@@ -795,6 +795,27 @@ void World::build()
 	//ellipsoid_ptr->scale(2, 3, 1);
 	//ellipsoid_ptr->rotateX(-45.0);
 	//addObject(ellipsoid_ptr);
+
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	Normal norm(1, 0, 2);
+
+	Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
+	tri_ptr->setMat(reflective_ptr);
+	addObject(tri_ptr);
+
+	/*
+	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
+	plane_ptr3->setMat(reflective_ptr);
+	addObject(plane_ptr3);
+	*/
 }
 
 // TODO: Check and get rid of this function, has been abstracted to camera
@@ -927,7 +948,7 @@ void writeImage(int width, int height, int rank)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "./output/";
+	string location = "../output/";
 	string filePrefix = "multipleObj";
 	int fileNum = rank;//0;
 	string extension = ".ppm";
