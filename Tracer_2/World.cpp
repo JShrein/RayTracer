@@ -52,6 +52,7 @@ using std::endl;
 using std::string;
 using std::cin;
 
+#define USEWIN 0
 #define USEMPI 0
 
 // TODO: Find a better way to do this
@@ -92,7 +93,7 @@ void writeImage(int width, int height, int rank);
 bool file_exists(const string& name);
 
 // Helper functions
-void pause();
+void haltBeforeClose();
 
 // Build functions
 
@@ -534,7 +535,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 256;
+	int numSamples = 1;
 
 	vp.setHres(512);
 	vp.setVres(512);
@@ -936,8 +937,11 @@ int main()
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
 
-	pause();
-	
+    if(USEWIN)
+    {
+	    haltBeforeClose();
+    }
+
 	return 0;
 }
 
@@ -948,7 +952,7 @@ void writeImage(int width, int height, int rank)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = rank;//0;
 	string extension = ".ppm";
@@ -985,7 +989,7 @@ bool file_exists(const string& name)
 }
 
 
-void pause()
+void haltBeforeClose()
 {
 	std::cin.sync();
 	std::cin.ignore();
