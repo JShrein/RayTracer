@@ -53,7 +53,7 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 1
+#define USEMPI 0
 
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
@@ -254,7 +254,7 @@ void World::render_perspective() const
 
 void World::displayPixel(const int row, const int column, const RGBColor& raw_color) const {
 	RGBColor mapped_color;
-	
+
 	if (vp.showOutOfGamut)
 		mapped_color = clampToColor(raw_color);
 	else
@@ -271,15 +271,50 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 	/*
 	if (image.size() == 20000)
 	{
-		cout << "r = " << mapped_color.r << ", b = " << mapped_color.b << ", g = " << mapped_color.g << endl;
+	cout << "r = " << mapped_color.r << ", b = " << mapped_color.b << ", g = " << mapped_color.g << endl;
 	}
 	*/
 	//image.insert(it, colorToRange(mapped_color, 255));
 	//image.push_back(colorToRange(mapped_color, 255));
 
-	// THIS IS MUCH FASTER 
+#if USEMPI
+	int totalNumPixels = vp.hRes * vp.vRes;
+	int pixelsPerProcess = totalNumPixels / (size - 1);
+	int remainderPixels = totalNumPixels % (size - 1);
+
+	// Distribute remaining pixels among processes [1..size-1]
+	for(int i = 0; i < remainderPixels; i++)
+	{
+		pixelsPerProcess++;
+	}
+
+	// Master process, will construct image
+	if(rank == 0)
+	{
+		MPI_Status status;
+		int inBuf[5];
+
+		for (int i = 0; i < totalNumPixels; i++)
+		{
+			MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+
+			image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
+		}
+	}
+	else
+	{
+		RGBColor c = colorToRange(mapped_color, 255);
+
+		// sendBuf[] = {row, col, red, green, blue};
+		int sendBuf[] = { x, y * vp.vRes, c.r, c.g, c.b };
+
+		MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
+	}
+}
+#else
 	image[x + y * vp.vRes] = colorToRange(mapped_color, 255);
 }
+#endif
 
 // Hit objects
 /*
@@ -1311,7 +1346,6 @@ void World::build()
 	}
 	else
 	{
-<<<<<<< HEAD
 		Pinhole* pinhole_ptr = new Pinhole();
 		pinhole_ptr->setEyePos(0, 24, 56);
 		pinhole_ptr->setLookAt(0, 2, 0);
@@ -1321,27 +1355,6 @@ void World::build()
 		setCamera(pinhole_ptr);
 	}
 
-=======
-	    PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
-	    distPinhole_ptr->setEyePos(64,24,56);
-	    distPinhole_ptr->setLookAt(0,3,0);
-	    distPinhole_ptr->setDistance(5000);
-	    distPinhole_ptr->setRoll(0);
-	    distPinhole_ptr->computeUVW();
-	    setCamera(distPinhole_ptr);
-	}
-    else 
-    {
-        Pinhole* pinhole_ptr = new Pinhole();
-	    pinhole_ptr->setEyePos(64, 24, 56);
-	    pinhole_ptr->setLookAt(0, 3, 0);
-	    pinhole_ptr->setDistance(5000);
-	    pinhole_ptr->setRoll(0);
-	    pinhole_ptr->computeUVW();
-	    setCamera(pinhole_ptr);
-    }
-    
->>>>>>> f5e1a2c93955e96a024ea70fca2ed532edd03445
 	PointLight* pointLight_ptr = new PointLight;
 	pointLight_ptr->setPos(30, 30, 30);
 	pointLight_ptr->scaleRadiance(0.01f);
@@ -1379,7 +1392,6 @@ void World::build()
 	phong_ptr->setKA(0.5);
 	phong_ptr->setKD(0.75);
 	phong_ptr->setKS(0.1f);
-<<<<<<< HEAD
 	phong_ptr->setEXP(200);
 	phong_ptr->setCD(gray);
 
@@ -1389,13 +1401,6 @@ void World::build()
 	sphere_ptr->translate(0, 1, 0);
 	sphere_ptr->setMat(reflective_ptr);
 	addObject(sphere_ptr);
-
-	//Sphere* sphere_ptr = new Sphere(Point3D(0, 2, 0), 1.0);
-	//sphere_ptr->setMat(reflective_ptr);
-	//addObject(sphere_ptr);
-=======
-	phong_ptr->setEXP(500);
-	phong_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
 
 	Phong* phong_ptr2 = new Phong;
 	phong_ptr2->setKA(0.25);
@@ -1407,7 +1412,7 @@ void World::build()
 	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
 	tri_ptr->setMat(phong_ptr);
 	//addObject(tri_ptr);
-	*/
+
 	/*
 	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
 	plane_ptr->setMat(phong_ptr2);
@@ -1455,6 +1460,7 @@ void World::build()
 	whiteTile_ptr->setEXP(500);
 	whiteTile_ptr->setCD(RGBColor(white));
 
+	/*
 	Box* box_ptr;
 
 	for (int i = -20; i < 21; i++)
@@ -1588,7 +1594,7 @@ void World::build()
 	sphere_ptr = new Sphere(Point3D(5,4,0), 1);
 	sphere_ptr->setMat(reflective_ptr);
 	addObject(sphere_ptr);
-
+	*/
 
 
 	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
@@ -1597,6 +1603,7 @@ void World::build()
 	//ellipsoid_ptr->rotateX(-45.0);
 	//addObject(ellipsoid_ptr);
 
+	/*
 	reflective_ptr = new Reflective;
 	reflective_ptr->setKA(0.5);
 	reflective_ptr->setKD(0.75);
@@ -1605,7 +1612,7 @@ void World::build()
 	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
 	reflective_ptr->setCR(white);
 	reflective_ptr->setKR(1.0);
-
+	*/
 	//Normal norm(1, 0, 2);
 
 	//Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
@@ -1617,7 +1624,6 @@ void World::build()
 	plane_ptr3->setMat(reflective_ptr);
 	addObject(plane_ptr3);
 	*/
->>>>>>> f5e1a2c93955e96a024ea70fca2ed532edd03445
 }
 
 ShadeRec World::hitObjects(const Ray& ray)

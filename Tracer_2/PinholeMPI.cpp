@@ -77,17 +77,28 @@ Vector3D PinholeMPI::getDir(const Point2D& p) const
 
 void PinholeMPI::renderScene(World& w)
 {
-	// num rendering blocks = 16
-	// block size = (2imageSize / MPISize)^2 (assuming square image for now)
-	int blockSize = w.vp.hRes / (size/4); // 512 / 16 = 32, 32*32 block size
-    
-    std::cout << "rank: " << rank << std::endl;
+	int pixelsToRender = w.vp.hRes * w.vp.vRes;
 
-	// for now, vertical and horizontal render range
-	int vStart = rank/4 * blockSize;
-	int vEnd = rank/4 * blockSize + blockSize;
-    int hStart = rank % 4 * blockSize;
-    int hEnd = rank%4 * blockSize + blockSize;;
+	// Each process will render this number of pixels
+	int pixelsPerProcess = pixelsToRender / (size - 1);
+	// head node renders remaining pixels (possibly [0..pixlesToRender-1] to render)
+	int remainderPixels = pixelsToRender % (size - 1);
+
+	for (int i = 0; i < remainderPixels; i++)
+	{
+		pixelsPerProcess++;
+	}
+
+	// Whatever rank I am, I start here
+	int start = rank * pixelsPerProcess;
+	// and I end here
+	int end = rank * pixelsPerProcess + pixelsPerProcess;
+
+	// Need to translate start & end to 2D range
+	int vStart = start / w.vp.hRes;
+	int hStart = start % w.vp.hRes;
+	int vEnd = end / w.vp.hRes;
+	int hEnd = end % w.vp.hRes;
 
 	clock_t		startTime;
 	clock_t		currentTime;

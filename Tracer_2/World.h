@@ -54,6 +54,7 @@ public:
 
 	void openWindow(const int hRes, const int vRes) const;
 	void displayPixel(const int row, const int column, const RGBColor& pixelColor) const;
+	void MPI_displayPixel(const int row, const int column, const RGBColor& pixelColor) const;
 
 	RGBColor maxToOne(const RGBColor& c) const;
 	RGBColor clampToColor(const RGBColor& raw_color) const;
