@@ -278,38 +278,12 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 	//image.push_back(colorToRange(mapped_color, 255));
 
 #if USEMPI
-	int totalNumPixels = vp.hRes * vp.vRes;
-	int pixelsPerProcess = totalNumPixels / (size - 1);
-	int remainderPixels = totalNumPixels % (size - 1);
+	RGBColor c = colorToRange(mapped_color, 255);
 
-	// Distribute remaining pixels among processes [1..size-1]
-	for(int i = 0; i < remainderPixels; i++)
-	{
-		pixelsPerProcess++;
-	}
+	// sendBuf[] = {row, col, red, green, blue};
+	int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
 
-	// Master process, will construct image
-	if(rank == 0)
-	{
-		MPI_Status status;
-		int inBuf[5];
-
-		for (int i = 0; i < totalNumPixels; i++)
-		{
-			MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-            cout << "Received pixel from " << status.MPI_SOURCE;
-			image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
-		}
-	}
-	else
-	{
-		RGBColor c = colorToRange(mapped_color, 255);
-
-		// sendBuf[] = {row, col, red, green, blue};
-		int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
-
-		MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
-	}
+	MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
 }
 #else
 	image[x + y * vp.vRes] = colorToRange(mapped_color, 255);
@@ -1726,14 +1700,39 @@ int main()
 		
 		//w.lights[0]->setPos(rx, lightPos.y, rz);
 		
-		w.camera_ptr->renderScene(w);
 #if USEMPI
+
 		if(rank == 0)
         {
+			int totalNumPixels = vp.hRes * vp.vRes;
+			int pixelsPerProcess = totalNumPixels / (size - 1);
+			int remainderPixels = totalNumPixels % (size - 1);
+
+			// Distribute remaining pixels among processes [1..size-1]
+			for (int i = 0; i < remainderPixels; i++)
+			{
+				pixelsPerProcess++;
+			}
+
+			MPI_Status status;
+			int inBuf[5];
+
+			for (int i = 0; i < totalNumPixels; i++)
+			{
+				MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+				cout << "Received pixel from " << status.MPI_SOURCE;
+				image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
+			}
+
             cout << "Writing image to file\n";
             writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
             cout << "Write successful, shutting down\n";
         }
+		else
+		{
+			w.camera_ptr->renderScene(w);
+		}
+
 #else
         writeImage(w.vp.hRes, w.vp.vRes, rank);
 #endif
