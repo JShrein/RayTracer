@@ -84,8 +84,7 @@ void PinholeMPI::renderScene(World& w)
 	// Remainder pixels
 	int remainderPixels = pixelsToRender % (size - 1);
 
-	// Distribute remainder pixels among processes
-	for (int i = 0; i < remainderPixels; i++)
+	if (rank > 0 && rank <= remainderPixels)
 	{
 		pixelsPerProcess++;
 	}
@@ -95,6 +94,7 @@ void PinholeMPI::renderScene(World& w)
 	// and I end here
 	int end = rank-1 * pixelsPerProcess + pixelsPerProcess-1;
 
+	std::cout << "Rank: " << rank << " reporting " << end - start << " pixels to render\n";
 	// Need to translate start & end to 2D range
 	int vStart = start / w.vp.hRes;
 	int hStart = start % w.vp.hRes;
