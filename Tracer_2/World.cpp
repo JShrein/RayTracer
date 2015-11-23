@@ -266,20 +266,10 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 	int x = column;
 	int y = vp.vRes - row - 1;
 
-	// THIS IS MEGA SLOW, DON'T DO IT!!!
-	//it = image.begin();
-	/*
-	if (image.size() == 20000)
-	{
-	cout << "r = " << mapped_color.r << ", b = " << mapped_color.b << ", g = " << mapped_color.g << endl;
-	}
-	*/
-	//image.insert(it, colorToRange(mapped_color, 255));
-	//image.push_back(colorToRange(mapped_color, 255));
-
 #if USEMPI
-	RGBColor c = colorToRange(mapped_color, 255);
-
+    
+    RGBColor c = colorToRange(mapped_color, 255);
+    cout << "rank: " << rank << " sending pixel info to rank 0\n";
 	// sendBuf[] = {row, col, red, green, blue};
 	int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
 
@@ -1704,7 +1694,7 @@ int main()
 
 		if(rank == 0)
         {
-			int totalNumPixels = vp.hRes * vp.vRes;
+			int totalNumPixels = w.vp.hRes * w.vp.vRes;
 			int pixelsPerProcess = totalNumPixels / (size - 1);
 			int remainderPixels = totalNumPixels % (size - 1);
 
@@ -1719,8 +1709,9 @@ int main()
 
 			for (int i = 0; i < totalNumPixels; i++)
 			{
+                cout << "Waiting for pixels\n";
 				MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-				cout << "Received pixel from " << status.MPI_SOURCE;
+				cout << "Received pixel from " << status.MPI_SOURCE << "\n";
 				image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
 			}
 
