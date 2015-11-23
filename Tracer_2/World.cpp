@@ -45,6 +45,7 @@
 #include <sys/stat.h>
 #include <string>
 #include <sstream>
+#include <stdio.h>
 
 using std::vector;
 using std::cout;
@@ -67,11 +68,13 @@ int size;
 bool usingMPI = 1;
 void initMPI(int argc, char *argv[])
 {
-	cout << "Initializing MPI sub-system\n";
 	MPI_Init(&argc, &argv);
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    if(rank == 0)
+        cout << "MPI sub-system initialized\n";
 }
 
 void shutdownMPI()
@@ -273,28 +276,18 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 	// sendBuf[] = {row, col, red, green, blue};
 	int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
 
-	MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
+	int succ = MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    
+    if(succ != MPI_SUCCESS)
+    {
+        cout << "ERROR: MPI_Send() failed, retrying...\n";
+    }
 }
 #else
 	image[x + y * vp.vRes] = colorToRange(mapped_color, 255);
 }
 #endif
 
-// Hit objects
-/*
-void World::build() {
-	vp.setHres(400);
-	vp.setVres(400);
-	vp.setPixelSize(1.0);
-	vp.setGamma(1.0);
-
-	backgroundColor = black;
-	tracer_ptr = new SingleSphere(this);
-
-	sphere.setCenter(0.0);
-	sphere.setRadius(165.0);
-}
-*/
 
 /*
 void World::build()
@@ -1257,338 +1250,138 @@ void World::build()
 //	}
 //}
 
-// TODO: Check and get rid of this function, has been abstracted to camera
-//ShadeRec World::hitBareBonesObject(const Ray& ray) {
-//	ShadeRec sr(*this);
-//	double t;
-//	double tmin = kHugeValue;
-//	int num_objects = objects.size();
-//
-//	for (int i = 0; i < num_objects; i++)
-//	{
-//		if (objects[i]->hit(ray, t, sr) && (t < tmin)) {
-//			sr.hitAnObject = true;
-//			tmin = t;
-//			//sr.color = objects[i]->get_color();
-//		}
-//	}
-//
-//	return sr;
-//}
+
 
 void World::build()
 {
-	int numSamples = 256;
+    int numSamples = 256;
 
-	vp.setHres(512);
-	vp.setVres(512);
-	vp.setSamples(numSamples);
-	vp.setMaxDepth(10);
-	image = vector<RGBColor>(vp.hRes * vp.vRes);
+    vp.setHres(512);
+    vp.setVres(512);
+    vp.setPixelSize(1);
+    vp.setSamples(numSamples);
+    vp.setMaxDepth(10);
 
-	tracer_ptr = new Whitted(this);
+    image = vector<RGBColor>(vp.hRes * vp.vRes);
 
-	MultiJittered* sampler_ptr = new MultiJittered(numSamples);
+    tracer_ptr = new Whitted(this);
 
-	AmbientOccluder* occluder_ptr = new AmbientOccluder;
-	occluder_ptr->scale_radiance(1.0);
-	occluder_ptr->setColor(white);
-	occluder_ptr->setMinAmt(0.0);
-	occluder_ptr->setSampler(sampler_ptr);
-	setAmbientLight(occluder_ptr);
+    MultiJittered* sampler_ptr = new MultiJittered(numSamples);
 
+    AmbientOccluder* occluder_ptr = new AmbientOccluder;
+    occluder_ptr->scale_radiance(1.0);
+    occluder_ptr->setColor(white);
+    occluder_ptr->setMinAmt(0.0);
+    occluder_ptr->setSampler(sampler_ptr);
+    occluder_ptr->setShadows(false);
+    setAmbientLight(occluder_ptr);
 
-	if (usingMPI)
-	{
-		PinholeMPI* distPinhole_ptr = new PinholeMPI(rank, size);
-		distPinhole_ptr->setEyePos(0, 24, 56);
-		distPinhole_ptr->setLookAt(0, 1, 0);
-		distPinhole_ptr->setDistance(5000);
-		distPinhole_ptr->setRoll(0);
-		distPinhole_ptr->computeUVW();
-		setCamera(distPinhole_ptr);
-	}
-	else
-	{
-		Pinhole* pinhole_ptr = new Pinhole();
-		pinhole_ptr->setEyePos(0, 24, 56);
-		pinhole_ptr->setLookAt(0, 2, 0);
-		pinhole_ptr->setDistance(5000);
-		pinhole_ptr->setRoll(0);
-		pinhole_ptr->computeUVW();
-		setCamera(pinhole_ptr);
-	}
-
-	PointLight* pointLight_ptr = new PointLight;
-	pointLight_ptr->setPos(30, 30, 30);
-	pointLight_ptr->scaleRadiance(0.01f);
-	pointLight_ptr->setAttenuate(false);
-	pointLight_ptr->setAttenPower(2);
-	pointLight_ptr->setShadows(true);
-	addLight(pointLight_ptr);
-
-	Reflective* reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(cyan);
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(0.75);
-
-	Instance* box_ptr = new Instance(new Box(-1, -1, -1, 1, 1, 1));
-	box_ptr->setMat(reflective_ptr);
-	//box_ptr->scale(2, 3, 1);
-	box_ptr->translate(0, 0, 0);
-	//box_ptr->rotateY(-45.0);
-	addObject(box_ptr);
-
-	reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(white);
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(0.75);
-
-	Phong* phong_ptr = new Phong;
-	phong_ptr->setKA(0.5);
-	phong_ptr->setKD(0.75);
-	phong_ptr->setKS(0.1f);
-	phong_ptr->setEXP(200);
-	phong_ptr->setCD(gray);
-
-	Instance* sphere_ptr = new Instance(new Sphere);
-	sphere_ptr->scale(Vector3D(1.5, 1, 1));
-	sphere_ptr->rotateY(-45);
-	sphere_ptr->translate(0, 1, 0);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-
-	Phong* phong_ptr2 = new Phong;
-	phong_ptr2->setKA(0.25);
-	phong_ptr2->setKD(0.75);
-	phong_ptr2->setKS(0.1f);
-	phong_ptr2->setCD(green);
-	phong_ptr2->setEXP(500);
-
-	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
-	tri_ptr->setMat(phong_ptr);
-	//addObject(tri_ptr);
-
-	/*
-	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
-	plane_ptr->setMat(phong_ptr2);
-	addObject(plane_ptr);
-	
-
-	Disk* disk_ptr = new Disk(Point3D(0), 3.0, Normal(0, 1, 0));
-	disk_ptr->setMat(phong_ptr2);
-	addObject(disk_ptr);
-	*/
-
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(0.1, 0.1, 0.1));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(0.75);
-
-	//OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 0.75);
-	//cylinder_ptr->setCenter(0, 0, -4);
-	//cylinder_ptr->setYRange(0, 3);
-	//cylinder_ptr->setMat(reflective_ptr);
-	//addObject(cylinder_ptr);
-
-	//SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
-	//solidCylinder_ptr->setMat(reflective_ptr);
-	//addObject(solidCylinder_ptr);
-	
-	//AABB a = solidCylinder_ptr->getAABB();
+    PointLight* pointLight_ptr = new PointLight;
+    pointLight_ptr->setPos(100, 100, 30);
+    pointLight_ptr->scaleRadiance(0.009f);
+    pointLight_ptr->setAttenuate(false);
+    pointLight_ptr->setAttenPower(2);
+    pointLight_ptr->setShadows(true);
+    addLight(pointLight_ptr);
 
 
-	Phong* blackTile_ptr = new Phong;
-	blackTile_ptr->setKA(0.5);
-	blackTile_ptr->setKD(0.75);
-	blackTile_ptr->setKS(0.1f);
-	blackTile_ptr->setEXP(500);
-	blackTile_ptr->setCD(RGBColor(black));
+    if (usingMPI)
+    {
+        PinholeMPI* distPinhole_ptr = new PinholeMPI(rank, size);
+        distPinhole_ptr->setEyePos(0, 24, 56);
+        distPinhole_ptr->setLookAt(0, 1, 0);
+        distPinhole_ptr->setDistance(5000);
+        distPinhole_ptr->setRoll(0);
+        distPinhole_ptr->computeUVW();
+        setCamera(distPinhole_ptr);
+    }
+    else
+    {
+        Pinhole* pinhole_ptr = new Pinhole();
+        pinhole_ptr->setEyePos(0, 24, 56);
+        pinhole_ptr->setLookAt(0, 1, 0);
+        pinhole_ptr->setDistance(5000);
+        pinhole_ptr->setRoll(0);
+        pinhole_ptr->computeUVW();
+        setCamera(pinhole_ptr);
+    }
 
-	Phong* whiteTile_ptr = new Phong;
-	whiteTile_ptr->setKA(0.5);
-	whiteTile_ptr->setKD(0.75);
-	whiteTile_ptr->setKS(0.1f);
-	whiteTile_ptr->setEXP(500);
-	whiteTile_ptr->setCD(RGBColor(white));
+    Reflective* reflective_ptr = new Reflective;
+    reflective_ptr->setKA(0.5);
+    reflective_ptr->setKD(0.75);
+    reflective_ptr->setKS(0.1f);
+    reflective_ptr->setEXP(500);
+    reflective_ptr->setCD(yellow);
+    reflective_ptr->setCR(white);
+    reflective_ptr->setKR(1.0);
 
-	/*
-	Box* box_ptr;
+    Sphere* sphere_ptr = new Sphere(Point3D(0, 1, 0), 1);
+    sphere_ptr->setMat(reflective_ptr);
+    addObject(sphere_ptr);
 
-	for (int i = -20; i < 21; i++)
-	{
-		for (int j = -20; j < 21; j++)
-		{
-			if (i % 2 == 0)
-			{
-				if (j % 2 == 0)
-				{
-					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(blackTile_ptr);
-					addObject(box_ptr);
-				}
-				else
-				{
-					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(whiteTile_ptr);
-					addObject(box_ptr);
-				}
-			}
-			else
-			{
-				if (j % 2 == 0)
-				{
-					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(whiteTile_ptr);
-					addObject(box_ptr);
-				}
-				else
-				{
-					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(blackTile_ptr);
-					addObject(box_ptr);
-				}
-			}
-		}
-	}
-	
+    Phong* matte_ptr2 = new Phong;
+    matte_ptr2->setKA(0.75);
+    matte_ptr2->setKD(0);
+    matte_ptr2->setKS(0);
+    matte_ptr2->setEXP(0);
+    matte_ptr2->setCD(cyan);
 
-	reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(1.0f, 0.686275f, 0.686275f));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
+    Phong* blackFloorPhong_ptr = new Phong;
+    blackFloorPhong_ptr->setKA(0.5);
+    blackFloorPhong_ptr->setKD(0.75);
+    blackFloorPhong_ptr->setKS(0.1f);
+    blackFloorPhong_ptr->setEXP(500);
+    blackFloorPhong_ptr->setCD(RGBColor(black));
 
-	Sphere* sphere_ptr = new Sphere(Point3D(-2,3,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-
-	sphere_ptr = new Sphere(Point3D(0,1,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-
-    sphere_ptr = new Sphere(Point3D(0,5,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(1.0f, 1.0f, 0.686275f));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-
-	sphere_ptr = new Sphere(Point3D(2,3,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-    
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(white));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-
-	sphere_ptr = new Sphere(Point3D(0,3,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
+    Phong* whiteFloorPhong_ptr = new Phong;
+    whiteFloorPhong_ptr->setKA(0.5);
+    whiteFloorPhong_ptr->setKD(0.75);
+    whiteFloorPhong_ptr->setKS(0.1f);
+    whiteFloorPhong_ptr->setEXP(500);
+    whiteFloorPhong_ptr->setCD(RGBColor(white));
 
     
-    
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(green));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
+    Box* box_ptr;
 
-	Box* box_ptr2 = new Box;
-    box_ptr2 = new Box(Point3D(4, 0, -1), Point3D(6, 3, 1));
-	box_ptr2->setMat(reflective_ptr);
-	addObject(box_ptr2);
-
-    reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(black));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-
-	sphere_ptr = new Sphere(Point3D(5,4,0), 1);
-	sphere_ptr->setMat(reflective_ptr);
-	addObject(sphere_ptr);
-	*/
-
-
-	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
-	//ellipsoid_ptr->setMat(phong_ptr2);
-	//ellipsoid_ptr->scale(2, 3, 1);
-	//ellipsoid_ptr->rotateX(-45.0);
-	//addObject(ellipsoid_ptr);
-
-	/*
-	reflective_ptr = new Reflective;
-	reflective_ptr->setKA(0.5);
-	reflective_ptr->setKD(0.75);
-	reflective_ptr->setKS(0.1f);
-	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
-	reflective_ptr->setCR(white);
-	reflective_ptr->setKR(1.0);
-	*/
-	//Normal norm(1, 0, 2);
-
-	//Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
-	//tri_ptr->setMat(reflective_ptr);
-	//addObject(tri_ptr);
-
-	/*
-	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
-	plane_ptr3->setMat(reflective_ptr);
-	addObject(plane_ptr3);
-	*/
+    for (int i = -5; i < 6; i++)
+    {
+        for (int j = -5; j < 6; j++)
+        {
+            if (i % 2 == 0)
+            {
+                if (j % 2 == 0)
+                {
+                    box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                    box_ptr->setMat(blackFloorPhong_ptr);
+                    addObject(box_ptr);
+                }
+                else
+                {
+                    box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                    box_ptr->setMat(whiteFloorPhong_ptr);
+                    addObject(box_ptr);
+                }
+            }
+            else
+            {
+                if (j % 2 == 0)
+                {
+                    box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                    box_ptr->setMat(whiteFloorPhong_ptr);
+                    addObject(box_ptr);
+                }
+                else
+                {
+                    box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                    box_ptr->setMat(blackFloorPhong_ptr);
+                    addObject(box_ptr);
+                }
+            }
+        }
+    }
 }
+
+
 
 ShadeRec World::hitObjects(const Ray& ray)
 {
@@ -1658,13 +1451,18 @@ int main()
 	initMPI(NULL, NULL);
 	World w;
 	w.build();
-	cout << "Rank " << rank << " reports build complete, rendering scene\n";
-	//w.renderScene();
+#if USEMPI
+    // cout << "Rank " << rank << " reports build complete, rendering scene\n";
+#endif
+    //w.renderScene();
 	//w.render_perspective();
-	//double angle = 5;
+    const int NUM_IMAGES = 145;
+
+    double angle = 2.5;
 	//double translationAmt = 0;
-	//for (int i = 0; i < 160; i++)
-	//{
+	for (int j = 0; j < NUM_IMAGES; j++)
+	{
+
 	//	translationAmt++;
 	//	Instance* box = (Instance*)w.objects[0];
 
@@ -1677,10 +1475,10 @@ int main()
 	//		box->translate(0, 0, -0.25);
 	//	}
 
-		//Point3D lightPos = w.lights[0]->getPos();
+		Point3D lightPos = w.lights[0]->getPos();
 
-		//double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
-		//double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
+		double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
+		double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
 
 		//cameraPosition.x = rx;
 		//cameraPosition.z = rz;
@@ -1688,40 +1486,30 @@ int main()
 		//w.camera_ptr->setEyePos(cameraPosition);
 		//w.camera_ptr->setLookAt(0, 0, 0);
 		
-		//w.lights[0]->setPos(rx, lightPos.y, rz);
+		w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 #if USEMPI
+        int totalNumPixels = w.vp.hRes * w.vp.vRes;
 
 		if(rank == 0)
         {
-			int totalNumPixels = w.vp.hRes * w.vp.vRes;
-			int pixelsPerProcess = totalNumPixels / (size - 1);
-			int remainderPixels = totalNumPixels % (size - 1);
-
-			// Distribute remaining pixels among processes [1..size-1]
-			for (int i = 0; i < remainderPixels; i++)
-			{
-				pixelsPerProcess++;
-			}
-
 			MPI_Status status;
 			int inBuf[5];
 
             int received = 0;
 			for (int i = 0; i < totalNumPixels; i++)
 			{
-                //cout << "Waiting for pixels\n";
-                MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-				//cout << "Received pixel from " << status.MPI_SOURCE << "\n";
-				if(received % 1000 == 0)
-                    cout << "Received " << received << " pixels\n";
-                received++;
+                int succ = MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+				
+                if (succ != MPI_SUCCESS)
+                {
+                    cout << "ERROR: MPI_Recv() failed\n";
+                }
+                
                 image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
-			}
-
-            cout << "Writing image to file\n";
+            }
+            cout << "Writing image " << j << " of " << NUM_IMAGES << "\n";      
             writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
-            cout << "Write successful, shutting down\n";
         }
 		else
 		{
@@ -1729,9 +1517,11 @@ int main()
 		}
 
 #else
+        
+        w.camera_ptr->renderScene(w);
         writeImage(w.vp.hRes, w.vp.vRes, rank);
 #endif
-	//}
+    }
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
@@ -1747,6 +1537,7 @@ int main()
 
 void writeImage(int width, int height, int rank)
 {
+    cout << "Rank: " << rank << " is writing an image\n";
 	std::ofstream imageFile;
 	std::stringstream ss;
 

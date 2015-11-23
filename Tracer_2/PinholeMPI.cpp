@@ -90,16 +90,17 @@ void PinholeMPI::renderScene(World& w)
 	}
 
 	// Whatever rank I am (minus one), I start here
-	int start = rank-1 * pixelsPerProcess;
+	int start = (rank-1) * pixelsPerProcess;
 	// and I end here
-	int end = rank-1 * pixelsPerProcess + pixelsPerProcess-1;
+	int end = (rank-1) * pixelsPerProcess + pixelsPerProcess-1;
 
-	std::cout << "Rank: " << rank << " reporting " << end - start << " pixels to render\n";
+	//std::cout << "Rank: " << rank << " reporting " << end - start << " pixels to render\n";
 	// Need to translate start & end to 2D range
-	int vStart = start / w.vp.hRes;
-	int hStart = start % w.vp.hRes;
-	int vEnd = end / w.vp.hRes;
-	int hEnd = end % w.vp.hRes;
+	//int vStart = start / w.vp.hRes;
+	//int hStart = start % w.vp.hRes;
+	//int vEnd = end / w.vp.hRes;
+	//int hEnd = end % w.vp.hRes;
+
 
 	clock_t		startTime;
 	clock_t		currentTime;
@@ -121,10 +122,15 @@ void PinholeMPI::renderScene(World& w)
 	startTime = clock();
 
 	// vertical image coord
-	for (int r = vStart; r < vEnd; r++) {
+	//for (int r = vStart; r <= vEnd; r++) {
 		// horizontal image coord	
-		for (int c = hStart; c < hEnd; c++) {
-			pixelColor = black;
+		//for (int c = hStart; c <= hEnd; c++) {
+        for(int i = start; i <= end; i++)
+        {
+            int r = i % w.vp.hRes;
+            int c = i / w.vp.hRes;
+
+            pixelColor = black;
                 
             for (int j = 0; j < vp.numSamples; j++)	
             {
@@ -137,13 +143,14 @@ void PinholeMPI::renderScene(World& w)
 
 			pixelColor /= (float)vp.numSamples;
             pixelColor *= exposureTime;
-			w.displayPixel(r, c, pixelColor);
+		
+            w.displayPixel(r, c, pixelColor);
 		}
-	}
+	//}
 
 	// stop clock
 	endTime = clock();
 	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
 
-	std::cout << "Rank: " << rank << " reports render completed in " << totalTime << " ms" << std::endl;
+	//std::cout << "Rank: " << rank << " reports render completed in " << totalTime << " ms" << std::endl;
 }
