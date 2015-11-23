@@ -24,10 +24,10 @@ RGBColor RayCast::traceRay(const Ray& ray) const {
 
 	if (sr.hitAnObject) {
 		sr.ray = ray;
-		return (sr.mat_ptr->shade(sr));
+		return sr.mat_ptr->shade(sr);
 	}
 	else
-		return (world_ptr->backgroundColor);
+		return world_ptr->backgroundColor;
 }
 
 // Since this is just ray casting, depth parameter isn't used

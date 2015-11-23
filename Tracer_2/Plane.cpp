@@ -34,7 +34,7 @@ Plane& Plane::operator= (const Plane& p)
 {
 
 	if (this == &p)
-		return (*this);
+		return *this;
 
 	GeometricObject::operator= (p);
 
@@ -59,10 +59,10 @@ bool Plane::hit(const Ray& ray, double& tmin, ShadeRec& sr) const
 		sr.normal = normal;
 		sr.localHitPoint = ray.o + t * ray.d;
 
-		return (true);
+		return true;
 	}
 
-	return(false);
+	return false;
 }
 
 bool Plane::shadowHit(const Ray& ray, double& tMin) const

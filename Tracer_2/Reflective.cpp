@@ -76,5 +76,5 @@ RGBColor Reflective::shade(ShadeRec& sr)
 
 	L += fr * sr.w.tracer_ptr->traceRay(reflectedRay, sr.depth + 1) * (sr.normal * wi);
 
-	return (L);
+	return L;
 }

@@ -87,7 +87,7 @@ inline Normal Normal::operator* (const double a) const
 Normal operator* (const double a, const Normal& n);
 inline Normal operator*(const double f, const Normal& n)
 {
-	return (Normal(f * n.x, f * n.y, f * n.z));
+	return Normal(f * n.x, f * n.y, f * n.z);
 }
 
 
@@ -96,7 +96,7 @@ inline Normal operator*(const double f, const Normal& n)
 Vector3D operator+ (const Vector3D& v, const Normal& n);
 inline Vector3D operator+ (const Vector3D& v, const Normal& n) 
 {
-	return (Vector3D(v.x + n.x, v.y + n.y, v.z + n.z));
+	return Vector3D(v.x + n.x, v.y + n.y, v.z + n.z);
 }
 
 
@@ -105,7 +105,7 @@ inline Vector3D operator+ (const Vector3D& v, const Normal& n)
 Vector3D operator- (const Vector3D&, const Normal& n);
 inline Vector3D operator- (const Vector3D& v, const Normal& n)
 {
-	return (Vector3D(v.x - n.x, v.y - n.y, v.z - n.z));
+	return Vector3D(v.x - n.x, v.y - n.y, v.z - n.z);
 }
 
 
@@ -114,7 +114,7 @@ inline Vector3D operator- (const Vector3D& v, const Normal& n)
 double operator* (const Vector3D& v, const Normal& n);
 inline double operator* (const Vector3D& v, const Normal& n)
 {
-	return (v.x * n.x + v.y * n.y + v.z * n.z);
+	return v.x * n.x + v.y * n.y + v.z * n.z;
 }
 
 

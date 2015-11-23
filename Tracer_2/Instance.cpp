@@ -235,7 +235,6 @@ bool Instance::hit(const Ray& ray, double& t, ShadeRec& sr) const {
 // Scale
 void Instance::scale(const Vector3D& s)
 {
-
 	Matrix	invScaleMat;
 
 	invScaleMat.m[0][0] = 1.0 / s.x;

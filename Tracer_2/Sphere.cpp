@@ -1,7 +1,7 @@
 #include "Sphere.h"
 #include <cmath>
 
-const double Sphere::kEpsilon = 0.00001;
+const double Sphere::kEpsilon = 0.001;
 
 // Default Constructor
 Sphere::Sphere()
@@ -47,14 +47,15 @@ Sphere::~Sphere()
 { }
 
 // Sphere hit
-bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
+bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const 
+{
 	double t;
 	Vector3D temp = ray.o - center;
 	double a = ray.d * ray.d;
 	double b = 2.0 * temp * ray.d;
 	double c = temp * temp - radius * radius;
 	double disc = b * b - 4.0 * a * c;
-
+	
 	if (disc < 0.0)
 	{
 		return false;
@@ -62,7 +63,7 @@ bool Sphere::hit(const Ray& ray, double& tmin, ShadeRec& sr) const {
 	else
 	{
 		double e = sqrt(disc);
-		double denom = 1.0 / 2.0 * a;
+		double denom = 1.0 / (2.0 * a);
 		double r = 1.0 / radius;
 		t = (-b - e) * denom;
 

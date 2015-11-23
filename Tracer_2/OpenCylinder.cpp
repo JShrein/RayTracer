@@ -40,7 +40,7 @@ OpenCylinder* OpenCylinder::clone() const
 OpenCylinder& OpenCylinder::operator= (const OpenCylinder& oc)
 {
 	if (this == &oc)
-		return (*this);
+		return *this;
 
 	GeometricObject::operator= (oc);
 
@@ -49,7 +49,7 @@ OpenCylinder& OpenCylinder::operator= (const OpenCylinder& oc)
 	radius = oc.radius;
 	invRadius = oc.invRadius;
 
-	return (*this);
+	return *this;
 }
 
 
@@ -73,8 +73,8 @@ bool OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const
 		return(false);
 	else {
 		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
+		double denom = 1.0 / (2.0 * a);
+		t = (-b - e) * denom;    // smaller root
 
 		if (t > kEpsilon) {
 			double yhit = ray.o.y + t * ray.d.y;
@@ -95,7 +95,7 @@ bool OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const
 			}
 		}
 
-		t = (-b + e) / denom;    // larger root
+		t = (-b + e) * denom;    // larger root
 
 		if (t > kEpsilon)
 		{
@@ -113,12 +113,12 @@ bool OpenCylinder::hit(const Ray& ray, double& tmin, ShadeRec& sr) const
 
 				sr.localHitPoint = ray.o + tmin * ray.d;
 
-				return (true);
+				return true;
 			}
 		}
 	}
 
-	return (false);
+	return false;
 }
 
 
@@ -137,31 +137,34 @@ bool OpenCylinder::shadowHit(const Ray& ray, double& tMin) const
 		return(false);
 	else {
 		double e = sqrt(disc);
-		double denom = 2.0 * a;
-		t = (-b - e) / denom;    // smaller root
+		double denom = 1.0 / (2.0 * a);
+		t = (-b - e) * denom;    // smaller root
 
-		if (t > kEpsilon) {
+		if (t > kEpsilon)
+		{
 			double yhit = ray.o.y + t * ray.d.y;
 
-			if (yhit > y0 && yhit < y1) {
+			if (yhit > y0 && yhit < y1)
+			{
 				tMin = t;
 				Normal normal((ray.o.x + t * ray.d.x) * invRadius, 0.0, (ray.o.z + t * ray.d.z) * invRadius);
 
 				// test for hitting from inside
-
 				if (-ray.d * normal < 0.0)
 					normal = normal;
 
-				return (true);
+				return true;
 			}
 		}
 
-		t = (-b + e) / denom;    // larger root
+		t = (-b + e) * denom;    // larger root
 
-		if (t > kEpsilon) {
+		if (t > kEpsilon) 
+		{
 			double yhit = ray.o.y + t * ray.d.y;
 
-			if (yhit > y0 && yhit < y1) {
+			if (yhit > y0 && yhit < y1) 
+			{
 				tMin = t;
 				Normal normal((ray.o.x + t * ray.d.x) * invRadius, 0.0, (ray.o.z + t * ray.d.z) * invRadius);
 
@@ -170,10 +173,9 @@ bool OpenCylinder::shadowHit(const Ray& ray, double& tMin) const
 				if (-ray.d * normal < 0.0)
 					normal = -normal;
 
-				return (true);
+				return true;
 			}
 		}
 	}
-
-	return (false);
+	return false;
 }

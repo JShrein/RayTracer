@@ -64,7 +64,7 @@
 //	else
 //	{
 //		double e = sqrt(disc);
-//		double denom = 1.0 / 2.0 * a;
+//		double denom = 1.0 / (2.0 * a);
 //		double r = 1.0 / radius;
 //
 //		t = (-b - e) * denom;
@@ -122,7 +122,7 @@
 //	else
 //	{
 //		double e = sqrt(disc);
-//		double denom = 1.0 / 2.0 * a;
+//		double denom = 1.0 / (2.0 * a);
 //		double r = 1.0 / radius;
 //
 //		t = (-b - e) * denom;

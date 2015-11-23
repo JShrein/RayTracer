@@ -34,7 +34,7 @@ public:
 // Point3D = -Point3D
 inline Point3D Point3D::operator- () const 
 {
-	return (Point3D(-x, -y, -z));
+	return Point3D(-x, -y, -z);
 }
 
 // Vector3D = Point3D - Point3D

@@ -22,9 +22,9 @@ MultipleObjects::~MultipleObjects()
 //	ShadeRec sr(world_ptr->hitBareBonesObject(ray)); // sr is copy constructed
 //
 //	if (sr.hitAnObject)
-//		return (sr.color);
+//		return sr.color;
 //	else
-//		return (world_ptr->backgroundColor);
+//		wreturn orld_ptr->backgroundColor;
 //}
 
 // TODO: remove
@@ -34,7 +34,7 @@ MultipleObjects::~MultipleObjects()
 //	ShadeRec sr(world_ptr->hitBareBonesObject(ray)); // sr is copy constructed
 //
 //	if (sr.hitAnObject)
-//		return (sr.color);
+//		return sr.color;
 //	else
-//		return (world_ptr->backgroundColor);
+//		return world_ptr->backgroundColor;
 //}

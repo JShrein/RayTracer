@@ -34,7 +34,7 @@ private:
 //  get_num_objects
 inline int CompoundObject::getNumObj()
 {
-	return (objects.size());
+	return objects.size();
 }
 
 #endif // COMPOUND_OBJECT_H

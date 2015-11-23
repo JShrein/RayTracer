@@ -47,7 +47,7 @@ double Hammersley::phi(int j) {
 		f *= 0.5;
 	}
 
-	return (x);
+	return x;
 }
 
 // Generate Samples override

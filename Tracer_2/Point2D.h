@@ -22,7 +22,7 @@ public:
 // Point * scalar
 inline Point2D Point2D::operator* (const float a) 
 {
-	return (Point2D(a * x, a * y));
+	return Point2D(a * x, a * y);
 }
 
 

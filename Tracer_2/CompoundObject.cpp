@@ -100,7 +100,7 @@ bool CompoundObject::hit(const Ray& ray, double& tmin, ShadeRec& sr) const
 		sr.localHitPoint = hitPoint;
 	}
 
-	return (hit);
+	return hit;
 }
 
 bool CompoundObject::shadowHit(const Ray& ray, double& tmin) const
@@ -119,5 +119,5 @@ bool CompoundObject::shadowHit(const Ray& ray, double& tmin) const
 		}
 	}
 
-	return (hit);
+	return hit;
 }
