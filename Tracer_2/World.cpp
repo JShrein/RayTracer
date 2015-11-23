@@ -535,7 +535,7 @@ void World::build()
 */
 void World::build()
 {
-	int numSamples = 1;
+	int numSamples = 256;
 
 	vp.setHres(512);
 	vp.setVres(512);
@@ -558,8 +558,8 @@ void World::build()
     if (usingMPI)
 	{
 	    PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
-	    distPinhole_ptr->setEyePos(0,24,56);
-	    distPinhole_ptr->setLookAt(0,1,0);
+	    distPinhole_ptr->setEyePos(64,24,56);
+	    distPinhole_ptr->setLookAt(0,3,0);
 	    distPinhole_ptr->setDistance(5000);
 	    distPinhole_ptr->setRoll(0);
 	    distPinhole_ptr->computeUVW();
@@ -568,8 +568,8 @@ void World::build()
     else 
     {
         Pinhole* pinhole_ptr = new Pinhole();
-	    pinhole_ptr->setEyePos(0, 24, 56);
-	    pinhole_ptr->setLookAt(0, 2, 0);
+	    pinhole_ptr->setEyePos(64, 24, 56);
+	    pinhole_ptr->setLookAt(0, 3, 0);
 	    pinhole_ptr->setDistance(5000);
 	    pinhole_ptr->setRoll(0);
 	    pinhole_ptr->computeUVW();
@@ -718,26 +718,27 @@ void World::build()
 	//cylinder_ptr->setMat(reflective_ptr);
 	//addObject(cylinder_ptr);
 
-	SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
-	solidCylinder_ptr->setMat(reflective_ptr);
-	addObject(solidCylinder_ptr);
+	//SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
+	//solidCylinder_ptr->setMat(reflective_ptr);
+	//addObject(solidCylinder_ptr);
 	
-	AABB a = solidCylinder_ptr->getAABB();
+	//AABB a = solidCylinder_ptr->getAABB();
 
-	Phong* blackFloorPhong_ptr = new Phong;
-	blackFloorPhong_ptr->setKA(0.5);
-	blackFloorPhong_ptr->setKD(0.75);
-	blackFloorPhong_ptr->setKS(0.1f);
-	blackFloorPhong_ptr->setEXP(500);
-	blackFloorPhong_ptr->setCD(RGBColor(black));
 
-	Phong* whiteFloorPhong_ptr = new Phong;
-	whiteFloorPhong_ptr->setKA(0.5);
-	whiteFloorPhong_ptr->setKD(0.75);
-	whiteFloorPhong_ptr->setKS(0.1f);
-	whiteFloorPhong_ptr->setEXP(500);
-	whiteFloorPhong_ptr->setCD(RGBColor(white));
-	
+	Phong* blackTile_ptr = new Phong;
+	blackTile_ptr->setKA(0.5);
+	blackTile_ptr->setKD(0.75);
+	blackTile_ptr->setKS(0.1f);
+	blackTile_ptr->setEXP(500);
+	blackTile_ptr->setCD(RGBColor(black));
+
+	Phong* whiteTile_ptr = new Phong;
+	whiteTile_ptr->setKA(0.5);
+	whiteTile_ptr->setKD(0.75);
+	whiteTile_ptr->setKS(0.1f);
+	whiteTile_ptr->setEXP(500);
+	whiteTile_ptr->setCD(RGBColor(white));
+
 	Box* box_ptr;
 
 	for (int i = -20; i < 21; i++)
@@ -749,13 +750,13 @@ void World::build()
 				if (j % 2 == 0)
 				{
 					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(blackFloorPhong_ptr);
+					box_ptr->setMat(blackTile_ptr);
 					addObject(box_ptr);
 				}
 				else
 				{
 					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(whiteFloorPhong_ptr);
+					box_ptr->setMat(whiteTile_ptr);
 					addObject(box_ptr);
 				}
 			}
@@ -764,13 +765,13 @@ void World::build()
 				if (j % 2 == 0)
 				{
 					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(whiteFloorPhong_ptr);
+					box_ptr->setMat(whiteTile_ptr);
 					addObject(box_ptr);
 				}
 				else
 				{
 					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-					box_ptr->setMat(blackFloorPhong_ptr);
+					box_ptr->setMat(blackTile_ptr);
 					addObject(box_ptr);
 				}
 			}
@@ -783,13 +784,96 @@ void World::build()
 	reflective_ptr->setKD(0.75);
 	reflective_ptr->setKS(0.1f);
 	reflective_ptr->setEXP(500);
-	reflective_ptr->setCD(RGBColor(red));
+	reflective_ptr->setCD(RGBColor(1.0f, 0.686275f, 0.686275f));
 	reflective_ptr->setCR(white);
 	reflective_ptr->setKR(1.0);
 
-	Sphere* sphere_ptr = new Sphere(Point3D(0, 3.15, 0), 1);
+	Sphere* sphere_ptr = new Sphere(Point3D(-2,3,0), 1);
 	sphere_ptr->setMat(reflective_ptr);
 	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(0,1,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+    sphere_ptr = new Sphere(Point3D(0,5,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(1.0f, 1.0f, 0.686275f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(2,3,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+    
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(white));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(0,3,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    
+    
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(green));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	Box* box_ptr2 = new Box;
+    box_ptr2 = new Box(Point3D(4, 0, -1), Point3D(6, 3, 1));
+	box_ptr2->setMat(reflective_ptr);
+	addObject(box_ptr2);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(black));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(5,4,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+
 
 	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
 	//ellipsoid_ptr->setMat(phong_ptr2);
@@ -806,11 +890,11 @@ void World::build()
 	reflective_ptr->setCR(white);
 	reflective_ptr->setKR(1.0);
 
-	Normal norm(1, 0, 2);
+	//Normal norm(1, 0, 2);
 
-	Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
-	tri_ptr->setMat(reflective_ptr);
-	addObject(tri_ptr);
+	//Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
+	//tri_ptr->setMat(reflective_ptr);
+	//addObject(tri_ptr);
 
 	/*
 	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
