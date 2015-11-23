@@ -269,7 +269,7 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 #if USEMPI
     
     RGBColor c = colorToRange(mapped_color, 255);
-    cout << "rank: " << rank << " sending pixel info to rank 0\n";
+    //cout << "rank: " << rank << " sending pixel info to rank 0\n";
 	// sendBuf[] = {row, col, red, green, blue};
 	int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
 
@@ -1707,12 +1707,16 @@ int main()
 			MPI_Status status;
 			int inBuf[5];
 
+            int received = 0;
 			for (int i = 0; i < totalNumPixels; i++)
 			{
-                cout << "Waiting for pixels\n";
-				MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-				cout << "Received pixel from " << status.MPI_SOURCE << "\n";
-				image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
+                //cout << "Waiting for pixels\n";
+                MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+				//cout << "Received pixel from " << status.MPI_SOURCE << "\n";
+				if(received % 1000 == 0)
+                    cout << "Received " << received << " pixels\n";
+                received++;
+                image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
 			}
 
             cout << "Writing image to file\n";
