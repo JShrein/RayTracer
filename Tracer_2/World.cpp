@@ -52,7 +52,8 @@ using std::endl;
 using std::string;
 using std::cin;
 
-#define USEMPI 0
+#define USEWIN 0
+#define USEMPI 1
 
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
@@ -92,7 +93,7 @@ void writeImage(int width, int height, int rank);
 bool file_exists(const string& name);
 
 // Helper functions
-void pause();
+void haltBeforeClose();
 
 // Build functions
 
@@ -1310,6 +1311,7 @@ void World::build()
 	}
 	else
 	{
+<<<<<<< HEAD
 		Pinhole* pinhole_ptr = new Pinhole();
 		pinhole_ptr->setEyePos(0, 24, 56);
 		pinhole_ptr->setLookAt(0, 2, 0);
@@ -1319,6 +1321,27 @@ void World::build()
 		setCamera(pinhole_ptr);
 	}
 
+=======
+	    PinholeMPI* distPinhole_ptr = new PinholeMPI(rank,size);
+	    distPinhole_ptr->setEyePos(64,24,56);
+	    distPinhole_ptr->setLookAt(0,3,0);
+	    distPinhole_ptr->setDistance(5000);
+	    distPinhole_ptr->setRoll(0);
+	    distPinhole_ptr->computeUVW();
+	    setCamera(distPinhole_ptr);
+	}
+    else 
+    {
+        Pinhole* pinhole_ptr = new Pinhole();
+	    pinhole_ptr->setEyePos(64, 24, 56);
+	    pinhole_ptr->setLookAt(0, 3, 0);
+	    pinhole_ptr->setDistance(5000);
+	    pinhole_ptr->setRoll(0);
+	    pinhole_ptr->computeUVW();
+	    setCamera(pinhole_ptr);
+    }
+    
+>>>>>>> f5e1a2c93955e96a024ea70fca2ed532edd03445
 	PointLight* pointLight_ptr = new PointLight;
 	pointLight_ptr->setPos(30, 30, 30);
 	pointLight_ptr->scaleRadiance(0.01f);
@@ -1356,6 +1379,7 @@ void World::build()
 	phong_ptr->setKA(0.5);
 	phong_ptr->setKD(0.75);
 	phong_ptr->setKS(0.1f);
+<<<<<<< HEAD
 	phong_ptr->setEXP(200);
 	phong_ptr->setCD(gray);
 
@@ -1369,6 +1393,231 @@ void World::build()
 	//Sphere* sphere_ptr = new Sphere(Point3D(0, 2, 0), 1.0);
 	//sphere_ptr->setMat(reflective_ptr);
 	//addObject(sphere_ptr);
+=======
+	phong_ptr->setEXP(500);
+	phong_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+
+	Phong* phong_ptr2 = new Phong;
+	phong_ptr2->setKA(0.25);
+	phong_ptr2->setKD(0.75);
+	phong_ptr2->setKS(0.1f);
+	phong_ptr2->setCD(green);
+	phong_ptr2->setEXP(500);
+
+	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
+	tri_ptr->setMat(phong_ptr);
+	//addObject(tri_ptr);
+	*/
+	/*
+	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
+	plane_ptr->setMat(phong_ptr2);
+	addObject(plane_ptr);
+	
+
+	Disk* disk_ptr = new Disk(Point3D(0), 3.0, Normal(0, 1, 0));
+	disk_ptr->setMat(phong_ptr2);
+	addObject(disk_ptr);
+	*/
+
+	Reflective* reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.1, 0.1, 0.1));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(0.75);
+
+	//OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 0.75);
+	//cylinder_ptr->setCenter(0, 0, -4);
+	//cylinder_ptr->setYRange(0, 3);
+	//cylinder_ptr->setMat(reflective_ptr);
+	//addObject(cylinder_ptr);
+
+	//SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
+	//solidCylinder_ptr->setMat(reflective_ptr);
+	//addObject(solidCylinder_ptr);
+	
+	//AABB a = solidCylinder_ptr->getAABB();
+
+
+	Phong* blackTile_ptr = new Phong;
+	blackTile_ptr->setKA(0.5);
+	blackTile_ptr->setKD(0.75);
+	blackTile_ptr->setKS(0.1f);
+	blackTile_ptr->setEXP(500);
+	blackTile_ptr->setCD(RGBColor(black));
+
+	Phong* whiteTile_ptr = new Phong;
+	whiteTile_ptr->setKA(0.5);
+	whiteTile_ptr->setKD(0.75);
+	whiteTile_ptr->setKS(0.1f);
+	whiteTile_ptr->setEXP(500);
+	whiteTile_ptr->setCD(RGBColor(white));
+
+	Box* box_ptr;
+
+	for (int i = -20; i < 21; i++)
+	{
+		for (int j = -20; j < 21; j++)
+		{
+			if (i % 2 == 0)
+			{
+				if (j % 2 == 0)
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(blackTile_ptr);
+					addObject(box_ptr);
+				}
+				else
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(whiteTile_ptr);
+					addObject(box_ptr);
+				}
+			}
+			else
+			{
+				if (j % 2 == 0)
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(whiteTile_ptr);
+					addObject(box_ptr);
+				}
+				else
+				{
+					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+					box_ptr->setMat(blackTile_ptr);
+					addObject(box_ptr);
+				}
+			}
+		}
+	}
+	
+
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(1.0f, 0.686275f, 0.686275f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	Sphere* sphere_ptr = new Sphere(Point3D(-2,3,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(0,1,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+    sphere_ptr = new Sphere(Point3D(0,5,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(1.0f, 1.0f, 0.686275f));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(2,3,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+    
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(white));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(0,3,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+    
+    
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(green));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	Box* box_ptr2 = new Box;
+    box_ptr2 = new Box(Point3D(4, 0, -1), Point3D(6, 3, 1));
+	box_ptr2->setMat(reflective_ptr);
+	addObject(box_ptr2);
+
+    reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(black));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	sphere_ptr = new Sphere(Point3D(5,4,0), 1);
+	sphere_ptr->setMat(reflective_ptr);
+	addObject(sphere_ptr);
+
+
+
+	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
+	//ellipsoid_ptr->setMat(phong_ptr2);
+	//ellipsoid_ptr->scale(2, 3, 1);
+	//ellipsoid_ptr->rotateX(-45.0);
+	//addObject(ellipsoid_ptr);
+
+	reflective_ptr = new Reflective;
+	reflective_ptr->setKA(0.5);
+	reflective_ptr->setKD(0.75);
+	reflective_ptr->setKS(0.1f);
+	reflective_ptr->setEXP(500);
+	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
+	reflective_ptr->setCR(white);
+	reflective_ptr->setKR(1.0);
+
+	//Normal norm(1, 0, 2);
+
+	//Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
+	//tri_ptr->setMat(reflective_ptr);
+	//addObject(tri_ptr);
+
+	/*
+	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
+	plane_ptr3->setMat(reflective_ptr);
+	addObject(plane_ptr3);
+	*/
+>>>>>>> f5e1a2c93955e96a024ea70fca2ed532edd03445
 }
 
 ShadeRec World::hitObjects(const Ray& ray)
@@ -1483,8 +1732,11 @@ int main()
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
 
-	pause();
-	
+    if(USEWIN)
+    {
+	    haltBeforeClose();
+    }
+
 	return 0;
 }
 
@@ -1532,7 +1784,7 @@ bool file_exists(const string& name)
 }
 
 
-void pause()
+void haltBeforeClose()
 {
 	std::cin.sync();
 	std::cin.ignore();

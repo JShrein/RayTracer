@@ -5,5 +5,5 @@ SOURCES= ./Tracer_2/AABB.cpp ./Tracer_2/Ambient.cpp ./Tracer_2/AmbientOccluder.c
 EXECUTABLE=RayTracer
 
 all: 
-	$(CC) $(SOURCES) -o $(EXECUTABLE)
+	$(CC) $(SOURCES) -o $(EXECUTABLE) -O3
 
