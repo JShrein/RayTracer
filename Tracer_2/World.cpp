@@ -53,7 +53,7 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 0
+#define USEMPI 1
 
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
@@ -297,7 +297,7 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 		for (int i = 0; i < totalNumPixels; i++)
 		{
 			MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-
+            cout << "Received pixel from " << status.MPI_SOURCE;
 			image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
 		}
 	}
@@ -306,7 +306,7 @@ void World::displayPixel(const int row, const int column, const RGBColor& raw_co
 		RGBColor c = colorToRange(mapped_color, 255);
 
 		// sendBuf[] = {row, col, red, green, blue};
-		int sendBuf[] = { x, y * vp.vRes, c.r, c.g, c.b };
+		int sendBuf[] = { x, y * vp.vRes, (int)c.r, (int)c.g, (int)c.b };
 
 		MPI_Send(&sendBuf, 5, MPI_INT, 0, 0, MPI_COMM_WORLD);
 	}
@@ -1424,7 +1424,7 @@ void World::build()
 	addObject(disk_ptr);
 	*/
 
-	Reflective* reflective_ptr = new Reflective;
+    reflective_ptr = new Reflective;
 	reflective_ptr->setKA(0.5);
 	reflective_ptr->setKD(0.75);
 	reflective_ptr->setKS(0.1f);
@@ -1693,9 +1693,8 @@ int main()
 	// MPI_Init() wrapped up in this function to facilitate multi-platform development
 	initMPI(NULL, NULL);
 	World w;
-	cout << "Created world object, entering build function\n";
 	w.build();
-	cout << "Build complete, rendering scene\n";
+	cout << "Rank " << rank << " reports build complete, rendering scene\n";
 	//w.renderScene();
 	//w.render_perspective();
 	//double angle = 5;
@@ -1728,12 +1727,17 @@ int main()
 		//w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 		w.camera_ptr->renderScene(w);
-		cout << "Writing image to file\n";
-		writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
-		
+#if USEMPI
+		if(rank == 0)
+        {
+            cout << "Writing image to file\n";
+            writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
+            cout << "Write successful, shutting down\n";
+        }
+#else
+        writeImage(w.vp.hRes, w.vp.vRes, rank);
+#endif
 	//}
-
-	cout << "Write successful, shutting down\n";
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
@@ -1753,7 +1757,7 @@ void writeImage(int width, int height, int rank)
 	std::stringstream ss;
 
 	string fileName;
-	string location = "../output/";
+	string location = "./output/";
 	string filePrefix = "multipleObj";
 	int fileNum = rank;//0;
 	string extension = ".ppm";

@@ -144,5 +144,5 @@ void PinholeMPI::renderScene(World& w)
 	endTime = clock();
 	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
 
-	std::cout << "Render completed in " << totalTime << " ms" << std::endl;
+	std::cout << "Rank: " << rank << " reports render completed in " << totalTime << " ms" << std::endl;
 }
