@@ -1457,12 +1457,16 @@ int main()
     //w.renderScene();
 	//w.render_perspective();
     const int NUM_IMAGES = 145;
+	
+	// Will use this flag to tell non-master nodes to GO (1 image at a time)
+	// Attempting to solve "artifact" problem
+	int readyFlag = 0;
 
+	// rotation angle
     double angle = 2.5;
 	//double translationAmt = 0;
 	for (int j = 0; j < NUM_IMAGES; j++)
 	{
-
 	//	translationAmt++;
 	//	Instance* box = (Instance*)w.objects[0];
 
@@ -1493,6 +1497,11 @@ int main()
 
 		if(rank == 0)
         {
+			readyFlag = 1;
+
+			// Broadcast to all processes to begin
+			MPI_Bcast(&readyFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
 			MPI_Status status;
 			int inBuf[5];
 
@@ -1513,7 +1522,15 @@ int main()
         }
 		else
 		{
+			cout << "Rank: " << rank << " has begun waiting\n";
+			do
+			{
+				// busy idling
+				MPI_Recv(&readyFlag, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			} while (!readyFlag);
+			cout << "Rank: " << rank << " is starting to render\n";
 			w.camera_ptr->renderScene(w);
+			readyFlag = 0;
 		}
 
 #else
