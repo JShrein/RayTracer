@@ -1475,10 +1475,10 @@ int main()
 	//		box->translate(0, 0, -0.25);
 	//	}
 
-		Point3D lightPos = w.lights[0]->getPos();
+		//Point3D lightPos = w.lights[0]->getPos();
 
-		double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
-		double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
+		//double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
+		//double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
 
 		//cameraPosition.x = rx;
 		//cameraPosition.z = rz;
@@ -1486,7 +1486,7 @@ int main()
 		//w.camera_ptr->setEyePos(cameraPosition);
 		//w.camera_ptr->setLookAt(0, 0, 0);
 		
-		w.lights[0]->setPos(rx, lightPos.y, rz);
+		//w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 #if USEMPI
         int totalNumPixels = w.vp.hRes * w.vp.vRes;
