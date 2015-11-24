@@ -46,7 +46,7 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
-
+#include <ctime>
 using std::vector;
 using std::cout;
 using std::endl;
@@ -54,7 +54,7 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 1
+#define USEMPI 0
 
 // TODO: Find a better way to do this
 // If OS is linux, do the MPI stuff
@@ -1479,10 +1479,10 @@ int main()
 	//		box->translate(0, 0, -0.25);
 	//	}
 
-		//Point3D lightPos = w.lights[0]->getPos();
+		Point3D lightPos = w.lights[0]->getPos();
 
-		//double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
-		//double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
+		double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
+		double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
 
 		//cameraPosition.x = rx;
 		//cameraPosition.z = rz;
@@ -1490,18 +1490,27 @@ int main()
 		//w.camera_ptr->setEyePos(cameraPosition);
 		//w.camera_ptr->setLookAt(0, 0, 0);
 		
-		//w.lights[0]->setPos(rx, lightPos.y, rz);
+		w.lights[0]->setPos(rx, lightPos.y, rz);
 		
 #if USEMPI
         int totalNumPixels = w.vp.hRes * w.vp.vRes;
 
 		if(rank == 0)
         {
-			readyFlag = 1;
+		    clock_t		startTime;
+	        clock_t		currentTime;
+	        clock_t		endTime;
+	        float		totalTime;
+
+
+            readyFlag = 1;
 
 			// Broadcast to all processes to begin
-			MPI_Bcast(&readyFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
+			MPI_Bcast(&readyFlag, 1, MPI_INT, rank, MPI_COMM_WORLD);
+          
+            cout << "Started rendering image " << j+1 << " of " << NUM_IMAGES << "\n";
 
+            startTime = clock();
 			MPI_Status status;
 			int inBuf[5];
 
@@ -1517,19 +1526,25 @@ int main()
                 
                 image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
             }
-            cout << "Writing image " << j << " of " << NUM_IMAGES << "\n";      
+            
+            endTime = clock();
+	        totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
+            
+            cout << "Render completed in " << totalTime << " s" << endl;
+
+
+            cout << "Writing image " << j+1 << " of " << NUM_IMAGES << "\n";      
             writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
         }
 		else
 		{
-			cout << "Rank: " << rank << " has begun waiting\n";
 			do
 			{
 				// busy idling
-				MPI_Recv(&readyFlag, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-			} while (!readyFlag);
-			cout << "Rank: " << rank << " is starting to render\n";
-			w.camera_ptr->renderScene(w);
+				MPI_Bcast(&readyFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            } while (!readyFlag);
+			
+            w.camera_ptr->renderScene(w);
 			readyFlag = 0;
 		}
 
