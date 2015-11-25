@@ -22,8 +22,22 @@ public:
 	void setLookAt(const float x, const float y, const float z);
 	void setUpVec(const Vector3D& upVec);
 	void setUpVec(const float x, const float y, const float z);
-	void setRoll(const float rollAngle);
-	void setExposureTime(const float expTime);
+	void setRoll(const double rollAngle);
+	void setExposureTime(const double expTime);
+
+    Point3D getEyePos();
+    Point3D getLookAt();
+    double getRoll();
+
+	// Matrix Transformations
+	// Translation
+	void translate(const Vector3D& trans);
+	void translate(const double dx, const double dy, const double dz);
+	
+    // Rotations
+	virtual void rotateX(const double angle);
+	virtual void rotateY(const double angle);
+	virtual void rotateZ(const double angle);
 
 	void computeUVW();
 	virtual void renderScene(World& w) = 0;
@@ -41,9 +55,12 @@ protected:
 	Vector3D v;
 	Vector3D w;
 	// The aptly named exposure time
-	float exposureTime;
+	double exposureTime;
 	// roll angle for rotation about w vector
-	float roll;
+	double roll;
+
+    Matrix				inverseMat;
+	static 	Matrix		transformation;
 };
 
 // Inline member functions
@@ -84,9 +101,24 @@ inline void Camera::setUpVec(const float x, const float y, const float z)
 	up.z = z;
 }
 
-inline void Camera::setExposureTime(const float expTime)
+inline void Camera::setRoll(const double rollAngle)
+{
+	roll = rollAngle;
+}
+
+inline void Camera::setExposureTime(const double expTime)
 {
 	exposureTime = expTime;
+}
+
+inline Point3D Camera::getEyePos()
+{
+    return eyePos;
+}
+
+inline Point3D Camera::getLookAt()
+{
+    return lookAt;
 }
 
 #endif // CAMERA_H

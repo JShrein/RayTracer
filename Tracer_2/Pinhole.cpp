@@ -118,5 +118,5 @@ void Pinhole::renderScene(World& w)
 	endTime = clock();
 	totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
 	
-    std::cout << "\rRender completed in " << totalTime << " ms" << std::endl;
+    std::cout << "\rRender completed in " << totalTime << " s" << std::endl;
 }

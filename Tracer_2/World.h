@@ -43,7 +43,9 @@ public:
 	ShadeRec hitObjects(const Ray& ray);
 
 	void setCamera(Camera* camera_ptr);
-	void setAmbientLight(Ambient* ambient_ptr);
+	void doCamMovement();
+    
+    void setAmbientLight(Ambient* ambient_ptr);
 	void setAmbientLight(AmbientOccluder* ambient_ptr);
 
 	// Orthographic render
