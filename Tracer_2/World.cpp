@@ -54,10 +54,10 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 0
+#define USEMPI 1
 
-// TODO: Find a better way to do this
-// If OS is linux, do the MPI stuff
+// TODO: Find a cleaner way to allow portability
+
 //void initMPI(int argc, char *argv[]);
 //void shutdownMPI();
 int rank;
@@ -1313,17 +1313,6 @@ bool usingMPI = 0;
         reflective_ptr->setCR(white);
         reflective_ptr->setKR(1.0);
 
-        Sphere* sphere_ptr = new Sphere(Point3D(0, 1, 0), 1);
-        sphere_ptr->setMat(reflective_ptr);
-        addObject(sphere_ptr);
-
-        Phong* matte_ptr2 = new Phong;
-        matte_ptr2->setKA(0.75);
-        matte_ptr2->setKD(0);
-        matte_ptr2->setKS(0);
-        matte_ptr2->setEXP(0);
-        matte_ptr2->setCD(cyan);
-
         Phong* blackFloorPhong_ptr = new Phong;
         blackFloorPhong_ptr->setKA(0.5);
         blackFloorPhong_ptr->setKD(0.75);
@@ -1383,6 +1372,36 @@ bool usingMPI = 0;
                 }
             }
         }
+   
+        reflective_ptr = new Reflective;
+        reflective_ptr->setKA(0.5);
+        reflective_ptr->setKD(0.75);
+        reflective_ptr->setKS(0.1f);
+        reflective_ptr->setEXP(500);
+        reflective_ptr->setCD(0.2, 0.2, 0.6);
+        reflective_ptr->setCR(white);
+        reflective_ptr->setKR(1.0);
+
+        Instance* sphere_ptr = new Instance(new Sphere(Point3D(0), 1));
+        sphere_ptr->translate(-5,0,5);
+        sphere_ptr->setMat(reflective_ptr);
+        addObject(sphere_ptr);
+
+        reflective_ptr->setCD(0.2,0.6,0.2);
+
+        sphere_ptr->translate(2,0,-2);
+        addObject(sphere_ptr);
+        
+        reflective_ptr->setCD(0.26,0.2,0.2);
+
+        sphere_ptr->translate(2,0,-2);
+        addObject(sphere_ptr);
+
+        reflective_ptr->setCD(0.1,0.1,0.1);
+
+        sphere_ptr->translate(2,0,-2);
+        addObject(sphere_ptr);
+
     }
 
 
@@ -1531,7 +1550,6 @@ bool usingMPI = 0;
                     {
                         cout << "ERROR: MPI_Recv() failed\n";
                     }
-                
                     image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
                 }
             
