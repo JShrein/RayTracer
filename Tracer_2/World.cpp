@@ -1252,7 +1252,7 @@ bool usingMPI = 0;
 
     void World::build()
     {
-        int numSamples = 1;
+        int numSamples = 256;
 
         vp.setHres(512);
         vp.setVres(512);
@@ -1339,8 +1339,8 @@ bool usingMPI = 0;
         whiteFloorPhong_ptr->setCD(RGBColor(white));
 
         
-        Box* box_ptr;
-
+        Instance* iBox_ptr = new Instance(new Box(Point3D(0,0,0), Point3D(1,1,1)));
+        
         for (int i = -5; i < 6; i++)
         {
             for (int j = -5; j < 6; j++)
@@ -1349,30 +1349,36 @@ bool usingMPI = 0;
                 {
                     if (j % 2 == 0)
                     {
-                        box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        box_ptr->setMat(blackFloorPhong_ptr);
-                        addObject(box_ptr);
+                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                        iBox_ptr->translate(i,-1,j);
+                        iBox_ptr->setMat(blackFloorPhong_ptr);
+                        addObject(iBox_ptr);
                     }
                     else
                     {
-                        box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        box_ptr->setMat(whiteFloorPhong_ptr);
-                        addObject(box_ptr);
+                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                        iBox_ptr->translate(i,-1,j);
+                        iBox_ptr->setMat(whiteFloorPhong_ptr);
+                        addObject(iBox_ptr);
                     }
                 }
                 else
                 {
                     if (j % 2 == 0)
                     {
-                        box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        box_ptr->setMat(whiteFloorPhong_ptr);
-                        addObject(box_ptr);
+                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                        iBox_ptr->translate(i,-1,j);
+                        iBox_ptr->setMat(whiteFloorPhong_ptr);
+                        addObject(iBox_ptr);
+
                     }
                     else
                     {
-                        box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        box_ptr->setMat(blackFloorPhong_ptr);
-                        addObject(box_ptr);
+                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+                        iBox_ptr->translate(i,-1,j);
+                        iBox_ptr->setMat(blackFloorPhong_ptr);
+                        addObject(iBox_ptr);
+
                     }
                 }
             }
@@ -1443,7 +1449,7 @@ bool usingMPI = 0;
     int main()
     {
         // Number of frames in your animation
-        const int NUM_IMAGES = 2;
+        const int NUM_IMAGES = 50;
 
 
         // MPI_Init() wrapped up in this function to facilitate multi-platform development
@@ -1571,7 +1577,8 @@ bool usingMPI = 0;
 
 void World::doCamMovement()
 {
-    camera_ptr->translate(0,100,0);
+    //camera_ptr->translate(0,0,-1);
+    camera_ptr->rotateY(1.0);
     camera_ptr->computeUVW();
 }
 

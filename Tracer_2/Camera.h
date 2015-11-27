@@ -58,9 +58,6 @@ protected:
 	double exposureTime;
 	// roll angle for rotation about w vector
 	double roll;
-
-    Matrix				inverseMat;
-	static 	Matrix		transformation;
 };
 
 // Inline member functions
