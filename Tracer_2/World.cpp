@@ -431,7 +431,7 @@ bool usingMPI = 0;
     }
     */
 
-    /*
+    /*/*
     void World::build() 
     {    
         int numSamples = 256;
@@ -808,317 +808,317 @@ bool usingMPI = 0;
     //	plane_ptr3->setMat(reflective_ptr);
     //	addObject(plane_ptr3);
     //	*/
-    //}
+    //}*/
 
-    //void World::build()
-    //{
-    //	int numSamples = 16;
-    //
-    //	vp.setHres(512);
-    //	vp.setVres(512);
-    //	vp.setSamples(numSamples);
-    //	vp.setMaxDepth(0);
-    //	image = vector<RGBColor>(vp.hRes * vp.vRes);
-    //
-    //	tracer_ptr = new RayCast(this);//new Whitted(this);
-    //
-    //	MultiJittered* sampler_ptr = new MultiJittered(numSamples);
-    //
-    //	AmbientOccluder* occluder_ptr = new AmbientOccluder;
-    //	occluder_ptr->scale_radiance(1.0);
-    //	occluder_ptr->setColor(white);
-    //	occluder_ptr->setMinAmt(0.0);
-    //	occluder_ptr->setSampler(sampler_ptr);
-    //	setAmbientLight(occluder_ptr);
-    //
-    //
-    //	if (usingMPI)
-    //	{
-    //		PinholeMPI* distPinhole_ptr = new PinholeMPI(rank, size);
-    //		distPinhole_ptr->setEyePos(0, 24, 56);
-    //		distPinhole_ptr->setLookAt(0, 1, 0);
-    //		distPinhole_ptr->setDistance(5000);
-    //		distPinhole_ptr->setRoll(0);
-    //		distPinhole_ptr->computeUVW();
-    //		setCamera(distPinhole_ptr);
-    //	}
-    //	else
-    //	{
-    //		Pinhole* pinhole_ptr = new Pinhole();
-    //		pinhole_ptr->setEyePos(0, 24, 56);
-    //		pinhole_ptr->setLookAt(0, 2, 0);
-    //		pinhole_ptr->setDistance(5000);
-    //		pinhole_ptr->setRoll(0);
-    //		pinhole_ptr->computeUVW();
-    //		setCamera(pinhole_ptr);
-    //	}
-    //
-    //	PointLight* pointLight_ptr = new PointLight;
-    //	pointLight_ptr->setPos(30, 30, 30);
-    //	pointLight_ptr->scaleRadiance(0.01f);
-    //	pointLight_ptr->setAttenuate(false);
-    //	pointLight_ptr->setAttenPower(2);
-    //	pointLight_ptr->setShadows(true);
-    //	addLight(pointLight_ptr);
-    //
-    //	/*
-    //	Phong* matte_ptr = new Phong;
-    //	matte_ptr->setKA(0.5);
-    //	matte_ptr->setKD(0.75);
-    //	matte_ptr->setKS(0.5f);
-    //	matte_ptr->setEXP(500);
-    //	matte_ptr->setCD(RGBColor(0.3f, 0.3f, 0.3f));
-    //	*/
-    //	/*
-    //	OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 1);
-    //	cylinder_ptr->setCenter(0, 1, 0);
-    //	cylinder_ptr->setYRange(0, 4);
-    //	cylinder_ptr->setMat(matte_ptr);
-    //	addObject(cylinder_ptr);
-    //
-    //	Phong* phong_ptr = new Phong;
-    //	phong_ptr->setKA(0.5);
-    //	phong_ptr->setKD(0.75);
-    //	phong_ptr->setKS(0.1f);
-    //	phong_ptr->setEXP(500);
-    //	phong_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
-    //
-    //	Box* box_ptr = new Box(-1,-1,-1,1,1,1);
-    //	box_ptr->setMat(phong_ptr);
-    //	addObject(box_ptr);
-    //
-    //	Sphere* sphere_ptr = new Sphere(Point3D(0, 4.5, 0), 1.25);
-    //	sphere_ptr->setMat(matte_ptr);
-    //	addObject(sphere_ptr);
-    //
-    //
-    //	Matte* matte_ptr = new Matte;
-    //	matte_ptr->setKA(0.75);
-    //	matte_ptr->setKD(0);
-    //	matte_ptr->setCD(yellow);
-    //
-    //	Cylinder* cylinder_ptr = new Cylinder();
-    //	cylinder_ptr->setCenter(0, 0, 0);
-    //	cylinder_ptr->setRadius(1);
-    //	cylinder_ptr->set_yRange(0, 5);
-    //	cylinder_ptr->setMat(matte_ptr);
-    //	addObject(cylinder_ptr);
-    //
-    //	Matte* matte_ptr2 = new Matte;
-    //	matte_ptr2->setKA(0.5);
-    //	matte_ptr2->setKD(0.75);
-    //	matte_ptr2->setCD(1.0);
-    //	*/
-    //
-    //	/*
-    //
-    //	Reflective* reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(0.9926f, 0.6784f, 0.6784f));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(0.75);
-    //
-    //	Sphere* sphere_ptr = new Sphere(Point3D(0, 1, 0), 1);
-    //	sphere_ptr->setMat(reflective_ptr);
-    //	addObject(sphere_ptr);
-    //
-    //	reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(black));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(0.75);
-    //
-    //	sphere_ptr = new Sphere(Point3D(2, 1, 0), 1);
-    //	sphere_ptr->setMat(reflective_ptr);
-    //	addObject(sphere_ptr);
-    //
-    //	reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(0.75);
-    //
-    //	sphere_ptr = new Sphere(Point3D(-2, 1, 0), 1);
-    //	sphere_ptr->setMat(reflective_ptr);
-    //	addObject(sphere_ptr);
-    //
-    //	Phong* phong_ptr = new Phong;
-    //	phong_ptr->setKA(0.5);
-    //	phong_ptr->setKD(0.75);
-    //	phong_ptr->setKS(0.1f);
-    //	phong_ptr->setEXP(500);
-    //	phong_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
-    //
-    //	Phong* phong_ptr2 = new Phong;
-    //	phong_ptr2->setKA(0.25);
-    //	phong_ptr2->setKD(0.75);
-    //	phong_ptr2->setKS(0.1f);
-    //	phong_ptr2->setCD(green);
-    //	phong_ptr2->setEXP(500);
-    //
-    //	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
-    //	tri_ptr->setMat(phong_ptr);
-    //	//addObject(tri_ptr);
-    //	*/
-    //	/*
-    //	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
-    //	plane_ptr->setMat(phong_ptr2);
-    //	addObject(plane_ptr);
-    //
-    //
-    //	Disk* disk_ptr = new Disk(Point3D(0), 3.0, Normal(0, 1, 0));
-    //	disk_ptr->setMat(phong_ptr2);
-    //	addObject(disk_ptr);
-    //	*/
-    //
-    //	Reflective* reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(0.1, 0.1, 0.1));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(0.75);
-    //
-    //	Phong* phong_ptr = new Phong;
-    //	phong_ptr->setKA(0.5);
-    //	phong_ptr->setKD(0.75);
-    //	phong_ptr->setKS(0.1f);
-    //	phong_ptr->setEXP(500);
-    //	phong_ptr->setCD(green);
-    //
-    //	//OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 0.75);
-    //	//cylinder_ptr->setCenter(0, 0, -4);
-    //	//cylinder_ptr->setYRange(0, 3);
-    //	//cylinder_ptr->setMat(reflective_ptr);
-    //	//addObject(cylinder_ptr);
-    //
-    //	//SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
-    //	//solidCylinder_ptr->setMat(phong_ptr);
-    //	//addObject(solidCylinder_ptr);
-    //
-    //	//AABB a = solidCylinder_ptr->getAABB();
-    //
-    //	/*
-    //	Phong* blackFloorPhong_ptr = new Phong;
-    //	blackFloorPhong_ptr->setKA(0.5);
-    //	blackFloorPhong_ptr->setKD(0.75);
-    //	blackFloorPhong_ptr->setKS(0.1f);
-    //	blackFloorPhong_ptr->setEXP(500);
-    //	blackFloorPhong_ptr->setCD(RGBColor(black));
-    //	
-    //	Phong* whiteFloorPhong_ptr = new Phong;
-    //	whiteFloorPhong_ptr->setKA(0.5);
-    //	whiteFloorPhong_ptr->setKD(0.75);
-    //	whiteFloorPhong_ptr->setKS(0.1f);
-    //	whiteFloorPhong_ptr->setEXP(500);
-    //	whiteFloorPhong_ptr->setCD(RGBColor(white));
-    //
-    //	Box* box_ptr;
-    //
-    //	for (int i = -20; i < 21; i++)
-    //	{
-    //		for (int j = -20; j < 21; j++)
-    //		{
-    //			if (i % 2 == 0)
-    //			{
-    //				if (j % 2 == 0)
-    //				{
-    //					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-    //					box_ptr->setMat(blackFloorPhong_ptr);
-    //					addObject(box_ptr);
-    //				}
-    //				else
-    //				{
-    //					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-    //					box_ptr->setMat(whiteFloorPhong_ptr);
-    //					addObject(box_ptr);
-    //				}
-    //			}
-    //			else
-    //			{
-    //				if (j % 2 == 0)
-    //				{
-    //					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-    //					box_ptr->setMat(whiteFloorPhong_ptr);
-    //					addObject(box_ptr);
-    //				}
-    //				else
-    //				{
-    //					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-    //					box_ptr->setMat(blackFloorPhong_ptr);
-    //					addObject(box_ptr);
-    //				}
-    //			}
-    //		}
-    //	}
-    //	*/
-    //	/*
-    //	reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(red));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(1.0);
-    //
-    //	*/
-    //
-    //	/*phong_ptr = new Phong;
-    //	phong_ptr->setKA(0.5);
-    //	phong_ptr->setKD(0.75);
-    //	phong_ptr->setKS(0.1f);
-    //	phong_ptr->setEXP(500);
-    //	phong_ptr->setCD(red);
-    //
-    //	Sphere* sphere_ptr = new Sphere(Point3D(0, 3.15, 0), 1);
-    //	sphere_ptr->setMat(phong_ptr);
-    //	addObject(sphere_ptr);*/
-    //
-    //	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
-    //	//ellipsoid_ptr->setMat(phong_ptr2);
-    //	//ellipsoid_ptr->scale(2, 3, 1);
-    //	//ellipsoid_ptr->rotateX(-45.0);
-    //	//addObject(ellipsoid_ptr);
-    //
-    //	/*reflective_ptr = new Reflective;
-    //	reflective_ptr->setKA(0.5);
-    //	reflective_ptr->setKD(0.75);
-    //	reflective_ptr->setKS(0.1f);
-    //	reflective_ptr->setEXP(500);
-    //	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
-    //	reflective_ptr->setCR(white);
-    //	reflective_ptr->setKR(1.0);*/
-    //
-    //	/*phong_ptr = new Phong;
-    //	phong_ptr->setKA(0.5);
-    //	phong_ptr->setKD(0.75);
-    //	phong_ptr->setKS(0.1f);
-    //	phong_ptr->setEXP(500);
-    //	phong_ptr->setCD(blue);
-    //
-    //	Normal norm(1, 0, 2);
-    //
-    //	Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
-    //	tri_ptr->setMat(phong_ptr);
-    //	addObject(tri_ptr);*/
-    //
-    //	/*
-    //	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
-    //	plane_ptr3->setMat(reflective_ptr);
-    //	addObject(plane_ptr3);
-    //	*/
-    //}
+    void World::build()
+    {
+    	int numSamples = 16;
+    
+    	vp.setHres(512);
+    	vp.setVres(512);
+    	vp.setSamples(numSamples);
+    	vp.setMaxDepth(0);
+    	image = vector<RGBColor>(vp.hRes * vp.vRes);
+    
+    	tracer_ptr = new RayCast(this);//new Whitted(this);
+    
+    	MultiJittered* sampler_ptr = new MultiJittered(numSamples);
+    
+    	AmbientOccluder* occluder_ptr = new AmbientOccluder;
+    	occluder_ptr->scale_radiance(1.0);
+    	occluder_ptr->setColor(white);
+    	occluder_ptr->setMinAmt(0.0);
+    	occluder_ptr->setSampler(sampler_ptr);
+    	setAmbientLight(occluder_ptr);
+    
+    
+    	if (usingMPI)
+    	{
+    		PinholeMPI* distPinhole_ptr = new PinholeMPI(rank, size);
+    		distPinhole_ptr->setEyePos(0, 24, 56);
+    		distPinhole_ptr->setLookAt(0, 1, 0);
+    		distPinhole_ptr->setDistance(5000);
+    		distPinhole_ptr->setRoll(0);
+    		distPinhole_ptr->computeUVW();
+    		setCamera(distPinhole_ptr);
+    	}
+    	else
+    	{
+    		Pinhole* pinhole_ptr = new Pinhole();
+    		pinhole_ptr->setEyePos(0, 24, 56);
+    		pinhole_ptr->setLookAt(0, 2, 0);
+    		pinhole_ptr->setDistance(5000);
+    		pinhole_ptr->setRoll(0);
+    		pinhole_ptr->computeUVW();
+    		setCamera(pinhole_ptr);
+    	}
+    
+    	PointLight* pointLight_ptr = new PointLight;
+    	pointLight_ptr->setPos(30, 30, 30);
+    	pointLight_ptr->scaleRadiance(0.01f);
+    	pointLight_ptr->setAttenuate(false);
+    	pointLight_ptr->setAttenPower(2);
+    	pointLight_ptr->setShadows(true);
+    	addLight(pointLight_ptr);
+    
+    	/*
+    	Phong* matte_ptr = new Phong;
+    	matte_ptr->setKA(0.5);
+    	matte_ptr->setKD(0.75);
+    	matte_ptr->setKS(0.5f);
+    	matte_ptr->setEXP(500);
+    	matte_ptr->setCD(RGBColor(0.3f, 0.3f, 0.3f));
+    	*/
+    	/*
+    	OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 1);
+    	cylinder_ptr->setCenter(0, 1, 0);
+    	cylinder_ptr->setYRange(0, 4);
+    	cylinder_ptr->setMat(matte_ptr);
+    	addObject(cylinder_ptr);
+    
+    	Phong* phong_ptr = new Phong;
+    	phong_ptr->setKA(0.5);
+    	phong_ptr->setKD(0.75);
+    	phong_ptr->setKS(0.1f);
+    	phong_ptr->setEXP(500);
+    	phong_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
+    
+    	Box* box_ptr = new Box(-1,-1,-1,1,1,1);
+    	box_ptr->setMat(phong_ptr);
+    	addObject(box_ptr);
+    
+    	Sphere* sphere_ptr = new Sphere(Point3D(0, 4.5, 0), 1.25);
+    	sphere_ptr->setMat(matte_ptr);
+    	addObject(sphere_ptr);
+    
+    
+    	Matte* matte_ptr = new Matte;
+    	matte_ptr->setKA(0.75);
+    	matte_ptr->setKD(0);
+    	matte_ptr->setCD(yellow);
+    
+    	Cylinder* cylinder_ptr = new Cylinder();
+    	cylinder_ptr->setCenter(0, 0, 0);
+    	cylinder_ptr->setRadius(1);
+    	cylinder_ptr->set_yRange(0, 5);
+    	cylinder_ptr->setMat(matte_ptr);
+    	addObject(cylinder_ptr);
+    
+    	Matte* matte_ptr2 = new Matte;
+    	matte_ptr2->setKA(0.5);
+    	matte_ptr2->setKD(0.75);
+    	matte_ptr2->setCD(1.0);
+    	*/
+    
+    	
+    
+    	Reflective* reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(0.9926f, 0.6784f, 0.6784f));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(0.75);
+    
+    	Sphere* sphere_ptr = new Sphere(Point3D(0, 1, 0), 1);
+    	sphere_ptr->setMat(reflective_ptr);
+    	addObject(sphere_ptr);
+    
+    	reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(black));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(0.75);
+    
+    	sphere_ptr = new Sphere(Point3D(2, 1, 0), 1);
+    	sphere_ptr->setMat(reflective_ptr);
+    	addObject(sphere_ptr);
+    
+    	reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(0.6784f, 0.6784f, 0.9926f));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(0.75);
+    
+    	sphere_ptr = new Sphere(Point3D(-2, 1, 0), 1);
+    	sphere_ptr->setMat(reflective_ptr);
+    	addObject(sphere_ptr);
+    
+    	Phong* phong_ptr = new Phong;
+    	phong_ptr->setKA(0.5);
+    	phong_ptr->setKD(0.75);
+    	phong_ptr->setKS(0.1f);
+    	phong_ptr->setEXP(500);
+    	phong_ptr->setCD(RGBColor(0.6784f, 0.9926f, 0.6784f));
+    
+    	Phong* phong_ptr2 = new Phong;
+    	phong_ptr2->setKA(0.25);
+    	phong_ptr2->setKD(0.75);
+    	phong_ptr2->setKS(0.1f);
+    	phong_ptr2->setCD(green);
+    	phong_ptr2->setEXP(500);
+    
+    	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
+    	tri_ptr->setMat(phong_ptr);
+    	//addObject(tri_ptr);
+    	
+    	/*
+    	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
+    	plane_ptr->setMat(phong_ptr2);
+    	addObject(plane_ptr);
+    
+    
+    	Disk* disk_ptr = new Disk(Point3D(0), 3.0, Normal(0, 1, 0));
+    	disk_ptr->setMat(phong_ptr2);
+    	addObject(disk_ptr);
+    	*/
+    
+    	Reflective* reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(0.1, 0.1, 0.1));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(0.75);
+    
+    	Phong* phong_ptr = new Phong;
+    	phong_ptr->setKA(0.5);
+    	phong_ptr->setKD(0.75);
+    	phong_ptr->setKS(0.1f);
+    	phong_ptr->setEXP(500);
+    	phong_ptr->setCD(green);
+    
+    	//OpenCylinder* cylinder_ptr = new OpenCylinder(0, 1, 0.75);
+    	//cylinder_ptr->setCenter(0, 0, -4);
+    	//cylinder_ptr->setYRange(0, 3);
+    	//cylinder_ptr->setMat(reflective_ptr);
+    	//addObject(cylinder_ptr);
+    
+    	//SolidCylinder* solidCylinder_ptr = new SolidCylinder(0, 2, 0.75);
+    	//solidCylinder_ptr->setMat(phong_ptr);
+    	//addObject(solidCylinder_ptr);
+    
+    	//AABB a = solidCylinder_ptr->getAABB();
+    
+    	
+    	Phong* blackFloorPhong_ptr = new Phong;
+    	blackFloorPhong_ptr->setKA(0.5);
+    	blackFloorPhong_ptr->setKD(0.75);
+    	blackFloorPhong_ptr->setKS(0.1f);
+    	blackFloorPhong_ptr->setEXP(500);
+    	blackFloorPhong_ptr->setCD(RGBColor(black));
+    	
+    	Phong* whiteFloorPhong_ptr = new Phong;
+    	whiteFloorPhong_ptr->setKA(0.5);
+    	whiteFloorPhong_ptr->setKD(0.75);
+    	whiteFloorPhong_ptr->setKS(0.1f);
+    	whiteFloorPhong_ptr->setEXP(500);
+    	whiteFloorPhong_ptr->setCD(RGBColor(white));
+    
+    	Box* box_ptr;
+    
+    	for (int i = -20; i < 21; i++)
+    	{
+    		for (int j = -20; j < 21; j++)
+    		{
+    			if (i % 2 == 0)
+    			{
+    				if (j % 2 == 0)
+    				{
+    					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+    					box_ptr->setMat(blackFloorPhong_ptr);
+    					addObject(box_ptr);
+    				}
+    				else
+    				{
+    					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+    					box_ptr->setMat(whiteFloorPhong_ptr);
+    					addObject(box_ptr);
+    				}
+    			}
+    			else
+    			{
+    				if (j % 2 == 0)
+    				{
+    					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+    					box_ptr->setMat(whiteFloorPhong_ptr);
+    					addObject(box_ptr);
+    				}
+    				else
+    				{
+    					box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
+    					box_ptr->setMat(blackFloorPhong_ptr);
+    					addObject(box_ptr);
+    				}
+    			}
+    		}
+    	}
+    	
+    	/*
+    	reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(red));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(1.0);
+    
+    	*/
+    
+    	/*phong_ptr = new Phong;
+    	phong_ptr->setKA(0.5);
+    	phong_ptr->setKD(0.75);
+    	phong_ptr->setKS(0.1f);
+    	phong_ptr->setEXP(500);
+    	phong_ptr->setCD(red);
+    
+    	Sphere* sphere_ptr = new Sphere(Point3D(0, 3.15, 0), 1);
+    	sphere_ptr->setMat(phong_ptr);
+    	addObject(sphere_ptr);*/
+    
+    	//Instance* ellipsoid_ptr = new Instance(new Sphere(Point3D(0,0,-16), 1));
+    	//ellipsoid_ptr->setMat(phong_ptr2);
+    	//ellipsoid_ptr->scale(2, 3, 1);
+    	//ellipsoid_ptr->rotateX(-45.0);
+    	//addObject(ellipsoid_ptr);
+    
+    	/*reflective_ptr = new Reflective;
+    	reflective_ptr->setKA(0.5);
+    	reflective_ptr->setKD(0.75);
+    	reflective_ptr->setKS(0.1f);
+    	reflective_ptr->setEXP(500);
+    	reflective_ptr->setCD(RGBColor(0.4, 0.4, 0.4));
+    	reflective_ptr->setCR(white);
+    	reflective_ptr->setKR(1.0);*/
+    
+    	/*phong_ptr = new Phong;
+    	phong_ptr->setKA(0.5);
+    	phong_ptr->setKD(0.75);
+    	phong_ptr->setKS(0.1f);
+    	phong_ptr->setEXP(500);
+    	phong_ptr->setCD(blue);
+    
+    	Normal norm(1, 0, 2);
+    
+    	Triangle* tri_ptr = new Triangle(Point3D(-4, 0, 1), Point3D(1, 0, -3), Point3D(-1.5, 5.8, -0.5));
+    	tri_ptr->setMat(phong_ptr);
+    	addObject(tri_ptr);*/
+    
+    	/*
+    	Plane* plane_ptr3 = new Plane(Point3D(-1.5, 5, -1.5), norm);
+    	plane_ptr3->setMat(reflective_ptr);
+    	addObject(plane_ptr3);
+    	*/
+    }
 
     //void World::build()
     //{
@@ -1248,161 +1248,6 @@ bool usingMPI = 0;
     //	}
     //}
 
-
-
-    void World::build()
-    {
-        int numSamples = 256;
-
-        vp.setHres(512);
-        vp.setVres(512);
-        vp.setPixelSize(1);
-        vp.setSamples(numSamples);
-        vp.setMaxDepth(10);
-
-        image = vector<RGBColor>(vp.hRes * vp.vRes);
-
-        tracer_ptr = new Whitted(this);
-
-        MultiJittered* sampler_ptr = new MultiJittered(numSamples);
-
-        AmbientOccluder* occluder_ptr = new AmbientOccluder;
-        occluder_ptr->scale_radiance(1.0);
-        occluder_ptr->setColor(white);
-        occluder_ptr->setMinAmt(0.0);
-        occluder_ptr->setSampler(sampler_ptr);
-        occluder_ptr->setShadows(false);
-        setAmbientLight(occluder_ptr);
-
-        PointLight* pointLight_ptr = new PointLight;
-        pointLight_ptr->setPos(100, 100, 30);
-        pointLight_ptr->scaleRadiance(0.009f);
-        pointLight_ptr->setAttenuate(false);
-        pointLight_ptr->setAttenPower(2);
-        pointLight_ptr->setShadows(true);
-        addLight(pointLight_ptr);
-
-
-        if (usingMPI)
-        {
-            PinholeMPI* distPinhole_ptr = new PinholeMPI(rank, size);
-            distPinhole_ptr->setEyePos(0, 24, 56);
-            distPinhole_ptr->setLookAt(0, 1, 0);
-            distPinhole_ptr->setDistance(5000);
-            distPinhole_ptr->setRoll(0);
-            distPinhole_ptr->computeUVW();
-            setCamera(distPinhole_ptr);
-        }
-        else
-        {
-            Pinhole* pinhole_ptr = new Pinhole();
-            pinhole_ptr->setEyePos(0, 24, 56);
-            pinhole_ptr->setLookAt(0, 1, 0);
-            pinhole_ptr->setDistance(5000);
-            pinhole_ptr->setRoll(0);
-            pinhole_ptr->computeUVW();
-            setCamera(pinhole_ptr);
-        }
-
-        Reflective* reflective_ptr = new Reflective;
-        reflective_ptr->setKA(0.5);
-        reflective_ptr->setKD(0.75);
-        reflective_ptr->setKS(0.1f);
-        reflective_ptr->setEXP(500);
-        reflective_ptr->setCD(yellow);
-        reflective_ptr->setCR(white);
-        reflective_ptr->setKR(1.0);
-
-        Phong* blackFloorPhong_ptr = new Phong;
-        blackFloorPhong_ptr->setKA(0.5);
-        blackFloorPhong_ptr->setKD(0.75);
-        blackFloorPhong_ptr->setKS(0.1f);
-        blackFloorPhong_ptr->setEXP(500);
-        blackFloorPhong_ptr->setCD(RGBColor(black));
-
-        Phong* whiteFloorPhong_ptr = new Phong;
-        whiteFloorPhong_ptr->setKA(0.5);
-        whiteFloorPhong_ptr->setKD(0.75);
-        whiteFloorPhong_ptr->setKS(0.1f);
-        whiteFloorPhong_ptr->setEXP(500);
-        whiteFloorPhong_ptr->setCD(RGBColor(white));
-
-        
-        Instance* iBox_ptr = new Instance(new Box(Point3D(0,0,0), Point3D(1,1,1)));
-        
-        for (int i = -5; i < 6; i++)
-        {
-            for (int j = -5; j < 6; j++)
-            {
-                if (i % 2 == 0)
-                {
-                    if (j % 2 == 0)
-                    {
-                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        iBox_ptr->translate(i,-1,j);
-                        iBox_ptr->setMat(blackFloorPhong_ptr);
-                        addObject(iBox_ptr);
-                    }
-                    else
-                    {
-                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        iBox_ptr->translate(i,-1,j);
-                        iBox_ptr->setMat(whiteFloorPhong_ptr);
-                        addObject(iBox_ptr);
-                    }
-                }
-                else
-                {
-                    if (j % 2 == 0)
-                    {
-                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        iBox_ptr->translate(i,-1,j);
-                        iBox_ptr->setMat(whiteFloorPhong_ptr);
-                        addObject(iBox_ptr);
-
-                    }
-                    else
-                    {
-                        //box_ptr = new Box(Point3D(i, -1, j), Point3D(i + 1, 0, j + 1));
-                        iBox_ptr->translate(i,-1,j);
-                        iBox_ptr->setMat(blackFloorPhong_ptr);
-                        addObject(iBox_ptr);
-
-                    }
-                }
-            }
-        }
-   
-        reflective_ptr = new Reflective;
-        reflective_ptr->setKA(0.5);
-        reflective_ptr->setKD(0.75);
-        reflective_ptr->setKS(0.1f);
-        reflective_ptr->setEXP(500);
-        reflective_ptr->setCD(0.2, 0.2, 0.6);
-        reflective_ptr->setCR(white);
-        reflective_ptr->setKR(1.0);
-
-        Instance* sphere_ptr = new Instance(new Sphere(Point3D(0), 1));
-        sphere_ptr->translate(-5,0,5);
-        sphere_ptr->setMat(reflective_ptr);
-        addObject(sphere_ptr);
-
-        reflective_ptr->setCD(0.2,0.6,0.2);
-
-        sphere_ptr->translate(2,0,-2);
-        addObject(sphere_ptr);
-        
-        reflective_ptr->setCD(0.26,0.2,0.2);
-
-        sphere_ptr->translate(2,0,-2);
-        addObject(sphere_ptr);
-
-        reflective_ptr->setCD(0.1,0.1,0.1);
-
-        sphere_ptr->translate(2,0,-2);
-        addObject(sphere_ptr);
-
-    }
 
 
 
