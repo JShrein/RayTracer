@@ -54,7 +54,7 @@ using std::string;
 using std::cin;
 
 #define USEWIN 0
-#define USEMPI 1
+#define USEMPI 0
 
 // TODO: Find a cleaner way to allow portability
 
@@ -812,15 +812,15 @@ bool usingMPI = 0;
 
     void World::build()
     {
-    	int numSamples = 16;
+    	int numSamples = 256;
     
-    	vp.setHres(512);
-    	vp.setVres(512);
+    	vp.setHres(1024);
+    	vp.setVres(1024);
     	vp.setSamples(numSamples);
-    	vp.setMaxDepth(0);
+    	vp.setMaxDepth(10);
     	image = vector<RGBColor>(vp.hRes * vp.vRes);
     
-    	tracer_ptr = new RayCast(this);//new Whitted(this);
+    	tracer_ptr = new Whitted(this);
     
     	MultiJittered* sampler_ptr = new MultiJittered(numSamples);
     
@@ -980,7 +980,7 @@ bool usingMPI = 0;
     	addObject(disk_ptr);
     	*/
     
-    	Reflective* reflective_ptr = new Reflective;
+        reflective_ptr = new Reflective;
     	reflective_ptr->setKA(0.5);
     	reflective_ptr->setKD(0.75);
     	reflective_ptr->setKS(0.1f);
@@ -989,7 +989,7 @@ bool usingMPI = 0;
     	reflective_ptr->setCR(white);
     	reflective_ptr->setKR(0.75);
     
-    	Phong* phong_ptr = new Phong;
+        phong_ptr = new Phong;
     	phong_ptr->setKA(0.5);
     	phong_ptr->setKD(0.75);
     	phong_ptr->setKS(0.1f);
@@ -1025,9 +1025,9 @@ bool usingMPI = 0;
     
     	Box* box_ptr;
     
-    	for (int i = -20; i < 21; i++)
+    	for (int i = -4; i < 5; i++)
     	{
-    		for (int j = -20; j < 21; j++)
+    		for (int j = -4; j < 5; j++)
     		{
     			if (i % 2 == 0)
     			{
