@@ -814,8 +814,8 @@ bool usingMPI = 0;
     {
     	int numSamples = 256;
     
-    	vp.setHres(1024);
-    	vp.setVres(1024);
+    	vp.setHres(512);
+    	vp.setVres(512);
     	vp.setSamples(numSamples);
     	vp.setMaxDepth(10);
     	image = vector<RGBColor>(vp.hRes * vp.vRes);
@@ -936,7 +936,7 @@ bool usingMPI = 0;
     
     	sphere_ptr = new Sphere(Point3D(2, 1, 0), 1);
     	sphere_ptr->setMat(reflective_ptr);
-    	addObject(sphere_ptr);
+    	//addObject(sphere_ptr);
     
     	reflective_ptr = new Reflective;
     	reflective_ptr->setKA(0.5);
@@ -949,7 +949,7 @@ bool usingMPI = 0;
     
     	sphere_ptr = new Sphere(Point3D(-2, 1, 0), 1);
     	sphere_ptr->setMat(reflective_ptr);
-    	addObject(sphere_ptr);
+    	//addObject(sphere_ptr);
     
     	Phong* phong_ptr = new Phong;
     	phong_ptr->setKA(0.5);
@@ -964,10 +964,13 @@ bool usingMPI = 0;
     	phong_ptr2->setKS(0.1f);
     	phong_ptr2->setCD(green);
     	phong_ptr2->setEXP(500);
-    
-    	Triangle* tri_ptr = new Triangle(Point3D(-1, 1, 0), Point3D(-0.5, 1.5, 2.5), Point3D(1, 0, 1));
-    	tri_ptr->setMat(phong_ptr);
-    	//addObject(tri_ptr);
+   
+
+        reflective_ptr->setCD(RGBColor(0.1f, 0.1f, 0.1f));
+
+    	Triangle* tri_ptr = new Triangle(Point3D(-2.5, 0, -2.5), Point3D(2.5, 0, -2.5), Point3D(0, 5, -2));
+    	tri_ptr->setMat(reflective_ptr);
+    	addObject(tri_ptr);
     	
     	/*
     	Plane* plane_ptr = new Plane(Point3D(0), Normal(0, 1, 0));
@@ -1025,9 +1028,9 @@ bool usingMPI = 0;
     
     	Box* box_ptr;
     
-    	for (int i = -4; i < 5; i++)
+    	for (int i = -20; i < 21; i++)
     	{
-    		for (int j = -4; j < 5; j++)
+    		for (int j = -20; j < 21; j++)
     		{
     			if (i % 2 == 0)
     			{
@@ -1313,7 +1316,7 @@ bool usingMPI = 0;
     int main()
     {
         // Number of frames in your animation
-        const int NUM_IMAGES = 50;
+        const int NUM_IMAGES = 1;
 
 
         // MPI_Init() wrapped up in this function to facilitate multi-platform development
