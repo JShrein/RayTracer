@@ -53,7 +53,7 @@ using std::endl;
 using std::string;
 using std::cin;
 
-#define USEWIN 1
+#define USEWIN 0
 #define USEMPI 0
 
 // TODO: Find a cleaner way to allow portability
@@ -1474,129 +1474,127 @@ void World::build()
         return ((float)max) * RGBColor(c);
     }
 
-    int main()
-    {
-        // Number of frames in your animation
-        const int NUM_IMAGES = 145;
+int main()
+{
+    // Number of frames in your animation
+    const int NUM_IMAGES = 145;
 
 
-        // MPI_Init() wrapped up in this function to facilitate multi-platform development
-        // NOTE: *** initMPI() and shutdown() are just empty for Windows implementation
-        // TODO: REMOVE THIS AND USE PREPROCESSOR DIRECTIVES TO INIT AND FINALIZE MPI
-        initMPI(NULL, NULL);
+    // MPI_Init() wrapped up in this function to facilitate multi-platform development
+    // NOTE: *** initMPI() and shutdown() are just empty for Windows implementation
+    // TODO: REMOVE THIS AND USE PREPROCESSOR DIRECTIVES TO INIT AND FINALIZE MPI
+    initMPI(NULL, NULL);
 
-        World w;
-        w.build();
+    World w;
+    w.build();
 #if USEMPI
-        // cout << "Rank " << rank << " reports build complete, rendering scene\n";
+    // cout << "Rank " << rank << " reports build complete, rendering scene\n";
 #endif
-        //w.renderScene();
-        //w.render_perspective();
+    //w.renderScene();
+    //w.render_perspective();
                 
-        // Will use this flag to tell non-master nodes to GO (1 image at a time)
-        // Attempting to solve "artifact" problem
-        int readyFlag = 0;
+    // Will use this flag to tell non-master nodes to GO (1 image at a time)
+    // Attempting to solve "artifact" problem
+    int readyFlag = 0;
 
-        // rotation angle
-        double angle = 2.5;
-        //double translationAmt = 0;
-        for (int j = 0; j < NUM_IMAGES; j++)
-        {
-        //	translationAmt++;
-        //	Instance* box = (Instance*)w.objects[0];
+    // rotation angle
+    double angle = 2.5;
+    //double translationAmt = 0;
+    for (int j = 0; j < NUM_IMAGES; j++)
+    {
+    //	translationAmt++;
+    //	Instance* box = (Instance*)w.objects[0];
 
-        //	if (i < 80)
-        //	{
-        //		box->translate(0, 0, 0.25);
-        //	}
-        //	else
-        //	{
-        //		box->translate(0, 0, -0.25);
-        //	}
+    //	if (i < 80)
+    //	{
+    //		box->translate(0, 0, 0.25);
+    //	}
+    //	else
+    //	{
+    //		box->translate(0, 0, -0.25);
+    //	}
 
-            Point3D lightPos = w.lights[0]->getPos();
+        Point3D lightPos = w.lights[0]->getPos();
 
-            double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
-            double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
+        double rx = lightPos.x * cos(toRads(angle)) - lightPos.z * sin(toRads(angle));
+        double rz = lightPos.x * sin(toRads(angle)) + lightPos.z * cos(toRads(angle));
 
-            //cameraPosition.x = rx;
-            //cameraPosition.z = rz;
+        //cameraPosition.x = rx;
+        //cameraPosition.z = rz;
 
-            //w.camera_ptr->setEyePos(cameraPosition);
-            //w.camera_ptr->setLookAt(0, 0, 0);
+        //w.camera_ptr->setEyePos(cameraPosition);
+        //w.camera_ptr->setLookAt(0, 0, 0);
         
-            w.lights[0]->setPos(rx, lightPos.y, rz);
+        w.lights[0]->setPos(rx, lightPos.y, rz);
             
-            w.doCamMovement();
+        w.doCamMovement();
 #if USEMPI
-            int totalNumPixels = w.vp.hRes * w.vp.vRes;
+        int totalNumPixels = w.vp.hRes * w.vp.vRes;
 
-            if(rank == 0)
-            {
-                clock_t		startTime;
-                clock_t		currentTime;
-	            clock_t		endTime;
-	            float		totalTime;
+        if(rank == 0)
+        {
+            clock_t		startTime;
+            clock_t		currentTime;
+	        clock_t		endTime;
+	        float		totalTime;
 
 
-                readyFlag = 1;
+            readyFlag = 1;
 
-			    // Broadcast to all processes to begin
-			    MPI_Bcast(&readyFlag, 1, MPI_INT, rank, MPI_COMM_WORLD);
+			// Broadcast to all processes to begin
+			MPI_Bcast(&readyFlag, 1, MPI_INT, rank, MPI_COMM_WORLD);
           
-                cout << "Started rendering image " << j+1 << " of " << NUM_IMAGES << "\n";
+            cout << "Started rendering image " << j+1 << " of " << NUM_IMAGES << "\n";
 
-                startTime = clock();
-			    MPI_Status status;
-			    int inBuf[5];
+            startTime = clock();
+			MPI_Status status;
+			int inBuf[5];
 
-                int received = 0;
-			    for (int i = 0; i < totalNumPixels; i++)
-		    	{
-                    int succ = MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+            int received = 0;
+			for (int i = 0; i < totalNumPixels; i++)
+		    {
+                int succ = MPI_Recv(&inBuf, 5, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
 				
-                    if (succ != MPI_SUCCESS)
-                    {
-                        cout << "ERROR: MPI_Recv() failed\n";
-                    }
-                    image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
+                if (succ != MPI_SUCCESS)
+                {
+                    cout << "ERROR: MPI_Recv() failed\n";
                 }
+                image[inBuf[0] + inBuf[1]] = RGBColor(inBuf[2], inBuf[3], inBuf[4]);
+            }
             
-                endTime = clock();
-	            totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
+            endTime = clock();
+	        totalTime = ((float)(endTime - startTime)) / CLOCKS_PER_SEC;
             
-            cout << "Render completed in " << totalTime << " s" << endl;
+			cout << "Render completed in " << totalTime << " s" << endl;
 
 
-            cout << "Writing image " << j+1 << " of " << NUM_IMAGES << "\n";      
-            writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
-        }
+			cout << "Writing image " << j+1 << " of " << NUM_IMAGES << "\n";      
+			writeImage(w.vp.hRes, w.vp.vRes, rank);//w.rank);
+		}
 		else
 		{
 			do
 			{
 				// busy idling
 				MPI_Bcast(&readyFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
-            } while (!readyFlag);
+			} while (!readyFlag);
 			
-            w.camera_ptr->renderScene(w);
+			w.camera_ptr->renderScene(w);
 			readyFlag = 0;
 		}
-
 #else
-        
-        w.camera_ptr->renderScene(w);
-        writeImage(w.vp.hRes, w.vp.vRes, rank);
+		w.camera_ptr->renderScene(w);
+		writeImage(w.vp.hRes, w.vp.vRes, rank);
 #endif
-    }
+	}
 
 	// MPI_Finalize() wrapped in shutdownMPI()
 	shutdownMPI();
 
-    if(USEWIN)
-    {
-	    haltBeforeClose();
-    }
+	if(USEWIN)
+	{
+		haltBeforeClose();
+	}
 
 	return 0;
 }
