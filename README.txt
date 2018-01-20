@@ -10,5 +10,3 @@ make -f Makefile_Linux mpi-all
 On Mac, compile using:
 make -f Makefile_mac all
 
-On Windows, project was built using Visual Studio 2013 Express
-Open Tracer_2.sln to load project into Visual Studio 2013 or greater
